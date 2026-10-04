@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>SmartPark — IoT Parking Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --navy-950:#070B14;
+    --navy-900:#0B1120;
+    --navy-800:#111A2E;
+    --navy-700:#1B2740;
+    --navy-600:#2A3B5C;
+    --line:#24314C;
+    --ink:#0F172A;
+    --paper:#F7F8FB;
+    --paper-card:#FFFFFF;
+    --muted:#64748B;
+    --available:#0EA472;
+    --available-soft:#E4F7EE;
+    --reserved:#D97F14;
+    --reserved-soft:#FBEED9;
+    --occupied:#D6455B;
+    --occupied-soft:#FBE2E6;
+    --offline:#6B7686;
+    --offline-soft:#E7E9ED;
+    --accent-glow: rgba(14,164,114,0.35);
+    box-sizing:border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior:smooth;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Manrope',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px;}
+  ::-webkit-scrollbar{height:8px;width:8px;}
+  ::-webkit-scrollbar-thumb{background:#CBD3E1;border-radius:8px;}
+
+  /* ---------- NAVBAR ---------- */
+  header.nav{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:60;
+    background:var(--navy-900); border-bottom:1px solid var(--navy-700);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:18px;letter-spacing:-0.01em;}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--available);box-shadow:0 0 0 4px var(--accent-glow);}
+  .navlinks{display:flex;align-items:center;gap:4px;}
+  .navlinks button{
+    background:transparent;border:none;color:#AAB4C8;font-weight:600;font-size:14px;
+    padding:8px 14px;border-radius:8px;transition:color .15s, background .15s;
+  }
+  .navlinks button:hover{color:#fff;background:var(--navy-800);}
+  .navlinks button.active{color:#fff;background:var(--navy-700);}
+  .nav-right{display:flex;align-items:center;gap:10px;}
+  .bell-btn{position:relative;background:var(--navy-800);border:1px solid var(--navy-700);border-radius:10px;padding:8px;color:#fff;display:flex;}
+  .bell-dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--occupied);}
+  .cta-dash{
+    background:var(--available);color:#04231A;font-weight:700;font-size:14px;
+    padding:9px 16px;border-radius:9px;border:none;
+    box-shadow:0 6px 16px -4px rgba(14,164,114,.45);
+  }
+  .hamburger{display:none;background:transparent;border:none;color:#fff;padding:8px;}
+  @media (max-width:860px){
+    .navlinks{display:none;}
+    .hamburger{display:flex;}
+  }
+  .mobile-menu{display:none;flex-direction:column;background:var(--navy-900);border-top:1px solid var(--navy-700);padding:8px 16px 16px;}
+  .mobile-menu.open{display:flex;}
+  .mobile-menu button{text-align:left;background:transparent;border:none;color:#AAB4C8;font-weight:600;padding:10px 4px;font-size:15px;border-bottom:1px solid var(--navy-800);}
+  .mobile-menu button.active{color:var(--available);}
+
+  section.page{display:none;}
+  section.page.active{display:block;}
+
+  /* ---------- HERO / LANDING ---------- */
+  .hero{
+    background:radial-gradient(circle at 15% 20%, #101C33 0%, var(--navy-950) 55%);
+    color:#fff; padding:76px 0 64px; position:relative; overflow:hidden;
+  }
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;}
+  @media (max-width:960px){.hero-grid{grid-template-columns:1fr;}}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;color:#8FE6C4;font-weight:600;font-size:13px;background:rgba(14,164,114,.12);border:1px solid rgba(14,164,114,.3);padding:6px 12px;border-radius:100px;}
+  .hero h1{font-size:52px;line-height:1.05;letter-spacing:-0.02em;font-weight:800;margin:20px 0 16px;}
+  @media (max-width:640px){.hero h1{font-size:36px;}}
+  .hero p.sub{color:#AAB4C8;font-size:17px;line-height:1.6;max-width:520px;margin:0 0 28px;}
+  .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn-primary{background:var(--available);color:#04231A;font-weight:700;padding:13px 22px;border-radius:10px;border:none;font-size:15px;box-shadow:0 8px 22px -6px rgba(14,164,114,.5);transition:transform .15s;}
+  .btn-primary:hover{transform:translateY(-1px);}
+  .btn-secondary{background:transparent;color:#fff;font-weight:700;padding:13px 22px;border-radius:10px;border:1px solid var(--navy-600);font-size:15px;transition:background .15s;}
+  .btn-secondary:hover{background:var(--navy-800);}
+
+  .lot-card{background:var(--navy-800);border:1px solid var(--navy-700);border-radius:18px;padding:22px;backdrop-filter:blur(6px);}
+  .lot-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .lot-head span{color:#8593AC;font-size:12.5px;font-weight:600;}
+  .lot-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+  .lot-cell{aspect-ratio:1/1;border-radius:7px;transition:background .6s ease;}
+
+  .stats-bar{margin-top:-40px;position:relative;z-index:5;}
+  .stats-card{background:var(--paper-card);border-radius:16px;box-shadow:0 20px 40px -20px rgba(15,23,42,.25);padding:22px 8px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  @media (max-width:700px){.stats-card{grid-template-columns:repeat(2,1fr);}}
+  .stat{text-align:center;padding:10px 6px;}
+  .stat .num{font-size:30px;font-weight:800;letter-spacing:-0.02em;}
+  .stat .lbl{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:2px;}
+
+  .howitworks{padding:72px 0 40px;}
+  .how-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px;}
+  @media (max-width:800px){.how-row{grid-template-columns:1fr;}}
+  .how-step{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:16px;padding:22px;}
+  .how-step .icn{width:40px;height:40px;border-radius:10px;background:var(--available-soft);color:var(--available);display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+  .how-step h3{font-size:16px;margin:0 0 6px;}
+  .how-step p{font-size:14px;color:var(--muted);line-height:1.55;margin:0;}
+  .section-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;}
+  .section-head h2{font-size:26px;letter-spacing:-0.01em;margin:0;}
+  .section-head p{color:var(--muted);font-size:14.5px;margin:4px 0 0;}
+
+  /* ---------- SHARED PAGE LAYOUT ---------- */
+  .page-body{padding:36px 0 64px;}
+  .summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0;}
+  @media (max-width:800px){.summary-row{grid-template-columns:repeat(2,1fr);}}
+  .summary-card{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:14px;padding:18px;}
+  .summary-card .top{display:flex;justify-content:space-between;align-items:center;}
+  .summary-card .top span.tag{font-size:12px;font-weight:700;color:var(--muted);}
+  .summary-card .val{font-size:26px;font-weight:800;margin-top:6px;}
+  .swatch{width:9px;height:9px;border-radius:50%;}
+
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0;}
+  select, input[type="text"]{
+    background:var(--paper-card);border:1px solid #DCE1EA;border-radius:9px;padding:9px 12px;font-size:13.5px;font-family:inherit;color:var(--ink);
+  }
+  select:focus,input:focus{outline:2px solid var(--available);outline-offset:1px;}
+  .refresh-pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-left:auto;}
+  .pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--available);animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(14,164,114,.5);}70%{box-shadow:0 0 0 6px rgba(14,164,114,0);}100%{box-shadow:0 0 0 0 rgba(14,164,114,0);}}
+
+  .slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+  .slot-card{
+    background:var(--paper-card);border:1px solid #E7EAF1;border-radius:14px;padding:14px;
+    transition:transform .15s, box-shadow .15s; cursor:pointer; position:relative; overflow:hidden;
+  }
+  .slot-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(15,23,42,.35);}
+  .slot-card .bar{position:absolute;left:0;top:0;bottom:0;width:4px;transition:background .6s ease;}
+  .slot-card .row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .slot-card .slotno{font-weight:800;font-size:15px;}
+  .badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap;transition:background .5s,color .5s;}
+  .slot-card .meta{font-size:12px;color:var(--muted);line-height:1.6;}
+  .slot-card .meta b{color:var(--ink);font-weight:600;}
+
+  .modal-backdrop{position:fixed;inset:0;background:rgba(7,11,20,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;}
+  .modal-backdrop.open{display:flex;}
+  .modal{background:var(--paper-card);border-radius:18px;max-width:420px;width:100%;padding:26px;box-shadow:0 30px 60px -20px rgba(0,0,0,.4);}
+  .modal .mhead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+  .modal .mhead h3{margin:0;font-size:20px;}
+  .modal .close{background:#EEF1F6;border:none;border-radius:8px;width:30px;height:30px;font-size:15px;color:var(--muted);}
+  .modal .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #EEF1F6;font-size:14px;}
+  .modal .row span:first-child{color:var(--muted);}
+  .modal .row span:last-child{font-weight:600;}
+  .modal .reserve-btn{width:100%;margin-top:18px;padding:13px;border-radius:10px;border:none;background:var(--navy-900);color:#fff;font-weight:700;font-size:14.5px;}
+  .modal .reserve-btn:disabled{background:#C9CFDB;color:#6B7686;}
+  .modal .confirm{background:var(--available-soft);color:#075C3D;padding:10px;border-radius:9px;font-size:13.5px;font-weight:600;margin-top:12px;text-align:center;display:none;}
+  .modal .confirm.show{display:block;}
+
+  /* ---------- FIND PARKING ---------- */
+  .find-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;align-items:flex-start;}
+  @media (max-width:900px){.find-layout{grid-template-columns:1fr;}}
+  .search-box{position:relative;}
+  .search-box input{width:100%;padding:13px 16px 13px 40px;font-size:14.5px;}
+  .search-box svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);}
+  .result-row{display:flex;justify-content:space-between;align-items:center;background:var(--paper-card);border:1px solid #E7EAF1;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;}
+  .result-row:hover{border-color:var(--available);}
+  .result-row .rleft{display:flex;align-items:center;gap:12px;}
+  .result-row .dist{font-size:12px;color:var(--muted);font-weight:600;}
+  .layout-view{background:var(--navy-900);border-radius:16px;padding:18px;position:sticky;top:80px;}
+  .layout-view h4{color:#fff;font-size:13px;font-weight:700;margin:0 0 12px;}
+  .zone-legend{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;}
+  .zone-legend .li{display:flex;align-items:center;gap:6px;font-size:12px;color:#AAB4C8;}
+
+  /* ---------- SENSORS ---------- */
+  .sensor-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:20px;}
+  @media (max-width:900px){.sensor-layout{grid-template-columns:1fr;}}
+  .sensor-card{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:12px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .sensor-card .sid{font-weight:800;font-size:14px;}
+  .sensor-card .stype{font-size:11.5px;color:var(--muted);font-weight:600;}
+  .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
+  .feed{background:var(--navy-900);border-radius:16px;padding:16px;height:560px;overflow-y:auto;}
+  .feed h4{color:#fff;font-size:13px;font-weight:700;margin:0 0 12px;}
+  .feed-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--navy-700);animation:slidein .35s ease;}
+  @keyframes slidein{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+  .feed-item .fdot{width:7px;height:7px;border-radius:50%;margin-top:6px;flex-shrink:0;}
+  .feed-item .ftxt{font-size:13px;color:#D3D9E6;line-height:1.5;}
+  .feed-item .ftime{font-size:11px;color:#6B7788;margin-top:2px;}
+
+  /* ---------- ANALYTICS ---------- */
+  .analytics-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:18px;}
+  @media (max-width:900px){.analytics-grid{grid-template-columns:1fr;}}
+  .chart-card{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:14px;padding:18px;}
+  .chart-card h4{margin:0 0 4px;font-size:14.5px;}
+  .chart-card .sub{font-size:12px;color:var(--muted);margin:0 0 14px;}
+  .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;}
+  @media (max-width:700px){.kpi-row{grid-template-columns:1fr;}}
+  .kpi{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:12px;padding:16px;}
+  .kpi .val{font-size:22px;font-weight:800;}
+  .kpi .lbl{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;}
+
+  /* ---------- ADMIN ---------- */
+  .admin-shell{display:grid;grid-template-columns:220px 1fr;gap:0;border:1px solid #E7EAF1;border-radius:16px;overflow:hidden;min-height:520px;}
+  @media (max-width:800px){.admin-shell{grid-template-columns:1fr;}}
+  .admin-side{background:var(--navy-900);padding:18px 12px;}
+  .admin-side button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:none;color:#AAB4C8;font-weight:600;font-size:13.5px;padding:10px 12px;border-radius:9px;margin-bottom:2px;}
+  .admin-side button.active{background:var(--navy-700);color:#fff;}
+  .admin-main{padding:22px;background:var(--paper-card);}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:8px 10px;border-bottom:1px solid #E7EAF1;}
+  td{padding:10px 10px;border-bottom:1px solid #F1F3F7;}
+  .row-actions button{background:#EEF1F6;border:none;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:600;margin-right:4px;}
+  .row-actions button.danger{background:var(--occupied-soft);color:var(--occupied);}
+  .add-form{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .add-form input,.add-form select{flex:1;min-width:120px;}
+  .add-form button{background:var(--navy-900);color:#fff;border:none;border-radius:9px;padding:9px 16px;font-weight:700;font-size:13.5px;}
+
+  /* ---------- ALERTS ---------- */
+  .alert-item{display:flex;gap:12px;background:var(--paper-card);border:1px solid #E7EAF1;border-radius:12px;padding:14px 16px;margin-bottom:10px;align-items:flex-start;}
+  .alert-item .aicon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .alert-item .atxt{font-size:14px;font-weight:600;}
+  .alert-item .atime{font-size:12px;color:var(--muted);margin-top:2px;}
+  .sev{font-size:11px;font-weight:700;padding:3px 9px;border-radius:100px;margin-left:auto;flex-shrink:0;}
+
+  footer{background:var(--navy-900);color:#AAB4C8;padding:44px 0 28px;margin-top:20px;}
+  .foot-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:30px;}
+  @media (max-width:700px){.foot-grid{grid-template-columns:1fr;}}
+  footer h5{color:#fff;font-size:13px;margin:0 0 12px;}
+  footer .flinks a{display:block;font-size:13.5px;color:#8593AC;padding:4px 0;}
+  footer .fbottom{border-top:1px solid var(--navy-800);margin-top:28px;padding-top:18px;display:flex;justify-content:space-between;font-size:12.5px;color:#5C6982;flex-wrap:wrap;gap:8px;}
+
+  .empty-state{text-align:center;padding:50px 20px;color:var(--muted);}
+
+  /* ---------- MAP ---------- */
+  .level-tabs{display:flex;gap:6px;background:#EEF1F6;border-radius:10px;padding:4px;}
+  .level-tab{background:transparent;border:none;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);}
+  .level-tab.active{background:var(--paper-card);color:var(--ink);box-shadow:0 1px 4px rgba(15,23,42,.12);}
+  .map-legend{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 18px;font-size:12.5px;color:var(--muted);}
+  .map-legend .li{display:flex;align-items:center;gap:6px;}
+  .map-floor{background:var(--navy-900);border-radius:18px;padding:24px;}
+  .map-entrance{text-align:center;color:#8593AC;font-size:11.5px;font-weight:700;letter-spacing:.05em;margin-bottom:16px;}
+  .map-zones{display:flex;flex-direction:column;gap:18px;}
+  .map-zone{background:var(--navy-800);border:1px solid var(--navy-700);border-radius:14px;padding:16px;}
+  .map-zone-label{color:#8593AC;font-size:11.5px;font-weight:700;letter-spacing:.04em;margin-bottom:10px;}
+  .map-slots-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;}
+  .map-slot{
+    position:relative;aspect-ratio:1/1.15;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-size:11px;font-weight:800;color:#fff;cursor:pointer;transition:transform .15s,background .5s;
+  }
+  .map-slot:hover{transform:translateY(-2px) scale(1.04);}
+  .map-slot .mtag{position:absolute;top:2px;right:3px;font-size:9px;}
+
+  /* ---------- ARCHITECTURE / HEALTH ---------- */
+  .arch-card{background:var(--navy-900);border-radius:16px;padding:20px;margin-bottom:18px;overflow-x:auto;}
+  .arch-row{display:flex;align-items:center;gap:6px;min-width:560px;}
+  .arch-node{background:var(--navy-800);border:1px solid var(--navy-700);border-radius:12px;padding:12px 10px;text-align:center;flex:1;min-width:92px;}
+  .arch-node.highlight{border-color:var(--available);background:rgba(14,164,114,.12);}
+  .arch-icn{font-size:20px;margin-bottom:4px;}
+  .arch-label{font-size:10.5px;color:#C4CCDC;font-weight:600;line-height:1.3;}
+  .arch-arrow{color:#4C5A78;font-size:16px;flex-shrink:0;}
+  .health-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px;}
+  @media (max-width:700px){.health-row{grid-template-columns:repeat(2,1fr);}}
+  .health-stat{background:var(--navy-800);border-radius:10px;padding:12px;text-align:center;}
+  .health-stat .hval{color:#fff;font-weight:800;font-size:17px;}
+  .health-stat .hlbl{color:#8593AC;font-size:11px;font-weight:600;margin-top:2px;}
+
+  /* ---------- SIMULATION CONTROLS ---------- */
+  .sim-panel{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:16px;padding:20px;margin-top:20px;}
+  .sim-panel h4{margin:0 0 4px;font-size:14.5px;}
+  .sim-sub{font-size:12.5px;color:var(--muted);margin:0 0 14px;}
+  .sim-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .sim-btn{background:var(--navy-900);color:#fff;border:none;border-radius:9px;padding:9px 14px;font-weight:700;font-size:13px;}
+  .sim-btn.accent{background:var(--available);color:#04231A;}
+  .sim-btn.warn{background:var(--reserved-soft);color:var(--reserved);}
+  .sim-btn.paused{background:#C9CFDB;color:#475369;}
+
+  /* ---------- HEATMAP ---------- */
+  .heatmap-wrap{overflow-x:auto;}
+  .heatmap-hours{display:grid;grid-template-columns:50px repeat(24,1fr);gap:2px;font-size:9px;color:var(--muted);margin-bottom:2px;min-width:620px;}
+  .heatmap-hours div{text-align:center;}
+  .heatmap-grid{display:grid;grid-template-columns:50px repeat(24,1fr);grid-auto-rows:16px;gap:2px;min-width:620px;}
+  .heatmap-row-label{font-size:10.5px;color:var(--muted);font-weight:600;display:flex;align-items:center;}
+  .heatmap-cell{border-radius:3px;}
+  .heatmap-scale{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--muted);}
+  .scale-bar{flex:1;max-width:160px;height:8px;border-radius:4px;background:linear-gradient(90deg,#E4F7EE,#0EA472);}
+
+  /* ---------- INSIGHTS ---------- */
+  .insights-card{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:14px;padding:18px;margin-top:16px;}
+  .insight-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #F1F3F7;font-size:13.5px;line-height:1.5;}
+  .insight-item:last-child{border-bottom:none;}
+  .insight-item .idot{width:7px;height:7px;border-radius:50%;background:var(--available);margin-top:6px;flex-shrink:0;}
+
+  /* ---------- EV / ACCESSIBILITY BADGES ---------- */
+  .type-badge{font-size:11px;margin-left:4px;}
+  .ev-charge-bar{height:4px;border-radius:3px;background:#E7E9ED;margin-top:6px;overflow:hidden;}
+  .ev-charge-bar .fill{height:100%;background:var(--available);transition:width .6s ease;}
+
+  /* ---------- QR MODAL ---------- */
+  .qr-wrap{text-align:center;margin-top:14px;padding:16px;background:#F7F8FB;border-radius:12px;}
+  .qr-wrap #qrCanvasHolder{display:inline-block;}
+  .qr-wrap .qr-caption{font-size:11.5px;color:var(--muted);margin-top:8px;}
+
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand"><span class="dot"></span>SmartPark</div>
+    <nav class="navlinks">
+      <button data-page="landing" class="active">Home</button>
+      <button data-page="find">Find Parking</button>
+      <button data-page="dashboard">Live Dashboard</button>
+      <button data-page="map">Map</button>
+      <button data-page="sensors">Sensors</button>
+      <button data-page="analytics">Analytics</button>
+      <button data-page="history">History</button>
+      <button data-page="alerts">Alerts</button>
+      <button data-page="admin">Admin</button>
+    </nav>
+    <div class="nav-right">
+      <button class="bell-btn" id="bellBtn" aria-label="Notifications">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="bell-dot" id="bellDot"></span>
+      </button>
+      <button class="cta-dash" data-page="dashboard">Dashboard</button>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <button data-page="landing" class="active">Home</button>
+    <button data-page="find">Find Parking</button>
+    <button data-page="dashboard">Live Dashboard</button>
+    <button data-page="map">Map</button>
+    <button data-page="sensors">Sensors</button>
+    <button data-page="analytics">Analytics</button>
+    <button data-page="history">History</button>
+    <button data-page="alerts">Alerts</button>
+    <button data-page="admin">Admin</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ===================== LANDING ===================== -->
+<section class="page active" id="page-landing">
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Live across 24 sensors right now</span>
+        <h1>Smart Parking.<br>Smarter Cities.</h1>
+        <p class="sub">Real-time parking management powered by IoT technology. Find available spaces instantly, reduce congestion, and skip the guesswork.</p>
+        <div class="hero-ctas">
+          <button class="btn-primary" data-page="find">Find Parking</button>
+          <button class="btn-secondary" data-page="dashboard">View Dashboard</button>
+        </div>
+      </div>
+      <div class="lot-card">
+        <div class="lot-head"><span>LIVE LOT — ZONE A</span><span id="lotTime" class="mono"></span></div>
+        <div class="lot-grid" id="heroLotGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap stats-bar">
+    <div class="stats-card">
+      <div class="stat"><div class="num" id="statTotal">0</div><div class="lbl">Total Slots</div></div>
+      <div class="stat"><div class="num" id="statAvail" style="color:var(--available)">0</div><div class="lbl">Available</div></div>
+      <div class="stat"><div class="num" id="statOcc" style="color:var(--occupied)">0</div><div class="lbl">Occupied</div></div>
+      <div class="stat"><div class="num" id="statSensors">0</div><div class="lbl">Active Sensors</div></div>
+    </div>
+  </div>
+
+  <div class="wrap howitworks">
+    <div class="section-head"><h2>How it works</h2><p>Three steps, zero manual updates</p></div>
+    <div class="how-row">
+      <div class="how-step">
+        <div class="icn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-5a3 3 0 013-2h8a3 3 0 013 2l2 5v6a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H6v1a1 1 0 01-1 1H4a1 1 0 01-1-1v-6z"/><circle cx="7.5" cy="14.5" r="1"/><circle cx="16.5" cy="14.5" r="1"/></svg></div>
+        <h3>Sensor detects a vehicle</h3>
+        <p>Ultrasonic and IR sensors under each slot detect arrivals and departures within seconds.</p>
+      </div>
+      <div class="how-step">
+        <div class="icn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 2 5-6"/></svg></div>
+        <h3>Dashboard updates instantly</h3>
+        <p>Slot status, counts, and the activity feed refresh live — no page reload, no delay.</p>
+      </div>
+      <div class="how-step">
+        <div class="icn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.33-7-11a7 7 0 1114 0c0 5.67-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <h3>You park, guesswork-free</h3>
+        <p>Search a zone, see what's actually open right now, and reserve a slot in one step.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LIVE DASHBOARD ===================== -->
+<section class="page" id="page-dashboard">
+  <div class="wrap page-body">
+    <div class="section-head">
+      <div><h2>Live Parking Dashboard</h2><p>Real-time status across all monitored slots</p></div>
+      <div class="refresh-pill"><span class="pulse-dot"></span><span>Updated <span id="lastUpdated" class="mono">just now</span></span></div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-card"><div class="top"><span class="tag">TOTAL SLOTS</span></div><div class="val" id="dashTotal">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">AVAILABLE</span><span class="swatch" style="background:var(--available)"></span></div><div class="val" style="color:var(--available)" id="dashAvail">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">OCCUPIED</span><span class="swatch" style="background:var(--occupied)"></span></div><div class="val" style="color:var(--occupied)" id="dashOcc">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">RESERVED</span><span class="swatch" style="background:var(--reserved)"></span></div><div class="val" style="color:var(--reserved)" id="dashRes">0</div></div>
+    </div>
+
+    <div class="toolbar">
+      <select id="filterStatus">
+        <option value="all">All statuses</option>
+        <option value="available">Available</option>
+        <option value="occupied">Occupied</option>
+        <option value="reserved">Reserved</option>
+        <option value="offline">Sensor offline</option>
+      </select>
+      <select id="filterZone">
+        <option value="all">All zones</option>
+        <option value="A">Zone A</option>
+        <option value="B">Zone B</option>
+        <option value="C">Zone C</option>
+      </select>
+      <select id="filterType">
+        <option value="all">All slot types</option>
+        <option value="standard">Standard</option>
+        <option value="ev">⚡ EV Charging</option>
+        <option value="accessibility">♿ Accessibility</option>
+      </select>
+      <select id="sortBy">
+        <option value="slot">Sort by slot number</option>
+        <option value="status">Sort by status</option>
+        <option value="duration">Sort by time occupied</option>
+      </select>
+    </div>
+
+    <div class="slot-grid" id="slotGrid"></div>
+  </div>
+</section>
+
+<!-- ===================== FIND PARKING ===================== -->
+<section class="page" id="page-find">
+  <div class="wrap page-body">
+    <div class="section-head"><div><h2>Find Parking</h2><p>Search by zone and pick from what's actually free right now</p></div></div>
+
+    <div class="find-layout" style="margin-top:18px;">
+      <div>
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="findSearch" placeholder="Search zone, e.g. “Zone A” or slot number">
+        </div>
+        <div style="margin-top:16px;" id="findResults"></div>
+      </div>
+      <div class="layout-view">
+        <h4>ZONE LAYOUT — LIVE</h4>
+        <div class="lot-grid" id="findLotGrid" style="grid-template-columns:repeat(8,1fr);"></div>
+        <div class="zone-legend">
+          <div class="li"><span class="swatch" style="background:var(--available)"></span>Available</div>
+          <div class="li"><span class="swatch" style="background:var(--occupied)"></span>Occupied</div>
+          <div class="li"><span class="swatch" style="background:var(--reserved)"></span>Reserved</div>
+          <div class="li"><span class="swatch" style="background:var(--offline)"></span>Offline</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== INTERACTIVE MAP ===================== -->
+<section class="page" id="page-map">
+  <div class="wrap page-body">
+    <div class="section-head">
+      <div><h2>Interactive Parking Map</h2><p>Live floor plan — click any bay for details</p></div>
+      <div class="toolbar" style="margin:0;">
+        <div class="level-tabs" id="levelTabs">
+          <button class="level-tab active" data-level="1">Level 1</button>
+          <button class="level-tab" data-level="2">Level 2</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-legend">
+      <div class="li"><span class="swatch" style="background:var(--available)"></span>Available</div>
+      <div class="li"><span class="swatch" style="background:var(--occupied)"></span>Occupied</div>
+      <div class="li"><span class="swatch" style="background:var(--reserved)"></span>Reserved</div>
+      <div class="li"><span class="swatch" style="background:var(--offline)"></span>Offline</div>
+      <div class="li">⚡ EV Charging</div>
+      <div class="li">♿ Accessible</div>
+    </div>
+
+    <div class="map-floor" id="mapFloor">
+      <div class="map-entrance">↓ ENTRANCE / EXIT ↓</div>
+      <div class="map-zones" id="mapZones"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SENSOR MONITORING ===================== -->
+<section class="page" id="page-sensors">
+  <div class="wrap page-body">
+    <div class="section-head"><div><h2>IoT Sensor Monitoring</h2><p>Ultrasonic + IR sensor network health</p></div></div>
+
+    <div class="arch-card">
+      <h4 style="color:#fff;font-size:13px;font-weight:700;margin:0 0 14px;">SYSTEM ARCHITECTURE</h4>
+      <div class="arch-row">
+        <div class="arch-node"><div class="arch-icn">📡</div><div class="arch-label">Ultrasonic / IR<br>Sensors</div></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node"><div class="arch-icn">🔧</div><div class="arch-label">Arduino<br>Controller</div></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node"><div class="arch-icn">📶</div><div class="arch-label">Gateway<br>(MQTT/WiFi)</div></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node"><div class="arch-icn">☁️</div><div class="arch-label">Cloud /<br>Broker</div></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node highlight"><div class="arch-icn">📊</div><div class="arch-label">SmartPark<br>Dashboard</div></div>
+      </div>
+      <div class="health-row">
+        <div class="health-stat"><div class="hval" id="healthLatency">—</div><div class="hlbl">Avg. message latency</div></div>
+        <div class="health-stat"><div class="hval" id="healthPackets">—</div><div class="hlbl">Packets / min</div></div>
+        <div class="health-stat"><div class="hval" id="healthUptime">—</div><div class="hlbl">Gateway uptime</div></div>
+        <div class="health-stat"><div class="hval" id="healthBattery">—</div><div class="hlbl">Avg. node battery</div></div>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-card"><div class="top"><span class="tag">TOTAL SENSORS</span></div><div class="val" id="sensTotal">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">ACTIVE</span><span class="swatch" style="background:var(--available)"></span></div><div class="val" style="color:var(--available)" id="sensActive">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">OFFLINE</span><span class="swatch" style="background:var(--offline)"></span></div><div class="val" style="color:var(--offline)" id="sensOffline">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">ERROR</span><span class="swatch" style="background:var(--occupied)"></span></div><div class="val" style="color:var(--occupied)" id="sensError">0</div></div>
+    </div>
+
+    <div class="sensor-layout">
+      <div id="sensorList"></div>
+      <div class="feed">
+        <h4>LIVE ACTIVITY FEED</h4>
+        <div id="feedList"></div>
+      </div>
+    </div>
+
+    <div class="sim-panel">
+      <h4>🎮 DEMO / SIMULATION CONTROLS</h4>
+      <p class="sim-sub">Drive the mock IoT feed manually to see the dashboard react live.</p>
+      <div class="sim-controls">
+        <button class="sim-btn" id="simPauseBtn">⏸ Pause simulation</button>
+        <select id="simSpeed">
+          <option value="6000">Speed: Slow</option>
+          <option value="4000" selected>Speed: Normal</option>
+          <option value="1200">Speed: Fast</option>
+        </select>
+        <select id="simForceSlot"></select>
+        <select id="simForceStatus">
+          <option value="available">→ Available</option>
+          <option value="occupied">→ Occupied</option>
+          <option value="reserved">→ Reserved</option>
+        </select>
+        <button class="sim-btn accent" id="simForceBtn">Force status</button>
+        <button class="sim-btn warn" id="simOutageBtn">⚠ Simulate random sensor outage</button>
+        <button class="sim-btn" id="simEventBtn">⚡ Trigger random event</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ANALYTICS ===================== -->
+<section class="page" id="page-analytics">
+  <div class="wrap page-body">
+    <div class="section-head"><div><h2>Analytics</h2><p>Trends across occupancy, peak hours, and sensor performance</p></div></div>
+
+    <div class="analytics-grid">
+      <div class="chart-card">
+        <h4>Occupancy over time</h4>
+        <p class="sub">Live-updating, last 30 samples</p>
+        <canvas id="occChart" height="130"></canvas>
+      </div>
+      <div class="chart-card">
+        <h4>Available vs. occupied</h4>
+        <p class="sub">Current split</p>
+        <canvas id="donutChart" height="130"></canvas>
+      </div>
+    </div>
+    <div class="analytics-grid" style="margin-top:16px;">
+      <div class="chart-card">
+        <h4>Peak hours</h4>
+        <p class="sub">Typical occupancy by hour of day</p>
+        <canvas id="peakChart" height="120"></canvas>
+      </div>
+      <div class="chart-card">
+        <h4>Sensor uptime (7 days)</h4>
+        <p class="sub">Network reliability</p>
+        <canvas id="uptimeChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi"><div class="val" id="kpiAvgDur">—</div><div class="lbl">Avg. parking duration</div></div>
+      <div class="kpi"><div class="val" id="kpiPeak">—</div><div class="lbl">Busiest hour today</div></div>
+      <div class="kpi"><div class="val" id="kpiUptime">—</div><div class="lbl">Network uptime (7d)</div></div>
+    </div>
+
+    <div class="chart-card" style="margin-top:16px;">
+      <h4>Occupancy heatmap</h4>
+      <p class="sub">Typical % occupancy by day and hour</p>
+      <div class="heatmap-wrap">
+        <div class="heatmap-hours" id="heatmapHours"></div>
+        <div class="heatmap-grid" id="heatmapGrid"></div>
+      </div>
+      <div class="heatmap-scale">
+        <span>Low</span>
+        <div class="scale-bar"></div>
+        <span>High</span>
+      </div>
+    </div>
+
+    <div class="insights-card">
+      <h4 style="margin:0 0 4px;font-size:14.5px;">💡 Smart insights</h4>
+      <p class="sub" style="margin:0 0 14px;">Auto-generated from current occupancy patterns</p>
+      <div id="insightsList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ADMIN ===================== -->
+<section class="page" id="page-admin">
+  <div class="wrap page-body">
+    <div class="section-head"><div><h2>Admin Dashboard</h2><p>Manage slots, sensors, and system settings</p></div></div>
+
+    <div class="admin-shell" style="margin-top:18px;">
+      <div class="admin-side">
+        <button class="admin-tab active" data-tab="slots">Parking Slots</button>
+        <button class="admin-tab" data-tab="sensors">Sensors</button>
+        <button class="admin-tab" data-tab="reservations">Reservations</button>
+        <button class="admin-tab" data-tab="settings">Settings</button>
+      </div>
+      <div class="admin-main">
+        <div id="admin-slots" class="admin-pane">
+          <div class="add-form">
+            <input type="text" id="newSlotId" placeholder="Slot ID e.g. P25">
+            <select id="newSlotZone"><option>A</option><option>B</option><option>C</option></select>
+            <button id="addSlotBtn">Add Slot</button>
+          </div>
+          <table>
+            <thead><tr><th>Slot</th><th>Zone</th><th>Status</th><th>Sensor</th><th>Actions</th></tr></thead>
+            <tbody id="adminSlotTable"></tbody>
+          </table>
+        </div>
+        <div id="admin-sensors" class="admin-pane" style="display:none;">
+          <table>
+            <thead><tr><th>Sensor ID</th><th>Type</th><th>Slot</th><th>Status</th><th>Last update</th></tr></thead>
+            <tbody id="adminSensorTable"></tbody>
+          </table>
+        </div>
+        <div id="admin-reservations" class="admin-pane" style="display:none;">
+          <table>
+            <thead><tr><th>Slot</th><th>Reserved at</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="adminResTable"></tbody>
+          </table>
+          <div class="empty-state" id="resEmpty" style="display:none;">No active reservations. Reserve a slot from the dashboard or Find Parking to see it here.</div>
+        </div>
+        <div id="admin-settings" class="admin-pane" style="display:none;">
+          <p style="font-size:14px;color:var(--muted);max-width:480px;line-height:1.6;">Simulation settings for this demo environment. In production this panel controls thresholds, zone naming, and alert routing.</p>
+          <div class="row" style="border-bottom:1px solid #EEF1F6;padding:12px 0;display:flex;justify-content:space-between;"><span>Simulated event interval</span><b>4s</b></div>
+          <div class="row" style="border-bottom:1px solid #EEF1F6;padding:12px 0;display:flex;justify-content:space-between;"><span>Sensor types</span><b>Ultrasonic, IR</b></div>
+          <div class="row" style="padding:12px 0;display:flex;justify-content:space-between;"><span>Data source</span><b>Mock IoT layer</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ALERTS ===================== -->
+<section class="page" id="page-alerts">
+  <div class="wrap page-body">
+    <div class="section-head"><div><h2>Alerts & Notifications</h2><p>Sensor faults, occupancy changes, and system events</p></div></div>
+    <div class="toolbar">
+      <select id="alertFilter">
+        <option value="all">All severities</option>
+        <option value="info">Info</option>
+        <option value="warning">Warning</option>
+        <option value="critical">Critical</option>
+      </select>
+    </div>
+    <div id="alertList" style="margin-top:8px;"></div>
+    <div class="empty-state" id="alertEmpty" style="display:none;">No alerts yet — events will appear here as the network reports them.</div>
+  </div>
+</section>
+
+<!-- ===================== VEHICLE & PARKING HISTORY ===================== -->
+<section class="page" id="page-history">
+  <div class="wrap page-body">
+    <div class="section-head"><div><h2>Vehicle & Parking History</h2><p>Completed sessions logged by the sensor network</p></div></div>
+
+    <div class="summary-row">
+      <div class="summary-card"><div class="top"><span class="tag">SESSIONS TODAY</span></div><div class="val" id="histTotal">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">AVG DURATION</span></div><div class="val" id="histAvg">—</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">EV SESSIONS</span></div><div class="val" id="histEv">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">TOTAL REVENUE</span></div><div class="val" id="histRevenue">$0</div></div>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="histSearch" placeholder="Search plate or slot…">
+      <select id="histTypeFilter">
+        <option value="all">All types</option>
+        <option value="standard">Standard</option>
+        <option value="ev">EV</option>
+        <option value="accessibility">Accessibility</option>
+      </select>
+    </div>
+
+    <table>
+      <thead><tr><th>Vehicle plate</th><th>Slot</th><th>Type</th><th>Arrived</th><th>Departed</th><th>Duration</th><th>Fee</th></tr></thead>
+      <tbody id="historyTable"></tbody>
+    </table>
+    <div class="empty-state" id="historyEmpty" style="display:none;">No completed sessions yet — history fills in as vehicles come and go.</div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <div class="brand" style="margin-bottom:10px;"><span class="dot"></span>SmartPark</div>
+      <p style="font-size:13.5px;color:#8593AC;max-width:320px;line-height:1.6;">Real-time IoT parking management for smarter, less congested cities.</p>
+    </div>
+    <div class="flinks">
+      <h5>Product</h5>
+      <a href="#" data-page="dashboard">Live Dashboard</a>
+      <a href="#" data-page="find">Find Parking</a>
+      <a href="#" data-page="analytics">Analytics</a>
+    </div>
+    <div class="flinks">
+      <h5>Company</h5>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a href="#">Support</a>
+    </div>
+  </div>
+  <div class="wrap fbottom">
+    <span>© 2026 SmartPark. All rights reserved.</span>
+    <span>Built on ultrasonic + IR sensor network</span>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="mhead"><h3 id="modalSlotId">P01</h3><button class="close" id="modalClose">✕</button></div>
+    <div id="modalStatusBadgeWrap" style="margin-bottom:10px;"></div>
+    <div class="row"><span>Sensor status</span><span id="modalSensorStatus">—</span></div>
+    <div class="row"><span>Detection type</span><span id="modalDetectionType">—</span></div>
+    <div class="row"><span>Vehicle plate</span><span id="modalPlate">—</span></div>
+    <div class="row" id="modalEvRow" style="display:none;"><span>EV charge</span><span id="modalEvCharge">—</span></div>
+    <div class="row"><span>Time occupied</span><span id="modalDuration">—</span></div>
+    <div class="row"><span>Parking fee</span><span id="modalFee">—</span></div>
+    <button class="reserve-btn" id="modalReserveBtn">Reserve Slot</button>
+    <div class="confirm" id="modalConfirm">Slot reserved. We'll hold it for 15 minutes.</div>
+    <div class="qr-wrap" id="qrWrap" style="display:none;">
+      <div id="qrCanvasHolder"></div>
+      <div class="qr-caption">Scan at the gate to confirm your reservation</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var COLORS = {
+    available: '#0EA472', availableSoft:'#E4F7EE',
+    occupied: '#D6455B', occupiedSoft:'#FBE2E6',
+    reserved: '#D97F14', reservedSoft:'#FBEED9',
+    offline: '#6B7686', offlineSoft:'#E7E9ED'
+  };
+
+  function statusColor(s){ return COLORS[s]; }
+  function statusSoft(s){ return COLORS[s+'Soft']; }
+  function statusLabel(s){ return {available:'Available',occupied:'Occupied',reserved:'Reserved',offline:'Offline'}[s]; }
+
+  // ---------------- MOCK IOT DATA LAYER ----------------
+  // Designed behind a small interface (getState/subscribe) so it can later be
+  // swapped for a real MQTT/WebSocket feed without touching the UI below.
+  var ParkingDataService = (function(){
+    var zones = ['A','B','C'];
+    var slots = [];
+    var sensors = [];
+    var feed = [];
+    var alerts = [];
+    var history = [];
+    var listeners = [];
+    var occHistory = [];
+    var startedAt = Date.now();
+    var paused = false;
+    var timer = null;
+    var currentInterval = 4000;
+
+    var PLATES = ['AB1203','DL8CJ91','MH12FX3','KA05LM7','TX9921Z','GJ03QW8','RJ14ST2','UP32NB5'];
+    function randPlate(){ return PLATES[Math.floor(Math.random()*PLATES.length)]; }
+
+    function slotType(num){
+      if (num % 6 === 0) return 'ev';
+      if (num % 7 === 0) return 'accessibility';
+      return 'standard';
+    }
+
+    function makeSlot(num, zone){
+      var id = 'P' + String(num).padStart(2,'0');
+      var type = slotType(num);
+      var status = Math.random() < 0.55 ? 'available' : 'occupied';
+      return {
+        id: id, zone: zone, type: type,
+        status: status,
+        sensorStatus: 'active',
+        detection: Math.random() < 0.5 ? 'Ultrasonic' : 'IR',
+        since: Date.now() - Math.floor(Math.random()*3600000),
+        fee: (type==='ev' ? (Math.random()*2+3) : (Math.random()*3 + 1)).toFixed(2),
+        plate: status === 'occupied' ? randPlate() : null,
+        evCharge: type === 'ev' && status === 'occupied' ? Math.floor(Math.random()*60+10) : null
+      };
+    }
+
+    for (var i=1;i<=24;i++){
+      var zone = zones[Math.floor((i-1)/8)];
+      slots.push(makeSlot(i, zone));
+    }
+    slots.forEach(function(s){
+      sensors.push({
+        id: 'S' + s.id.slice(1),
+        slot: s.id,
+        type: s.detection,
+        status: 'active',
+        lastUpdate: Date.now(),
+        battery: Math.floor(Math.random()*35+65)
+      });
+    });
+
+    function pushFeed(text, kind){
+      feed.unshift({ text:text, kind:kind, time: Date.now() });
+      if (feed.length > 40) feed.pop();
+    }
+    function pushAlert(text, sev){
+      alerts.unshift({ text:text, sev:sev, time: Date.now() });
+      if (alerts.length > 40) alerts.pop();
+    }
+    function pushHistory(slot, arrivedAt){
+      history.unshift({
+        plate: slot.plate || randPlate(), slot: slot.id, type: slot.type,
+        arrived: arrivedAt, departed: Date.now(), fee: slot.fee
+      });
+      if (history.length > 60) history.pop();
+    }
+
+    pushFeed('SmartPark network online — 24 slots, 24 sensors', 'info');
+
+    function occupySlot(slot){
+      slot.status = 'occupied';
+      slot.since = Date.now();
+      slot.plate = randPlate();
+      if (slot.type === 'ev') slot.evCharge = Math.floor(Math.random()*20+5);
+      pushFeed('Vehicle ' + slot.plate + ' detected at Slot ' + slot.id, 'occ');
+    }
+    function freeSlot(slot){
+      pushHistory(slot, slot.since);
+      slot.status = 'available';
+      slot.since = Date.now();
+      slot.plate = null;
+      slot.evCharge = null;
+      pushFeed('Slot ' + slot.id + ' became available', 'avail');
+    }
+
+    function tick(){
+      if (paused) return;
+      var idx = Math.floor(Math.random()*slots.length);
+      var slot = slots[idx];
+      var sensor = sensors[idx];
+      var roll = Math.random();
+
+      sensor.lastUpdate = Date.now();
+      if (sensor.status === 'active') sensor.battery = Math.max(2, sensor.battery - Math.random()*0.4);
+
+      if (roll < 0.08 && sensor.status === 'active'){
+        sensor.status = Math.random() < 0.6 ? 'offline' : 'error';
+        slot.sensorStatus = sensor.status;
+        pushFeed('Sensor ' + sensor.id + ' went ' + sensor.status + ' (Slot ' + slot.id + ')', 'warn');
+        pushAlert('Sensor malfunction: ' + sensor.id + ' reporting ' + sensor.status, sensor.status === 'error' ? 'critical' : 'warning');
+      } else if (roll < 0.14 && sensor.status !== 'active'){
+        sensor.status = 'active';
+        slot.sensorStatus = 'active';
+        pushFeed('Sensor ' + sensor.id + ' back online', 'info');
+      } else if (sensor.status === 'active'){
+        if (slot.status === 'available') occupySlot(slot);
+        else if (slot.status === 'occupied') freeSlot(slot);
+        else if (slot.status === 'reserved' && Math.random() < 0.3){
+          slot.status = 'occupied'; slot.since = Date.now(); slot.plate = randPlate();
+          pushFeed('Reserved Slot ' + slot.id + ' now occupied', 'occ');
+        }
+      }
+
+      // trickle EV charge progress for occupied EV bays
+      slots.forEach(function(s){
+        if (s.type === 'ev' && s.status === 'occupied' && s.evCharge != null){
+          s.evCharge = Math.min(100, s.evCharge + Math.random()*4);
+        }
+      });
+
+      var occCount = slots.filter(function(s){return s.status==='occupied';}).length;
+      occHistory.push(occCount);
+      if (occHistory.length > 30) occHistory.shift();
+
+      listeners.forEach(function(fn){ fn(getState()); });
+    }
+
+    function getState(){
+      return { slots: slots, sensors: sensors, feed: feed, alerts: alerts, history: history, occHistory: occHistory.slice(), paused: paused };
+    }
+    function subscribe(fn){ listeners.push(fn); }
+    function notify(){ listeners.forEach(function(fn){ fn(getState()); }); }
+
+    function reserveSlot(slotId){
+      var slot = slots.filter(function(s){return s.id===slotId;})[0];
+      if (slot && slot.status === 'available'){
+        slot.status = 'reserved';
+        slot.since = Date.now();
+        pushFeed('Slot ' + slot.id + ' reserved by user', 'res');
+        notify();
+        return true;
+      }
+      return false;
+    }
+    function addSlot(id, zone){
+      var slot = { id:id, zone:zone, type:'standard', status:'available', sensorStatus:'active', detection: Math.random()<0.5?'Ultrasonic':'IR', since: Date.now(), fee:(Math.random()*3+1).toFixed(2), plate:null, evCharge:null };
+      slots.push(slot);
+      sensors.push({ id:'S'+id.slice(1), slot:id, type:slot.detection, status:'active', lastUpdate: Date.now(), battery:100 });
+      pushFeed('Slot ' + id + ' added to Zone ' + zone, 'info');
+      notify();
+    }
+    function removeSlot(id){
+      slots = slots.filter(function(s){return s.id!==id;});
+      sensors = sensors.filter(function(s){return s.slot!==id;});
+      pushFeed('Slot ' + id + ' removed', 'info');
+      notify();
+    }
+    function forceStatus(slotId, status){
+      var slot = slots.filter(function(s){return s.id===slotId;})[0];
+      if (!slot) return;
+      if (status === 'available' && slot.status !== 'available') freeSlot(slot);
+      else if (status === 'occupied' && slot.status !== 'occupied') occupySlot(slot);
+      else if (status === 'reserved'){ slot.status='reserved'; slot.since=Date.now(); pushFeed('Slot '+slot.id+' manually set to reserved', 'res'); }
+      notify();
+    }
+    function triggerOutage(){
+      var activeSensors = sensors.filter(function(s){return s.status==='active';});
+      if (!activeSensors.length) return;
+      var sensor = activeSensors[Math.floor(Math.random()*activeSensors.length)];
+      sensor.status = 'error';
+      var slot = slots.filter(function(s){return s.id===sensor.slot;})[0];
+      if (slot) slot.sensorStatus = 'error';
+      pushFeed('Sensor ' + sensor.id + ' outage simulated (Slot ' + sensor.slot + ')', 'warn');
+      pushAlert('Simulated outage: ' + sensor.id + ' reporting error', 'critical');
+      notify();
+    }
+    function triggerRandomEvent(){ var wasPaused = paused; paused = false; tick(); paused = wasPaused; }
+    function setPaused(p){ paused = p; }
+    function setSpeed(ms){
+      currentInterval = ms;
+      if (timer) clearInterval(timer);
+      timer = setInterval(tick, currentInterval);
+    }
+
+    timer = setInterval(tick, currentInterval);
+
+    return {
+      getState:getState, subscribe:subscribe, reserveSlot:reserveSlot, addSlot:addSlot, removeSlot:removeSlot,
+      forceStatus:forceStatus, triggerOutage:triggerOutage, triggerRandomEvent:triggerRandomEvent,
+      setPaused:setPaused, setSpeed:setSpeed
+    };
+  })();
+
+  // ---------------- UTIL ----------------
+  function timeAgo(ts){
+    var s = Math.floor((Date.now()-ts)/1000);
+    if (s < 60) return s + 's ago';
+    var m = Math.floor(s/60);
+    if (m < 60) return m + 'm ago';
+    var h = Math.floor(m/60);
+    return h + 'h ago';
+  }
+  function duration(since){
+    var s = Math.floor((Date.now()-since)/60000);
+    if (s < 1) return '<1 min';
+    if (s < 60) return s + ' min';
+    return Math.floor(s/60) + 'h ' + (s%60) + 'm';
+  }
+  function animateCount(el, to){
+    var from = parseInt(el.textContent.replace(/\D/g,'')) || 0;
+    if (from === to){ el.textContent = to; return; }
+    var steps = 12, i = 0;
+    var step = (to - from) / steps;
+    var timer = setInterval(function(){
+      i++;
+      var val = Math.round(from + step*i);
+      el.textContent = i>=steps ? to : val;
+      if (i>=steps) clearInterval(timer);
+    }, 25);
+  }
+
+  // ---------------- NAV ----------------
+  var pages = document.querySelectorAll('.page');
+  var navButtons = document.querySelectorAll('[data-page]');
+  function goToPage(name){
+    pages.forEach(function(p){ p.classList.toggle('active', p.id === 'page-' + name); });
+    navButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.page === name); });
+    document.getElementById('mobileMenu').classList.remove('open');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  navButtons.forEach(function(b){ b.addEventListener('click', function(){ goToPage(b.dataset.page); }); });
+  document.getElementById('hamburger').addEventListener('click', function(){
+    document.getElementById('mobileMenu').classList.toggle('open');
+  });
+
+  // ---------------- HERO MINI LOT ----------------
+  var heroGrid = document.getElementById('heroLotGrid');
+  var findGrid = document.getElementById('findLotGrid');
+  function renderMiniLot(container, slots, count){
+    container.innerHTML = '';
+    slots.slice(0, count).forEach(function(s){
+      var cell = document.createElement('div');
+      cell.className = 'lot-cell';
+      cell.style.background = statusColor(s.status);
+      cell.title = s.id + ' — ' + statusLabel(s.status);
+      container.appendChild(cell);
+    });
+  }
+
+  // ---------------- MODAL ----------------
+  var modalBackdrop = document.getElementById('modalBackdrop');
+  var currentModalSlot = null;
+  var TYPE_LABEL = { standard:'Standard', ev:'⚡ EV Charging', accessibility:'♿ Accessible' };
+  function openModal(slot){
+    currentModalSlot = slot.id;
+    document.getElementById('modalSlotId').textContent = slot.id + ' · Zone ' + slot.zone + (slot.type!=='standard' ? ' · ' + TYPE_LABEL[slot.type] : '');
+    var badgeWrap = document.getElementById('modalStatusBadgeWrap');
+    badgeWrap.innerHTML = '<span class="badge" style="background:'+statusSoft(slot.status)+';color:'+statusColor(slot.status)+'">'+statusLabel(slot.status)+'</span>';
+    document.getElementById('modalSensorStatus').textContent = slot.sensorStatus === 'active' ? 'Online' : (slot.sensorStatus.charAt(0).toUpperCase()+slot.sensorStatus.slice(1));
+    document.getElementById('modalDetectionType').textContent = slot.detection;
+    document.getElementById('modalPlate').textContent = slot.plate || '—';
+    var evRow = document.getElementById('modalEvRow');
+    if (slot.type === 'ev' && slot.evCharge != null){
+      evRow.style.display = 'flex';
+      document.getElementById('modalEvCharge').textContent = Math.round(slot.evCharge) + '%';
+    } else { evRow.style.display = 'none'; }
+    document.getElementById('modalDuration').textContent = slot.status === 'available' ? '—' : duration(slot.since);
+    document.getElementById('modalFee').textContent = '$' + slot.fee + ' / hr';
+    var btn = document.getElementById('modalReserveBtn');
+    var confirm = document.getElementById('modalConfirm');
+    confirm.classList.remove('show');
+    document.getElementById('qrWrap').style.display = 'none';
+    document.getElementById('qrCanvasHolder').innerHTML = '';
+    btn.style.display = 'block';
+    btn.disabled = slot.status !== 'available';
+    btn.textContent = slot.status === 'available' ? 'Reserve Slot' : 'Not Available';
+    modalBackdrop.classList.add('open');
+  }
+  document.getElementById('modalClose').addEventListener('click', function(){ modalBackdrop.classList.remove('open'); });
+  modalBackdrop.addEventListener('click', function(e){ if (e.target === modalBackdrop) modalBackdrop.classList.remove('open'); });
+  document.getElementById('modalReserveBtn').addEventListener('click', function(){
+    if (!currentModalSlot) return;
+    var ok = ParkingDataService.reserveSlot(currentModalSlot);
+    if (ok){
+      document.getElementById('modalConfirm').classList.add('show');
+      this.style.display = 'none';
+      var qrWrap = document.getElementById('qrWrap');
+      var holder = document.getElementById('qrCanvasHolder');
+      holder.innerHTML = '';
+      qrWrap.style.display = 'block';
+      if (window.QRCode){
+        new QRCode(holder, {
+          text: 'SMARTPARK-RES:' + currentModalSlot + ':' + Date.now(),
+          width: 120, height: 120, colorDark:'#0B1120', colorLight:'#ffffff'
+        });
+      }
+    }
+  });
+
+  // ---------------- DASHBOARD RENDER ----------------
+  var filterStatus = document.getElementById('filterStatus');
+  var filterZone = document.getElementById('filterZone');
+  var filterType = document.getElementById('filterType');
+  var sortBy = document.getElementById('sortBy');
+  [filterStatus, filterZone, filterType, sortBy].forEach(function(el){ el.addEventListener('change', function(){ render(ParkingDataService.getState()); }); });
+
+  function renderSlotGrid(container, slots){
+    var statusF = filterStatus.value, zoneF = filterZone.value, typeF = filterType.value, sort = sortBy.value;
+    var list = slots.slice();
+    if (statusF !== 'all') list = list.filter(function(s){ return s.status === statusF || (statusF==='offline' && s.sensorStatus!=='active'); });
+    if (zoneF !== 'all') list = list.filter(function(s){ return s.zone === zoneF; });
+    if (typeF !== 'all') list = list.filter(function(s){ return s.type === typeF; });
+    if (sort === 'status') list.sort(function(a,b){ return a.status.localeCompare(b.status); });
+    else if (sort === 'duration') list.sort(function(a,b){ return b.since - a.since; });
+    else list.sort(function(a,b){ return a.id.localeCompare(b.id); });
+
+    container.innerHTML = '';
+    if (list.length === 0){
+      container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No slots match these filters.</div>';
+      return;
+    }
+    list.forEach(function(s){
+      var offline = s.sensorStatus !== 'active';
+      var displayStatus = offline ? 'offline' : s.status;
+      var typeIcon = s.type === 'ev' ? ' ⚡' : (s.type === 'accessibility' ? ' ♿' : '');
+      var card = document.createElement('div');
+      card.className = 'slot-card';
+      card.innerHTML =
+        '<div class="bar" style="background:'+statusColor(displayStatus)+'"></div>' +
+        '<div class="row1"><span class="slotno">'+s.id+typeIcon+'</span><span class="badge" style="background:'+statusSoft(displayStatus)+';color:'+statusColor(displayStatus)+'">'+statusLabel(displayStatus)+'</span></div>' +
+        '<div class="meta">Zone <b>'+s.zone+'</b> · '+s.detection+'<br>' +
+        (s.status === 'available' ? 'Vacant' : (s.plate ? '<b>'+s.plate+'</b> · ' : '') + 'Since <b>'+duration(s.since)+'</b>') + '</div>' +
+        (s.type === 'ev' && s.evCharge != null ? '<div class="ev-charge-bar"><div class="fill" style="width:'+Math.round(s.evCharge)+'%"></div></div>' : '');
+      card.addEventListener('click', function(){ openModal(s); });
+      container.appendChild(card);
+    });
+  }
+
+  // ---------------- FIND PARKING ----------------
+  var findSearch = document.getElementById('findSearch');
+  findSearch.addEventListener('input', function(){ render(ParkingDataService.getState()); });
+  function renderFindResults(slots){
+    var q = findSearch.value.trim().toLowerCase();
+    var list = slots.filter(function(s){ return s.status === 'available'; });
+    if (q) list = list.filter(function(s){ return s.id.toLowerCase().includes(q) || ('zone '+s.zone).includes(q) || s.zone.toLowerCase() === q; });
+    var container = document.getElementById('findResults');
+    container.innerHTML = '';
+    if (list.length === 0){
+      container.innerHTML = '<div class="empty-state">No open slots match your search right now.</div>';
+      return;
+    }
+    list.forEach(function(s){
+      var row = document.createElement('div');
+      row.className = 'result-row';
+      var dist = (Math.random()*250+30).toFixed(0);
+      var typeIcon = s.type === 'ev' ? ' ⚡' : (s.type === 'accessibility' ? ' ♿' : '');
+      row.innerHTML =
+        '<div class="rleft"><span class="swatch" style="background:'+statusColor('available')+'"></span>'+
+        '<div><div style="font-weight:700;font-size:14px;">'+s.id+typeIcon+' · Zone '+s.zone+'</div>'+
+        '<div style="font-size:12px;color:var(--muted);">'+s.detection+' sensor · $'+s.fee+'/hr</div></div></div>'+
+        '<div class="dist">'+dist+'m away</div>';
+      row.addEventListener('click', function(){ openModal(s); });
+      container.appendChild(row);
+    });
+  }
+
+  // ---------------- SENSORS + FEED ----------------
+  function renderSensors(sensors){
+    var totalEl=document.getElementById('sensTotal'), activeEl=document.getElementById('sensActive'),
+        offlineEl=document.getElementById('sensOffline'), errorEl=document.getElementById('sensError');
+    var active = sensors.filter(function(s){return s.status==='active';}).length;
+    var offline = sensors.filter(function(s){return s.status==='offline';}).length;
+    var error = sensors.filter(function(s){return s.status==='error';}).length;
+    animateCount(totalEl, sensors.length);
+    animateCount(activeEl, active);
+    animateCount(offlineEl, offline);
+    animateCount(errorEl, error);
+    animateCount(document.getElementById('statSensors'), active);
+
+    var list = document.getElementById('sensorList');
+    list.innerHTML = '';
+    sensors.forEach(function(s){
+      var col = s.status==='active' ? COLORS.available : (s.status==='error' ? COLORS.occupied : COLORS.offline);
+      var card = document.createElement('div');
+      card.className = 'sensor-card';
+      card.innerHTML =
+        '<div><div class="sid">'+s.id+' <span class="stype">'+s.type+'</span></div>'+
+        '<div style="font-size:12px;color:var(--muted);margin-top:2px;">Linked to '+s.slot+'</div></div>'+
+        '<div style="text-align:right;"><div><span class="status-dot" style="background:'+col+'"></span><b style="font-size:12.5px;">'+s.status.charAt(0).toUpperCase()+s.status.slice(1)+'</b></div>'+
+        '<div style="font-size:11.5px;color:var(--muted);margin-top:2px;">'+timeAgo(s.lastUpdate)+'</div></div>';
+      list.appendChild(card);
+    });
+  }
+
+  var feedKindColor = { avail: COLORS.available, occ: COLORS.occupied, res: COLORS.reserved, warn: '#F0B429', info: '#6B7686' };
+  function renderFeed(feed){
+    var el = document.getElementById('feedList');
+    el.innerHTML = '';
+    feed.slice(0,25).forEach(function(f){
+      var item = document.createElement('div');
+      item.className = 'feed-item';
+      item.innerHTML = '<span class="fdot" style="background:'+(feedKindColor[f.kind]||'#6B7686')+'"></span>'+
+        '<div><div class="ftxt">'+f.text+'</div><div class="ftime">'+timeAgo(f.time)+'</div></div>';
+      el.appendChild(item);
+    });
+  }
+
+  // ---------------- SYSTEM HEALTH ----------------
+  function renderHealth(sensors){
+    var active = sensors.filter(function(s){return s.status==='active';});
+    var avgBattery = active.length ? active.reduce(function(a,s){return a+s.battery;},0)/active.length : 0;
+    document.getElementById('healthLatency').textContent = (120 + Math.round(Math.random()*40)) + 'ms';
+    document.getElementById('healthPackets').textContent = (sensors.length * 4 + Math.round(Math.random()*10));
+    document.getElementById('healthUptime').textContent = '99.' + (70 + Math.round(Math.random()*25)) + '%';
+    document.getElementById('healthBattery').textContent = Math.round(avgBattery) + '%';
+  }
+
+  // ---------------- SIMULATION CONTROLS ----------------
+  var simPauseBtn = document.getElementById('simPauseBtn');
+  var simForceSlotSel = document.getElementById('simForceSlot');
+  var isPaused = false;
+  simPauseBtn.addEventListener('click', function(){
+    isPaused = !isPaused;
+    ParkingDataService.setPaused(isPaused);
+    simPauseBtn.textContent = isPaused ? '▶ Resume simulation' : '⏸ Pause simulation';
+    simPauseBtn.classList.toggle('paused', isPaused);
+  });
+  document.getElementById('simSpeed').addEventListener('change', function(){
+    ParkingDataService.setSpeed(parseInt(this.value, 10));
+  });
+  document.getElementById('simForceBtn').addEventListener('click', function(){
+    var slotId = simForceSlotSel.value;
+    var status = document.getElementById('simForceStatus').value;
+    if (slotId) ParkingDataService.forceStatus(slotId, status);
+  });
+  document.getElementById('simOutageBtn').addEventListener('click', function(){ ParkingDataService.triggerOutage(); });
+  document.getElementById('simEventBtn').addEventListener('click', function(){ ParkingDataService.triggerRandomEvent(); });
+  function renderSimForceOptions(slots){
+    var current = simForceSlotSel.value;
+    simForceSlotSel.innerHTML = slots.map(function(s){ return '<option value="'+s.id+'">'+s.id+' ('+s.status+')</option>'; }).join('');
+    if (slots.some(function(s){return s.id===current;})) simForceSlotSel.value = current;
+  }
+
+  // ---------------- INTERACTIVE MAP ----------------
+  var currentMapLevel = '1';
+  document.querySelectorAll('.level-tab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.level-tab').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      currentMapLevel = btn.dataset.level;
+      render(ParkingDataService.getState());
+    });
+  });
+  function renderMap(slots){
+    var container = document.getElementById('mapZones');
+    container.innerHTML = '';
+    // Level 2 is a lighter-occupancy mirror of level 1 for demo purposes
+    var zoneNames = ['A','B','C'];
+    zoneNames.forEach(function(zone){
+      var zoneSlots = slots.filter(function(s){ return s.zone === zone; });
+      var wrap = document.createElement('div');
+      wrap.className = 'map-zone';
+      var label = document.createElement('div');
+      label.className = 'map-zone-label';
+      label.textContent = 'ZONE ' + zone + (currentMapLevel==='2' ? ' — LEVEL 2' : ' — LEVEL 1');
+      wrap.appendChild(label);
+      var row = document.createElement('div');
+      row.className = 'map-slots-row';
+      zoneSlots.forEach(function(s){
+        var offline = s.sensorStatus !== 'active';
+        var displayStatus = offline ? 'offline' : (currentMapLevel==='2' && s.status==='occupied' && Math.random()<0.4 ? 'available' : s.status);
+        var cell = document.createElement('div');
+        cell.className = 'map-slot';
+        cell.style.background = statusColor(displayStatus);
+        var tag = s.type === 'ev' ? '⚡' : (s.type === 'accessibility' ? '♿' : '');
+        cell.innerHTML = (tag ? '<span class="mtag">'+tag+'</span>' : '') + s.id;
+        cell.title = s.id + ' — ' + statusLabel(displayStatus);
+        cell.addEventListener('click', function(){ openModal(s); });
+        row.appendChild(cell);
+      });
+      wrap.appendChild(row);
+      container.appendChild(wrap);
+    });
+  }
+
+  // ---------------- HEATMAP + INSIGHTS ----------------
+  var heatmapBuilt = false;
+  var heatmapData = null;
+  function buildHeatmapData(){
+    var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    var data = days.map(function(day, di){
+      return Array.from({length:24}, function(_, h){
+        var weekday = di < 5;
+        var base = (h>=7&&h<=9) ? 55 : (h>=17&&h<=19) ? 70 : (h>=10&&h<=16) ? 40 : 10;
+        if (!weekday) base = Math.round(base * 0.55);
+        return Math.min(95, Math.max(3, base + Math.round((Math.random()-0.5)*18)));
+      });
+    });
+    return { days: days, data: data };
+  }
+  function heatColor(pct){
+    // interpolate between light mint and emerald
+    var t = pct/100;
+    var r = Math.round(228 + (14-228)*t);
+    var g = Math.round(247 + (164-247)*t);
+    var b = Math.round(238 + (114-238)*t);
+    return 'rgb('+r+','+g+','+b+')';
+  }
+  function renderHeatmap(){
+    if (!heatmapData) heatmapData = buildHeatmapData();
+    var hoursEl = document.getElementById('heatmapHours');
+    var gridEl = document.getElementById('heatmapGrid');
+    if (!hoursEl || !gridEl) return;
+    if (!heatmapBuilt){
+      hoursEl.innerHTML = '<div></div>' + Array.from({length:24}, function(_,h){ return '<div>'+(h%3===0?h:'')+'</div>'; }).join('');
+      gridEl.innerHTML = '';
+      heatmapData.days.forEach(function(day, di){
+        var label = document.createElement('div');
+        label.className = 'heatmap-row-label';
+        label.textContent = day;
+        gridEl.appendChild(label);
+        heatmapData.data[di].forEach(function(pct){
+          var cell = document.createElement('div');
+          cell.className = 'heatmap-cell';
+          cell.style.background = heatColor(pct);
+          cell.title = pct + '% typical occupancy';
+          gridEl.appendChild(cell);
+        });
+      });
+      heatmapBuilt = true;
+    }
+  }
+  function renderInsights(state){
+    var el = document.getElementById('insightsList');
+    if (!el) return;
+    var avail = state.slots.filter(function(s){return s.status==='available';}).length;
+    var occ = state.slots.filter(function(s){return s.status==='occupied';}).length;
+    var zoneCounts = {};
+    state.slots.forEach(function(s){ zoneCounts[s.zone] = zoneCounts[s.zone] || {occ:0,total:0}; zoneCounts[s.zone].total++; if (s.status==='occupied') zoneCounts[s.zone].occ++; });
+    var busiest = Object.keys(zoneCounts).sort(function(a,b){ return (zoneCounts[b].occ/zoneCounts[b].total) - (zoneCounts[a].occ/zoneCounts[a].total); })[0];
+    var evSlots = state.slots.filter(function(s){return s.type==='ev';});
+    var evFree = evSlots.filter(function(s){return s.status==='available';}).length;
+    var offlineSensors = state.sensors.filter(function(s){return s.status!=='active';}).length;
+    var insights = [
+      'Zone ' + busiest + ' is currently your busiest zone — consider surfacing it first in Find Parking during peak hours.',
+      occ > avail ? 'Occupancy (' + occ + ') has overtaken availability (' + avail + ') — expect wait times near the entrance.' : 'Availability is comfortably ahead of demand right now (' + avail + ' open vs ' + occ + ' occupied).',
+      evFree + ' of ' + evSlots.length + ' EV bays are free — ' + (evFree === 0 ? 'EV drivers may need to wait.' : 'plenty of charging capacity available.'),
+      offlineSensors > 0 ? offlineSensors + ' sensor(s) are currently offline or erroring — flagged in Alerts for maintenance.' : 'All sensors are reporting normally — no maintenance flags right now.',
+      'Based on typical patterns, expect the heaviest load around 5–7 PM on weekdays.'
+    ];
+    el.innerHTML = insights.map(function(t){ return '<div class="insight-item"><span class="idot"></span><span>'+t+'</span></div>'; }).join('');
+  }
+
+  // ---------------- VEHICLE & PARKING HISTORY ----------------
+  var histSearch = document.getElementById('histSearch');
+  var histTypeFilter = document.getElementById('histTypeFilter');
+  if (histSearch) histSearch.addEventListener('input', function(){ render(ParkingDataService.getState()); });
+  if (histTypeFilter) histTypeFilter.addEventListener('change', function(){ render(ParkingDataService.getState()); });
+  function renderHistory(history){
+    var tbody = document.getElementById('historyTable');
+    if (!tbody) return;
+    var q = histSearch.value.trim().toLowerCase();
+    var typeF = histTypeFilter.value;
+    var list = history.slice();
+    if (q) list = list.filter(function(h){ return h.plate.toLowerCase().includes(q) || h.slot.toLowerCase().includes(q); });
+    if (typeF !== 'all') list = list.filter(function(h){ return h.type === typeF; });
+
+    tbody.innerHTML = '';
+    document.getElementById('historyEmpty').style.display = list.length ? 'none' : 'block';
+    list.slice(0,40).forEach(function(h){
+      var mins = Math.max(1, Math.round((h.departed - h.arrived)/60000));
+      var fee = (mins/60 * parseFloat(h.fee)).toFixed(2);
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td><b>'+h.plate+'</b></td><td>'+h.slot+'</td><td>'+TYPE_LABEL[h.type]+'</td>'+
+        '<td>'+new Date(h.arrived).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+'</td>'+
+        '<td>'+new Date(h.departed).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+'</td>'+
+        '<td>'+mins+' min</td><td>$'+fee+'</td>';
+      tbody.appendChild(tr);
+    });
+
+    var total = history.length;
+    var avgMins = total ? Math.round(history.reduce(function(a,h){return a+Math.max(1,(h.departed-h.arrived)/60000);},0)/total) : 0;
+    var evCount = history.filter(function(h){return h.type==='ev';}).length;
+    var revenue = history.reduce(function(a,h){ var mins=Math.max(1,(h.departed-h.arrived)/60000); return a + (mins/60*parseFloat(h.fee)); },0);
+    document.getElementById('histTotal').textContent = total;
+    document.getElementById('histAvg').textContent = total ? avgMins + ' min' : '—';
+    document.getElementById('histEv').textContent = evCount;
+    document.getElementById('histRevenue').textContent = '$' + revenue.toFixed(2);
+  }
+
+  // ---------------- ALERTS ----------------
+  var alertFilter = document.getElementById('alertFilter');
+  alertFilter.addEventListener('change', function(){ render(ParkingDataService.getState()); });
+  var sevMeta = {
+    info: { bg:'#E7EEFB', fg:'#3457A6' },
+    warning: { bg:'#FBEED9', fg:'#9A5B0A' },
+    critical: { bg:'#FBE2E6', fg:'#A9273F' }
+  };
+  function renderAlerts(alerts){
+    var f = alertFilter.value;
+    var list = f==='all' ? alerts : alerts.filter(function(a){return a.sev===f;});
+    var el = document.getElementById('alertList');
+    var empty = document.getElementById('alertEmpty');
+    el.innerHTML = '';
+    empty.style.display = list.length ? 'none' : 'block';
+    list.forEach(function(a){
+      var m = sevMeta[a.sev];
+      var item = document.createElement('div');
+      item.className = 'alert-item';
+      item.innerHTML =
+        '<div class="aicon" style="background:'+m.bg+';color:'+m.fg+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>'+
+        '<div><div class="atxt">'+a.text+'</div><div class="atime">'+timeAgo(a.time)+'</div></div>'+
+        '<span class="sev" style="background:'+m.bg+';color:'+m.fg+'">'+a.sev.toUpperCase()+'</span>';
+      el.appendChild(item);
+    });
+    document.getElementById('bellDot').style.display = alerts.length ? 'block' : 'none';
+  }
+
+  // ---------------- ADMIN ----------------
+  document.querySelectorAll('.admin-tab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.admin-tab').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      document.querySelectorAll('.admin-pane').forEach(function(p){ p.style.display = 'none'; });
+      document.getElementById('admin-'+btn.dataset.tab).style.display = 'block';
+    });
+  });
+  document.getElementById('addSlotBtn').addEventListener('click', function(){
+    var id = document.getElementById('newSlotId').value.trim();
+    var zone = document.getElementById('newSlotZone').value;
+    if (!id) return;
+    ParkingDataService.addSlot(id, zone);
+    document.getElementById('newSlotId').value = '';
+  });
+  function renderAdmin(state){
+    var tbody = document.getElementById('adminSlotTable');
+    tbody.innerHTML = '';
+    state.slots.forEach(function(s){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td><b>'+s.id+'</b></td><td>Zone '+s.zone+'</td>'+
+        '<td><span class="badge" style="background:'+statusSoft(s.status)+';color:'+statusColor(s.status)+'">'+statusLabel(s.status)+'</span></td>'+
+        '<td>'+(s.sensorStatus==='active'?'Online':s.sensorStatus)+'</td>'+
+        '<td class="row-actions"><button class="danger" data-remove="'+s.id+'">Remove</button></td>';
+      tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('[data-remove]').forEach(function(b){
+      b.addEventListener('click', function(){ ParkingDataService.removeSlot(b.dataset.remove); });
+    });
+
+    var sbody = document.getElementById('adminSensorTable');
+    sbody.innerHTML = '';
+    state.sensors.forEach(function(s){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td><b>'+s.id+'</b></td><td>'+s.type+'</td><td>'+s.slot+'</td>'+
+        '<td>'+s.status.charAt(0).toUpperCase()+s.status.slice(1)+'</td><td>'+timeAgo(s.lastUpdate)+'</td>';
+      sbody.appendChild(tr);
+    });
+
+    var reserved = state.slots.filter(function(s){return s.status==='reserved';});
+    var rbody = document.getElementById('adminResTable');
+    rbody.innerHTML = '';
+    document.getElementById('resEmpty').style.display = reserved.length ? 'none' : 'block';
+    reserved.forEach(function(s){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td><b>'+s.id+'</b></td><td>'+timeAgo(s.since)+'</td><td>Active</td>'+
+        '<td class="row-actions"><button data-cancel="'+s.id+'">Cancel</button></td>';
+      rbody.appendChild(tr);
+    });
+    rbody.querySelectorAll('[data-cancel]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var s = state.slots.filter(function(x){return x.id===b.dataset.cancel;})[0];
+        if (s) s.status = 'available';
+        render(ParkingDataService.getState());
+      });
+    });
+  }
+
+  // ---------------- CHARTS ----------------
+  var occChart, donutChart, peakChart, uptimeChart;
+  function initCharts(state){
+    var ctx1 = document.getElementById('occChart').getContext('2d');
+    occChart = new Chart(ctx1, {
+      type:'line',
+      data:{ labels: state.occHistory.map(function(_,i){return i;}),
+        datasets:[{ data: state.occHistory, borderColor:COLORS.available, backgroundColor:'rgba(14,164,114,0.08)', fill:true, tension:0.35, pointRadius:0, borderWidth:2 }] },
+      options:{ animation:{duration:300}, plugins:{legend:{display:false}}, scales:{ x:{display:false}, y:{ grid:{color:'#F0F2F6'}, ticks:{color:'#94A0B4'} } } }
+    });
+
+    var ctx2 = document.getElementById('donutChart').getContext('2d');
+    donutChart = new Chart(ctx2, {
+      type:'doughnut',
+      data:{ labels:['Available','Occupied'], datasets:[{ data:[1,1], backgroundColor:[COLORS.available, COLORS.occupied], borderWidth:0 }] },
+      options:{ cutout:'70%', plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, color:'#475369', font:{size:11} } } } }
+    });
+
+    var peakData = [2,1,1,3,6,10,14,18,20,17,15,16,19,17,14,15,18,22,19,12,8,5,3,2];
+    var ctx3 = document.getElementById('peakChart').getContext('2d');
+    peakChart = new Chart(ctx3, {
+      type:'bar',
+      data:{ labels: peakData.map(function(_,i){return i+':00';}),
+        datasets:[{ data: peakData, backgroundColor: COLORS.available+'CC', borderRadius:4, maxBarThickness:14 }] },
+      options:{ plugins:{legend:{display:false}}, scales:{ x:{ ticks:{ color:'#94A0B4', font:{size:9}, maxRotation:0, autoSkip:true } }, y:{ grid:{color:'#F0F2F6'}, ticks:{color:'#94A0B4'} } } }
+    });
+
+    var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    var uptimeData = [99.8,99.5,100,98.9,99.9,99.7,99.9];
+    var ctx4 = document.getElementById('uptimeChart').getContext('2d');
+    uptimeChart = new Chart(ctx4, {
+      type:'bar',
+      data:{ labels: days, datasets:[{ data: uptimeData, backgroundColor: '#1B2740', borderRadius:6, maxBarThickness:28 }] },
+      options:{ plugins:{legend:{display:false}}, scales:{ y:{ min:95, max:100, grid:{color:'#F0F2F6'}, ticks:{color:'#94A0B4'} }, x:{ ticks:{color:'#94A0B4'} } } }
+    });
+  }
+  function updateCharts(state){
+    if (!occChart) return;
+    occChart.data.labels = state.occHistory.map(function(_,i){return i;});
+    occChart.data.datasets[0].data = state.occHistory;
+    occChart.update('none');
+
+    var avail = state.slots.filter(function(s){return s.status==='available';}).length;
+    var occ = state.slots.filter(function(s){return s.status!=='available';}).length;
+    donutChart.data.datasets[0].data = [avail, occ];
+    donutChart.update('none');
+  }
+
+  // ---------------- MAIN RENDER ----------------
+  function render(state){
+    var avail = state.slots.filter(function(s){return s.status==='available';}).length;
+    var occ = state.slots.filter(function(s){return s.status==='occupied';}).length;
+    var res = state.slots.filter(function(s){return s.status==='reserved';}).length;
+    var total = state.slots.length;
+
+    animateCount(document.getElementById('statTotal'), total);
+    animateCount(document.getElementById('statAvail'), avail);
+    animateCount(document.getElementById('statOcc'), occ);
+    animateCount(document.getElementById('dashTotal'), total);
+    animateCount(document.getElementById('dashAvail'), avail);
+    animateCount(document.getElementById('dashOcc'), occ);
+    animateCount(document.getElementById('dashRes'), res);
+
+    document.getElementById('lastUpdated').textContent = 'just now';
+    document.getElementById('lotTime').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+    renderMiniLot(heroGrid, state.slots.filter(function(s){return s.zone==='A';}), 18);
+    renderMiniLot(findGrid, state.slots, 24);
+    renderSlotGrid(document.getElementById('slotGrid'), state.slots);
+    renderFindResults(state.slots);
+    renderSensors(state.sensors);
+    renderFeed(state.feed);
+    renderAlerts(state.alerts);
+    renderAdmin(state);
+    updateCharts(state);
+    renderHealth(state.sensors);
+    renderSimForceOptions(state.slots);
+    renderMap(state.slots);
+    renderHeatmap();
+    renderInsights(state);
+    renderHistory(state.history);
+
+    document.getElementById('kpiAvgDur').textContent = '38 min';
+    document.getElementById('kpiPeak').textContent = '5:00 – 6:00 PM';
+    document.getElementById('kpiUptime').textContent = '99.7%';
+  }
+
+  document.getElementById('bellBtn').addEventListener('click', function(){ goToPage('alerts'); });
+
+  ParkingDataService.subscribe(render);
+  var initialState = ParkingDataService.getState();
+  initCharts(initialState);
+  render(initialState);
+  setInterval(function(){
+    document.getElementById('lastUpdated').textContent = timeAgo(Date.now()-1000);
+  }, 5000);
+
+})();
+</script>
+</body>
+</html>
