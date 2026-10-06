@@ -1,9 +1,38 @@
-# SmartPark India (स्मार्टपार्क) — Smart City IoT Parking & FASTag Management
+# SmartPark India (स्मार्टपार्क) — Smart City IoT Parking, FASTag & 360° CCTV Management
 
-A modern, responsive, real-time dashboard and architectural simulation for an IoT-based smart parking system localized for Indian urban hubs (IGI Airport Terminal 3, DLF CyberHub Gurugram, Kempegowda T2, Phoenix Marketcity). Integrates real-time ultrasonic & infrared edge sensors, NETC FASTag automated boom barriers, UPI payments (Google Pay, PhonePe, Paytm), Indian HSRP and green EV plates, turn-by-turn wayfinding, and interactive audio synthesis.
+A modern, responsive, real-time dashboard, interactive live GPS radar map, and 360-degree virtual CCTV surveillance suite for an IoT-based smart parking system localized for Indian urban hubs (IGI Airport Terminal 3, DLF CyberHub Gurugram, Kempegowda T2, Phoenix Marketcity). Integrates real-time ultrasonic & infrared edge sensors, NETC FASTag automated boom barriers, UPI payments (Google Pay, PhonePe, Paytm), Indian HSRP and green EV plates, turn-by-turn wayfinding, and interactive Web Audio synthesis.
 
 🔗 **Live Web Demo:** [https://ridhimananda2607-source.github.io/Smart-parking-management-system/](https://ridhimananda2607-source.github.io/Smart-parking-management-system/)  
 *(Or open `parking.html` / `index.html` directly in any web browser)*
+
+---
+
+## 🗺️ Live GPS Facility & Approach Radar Map
+Navigate to the **🗺️ Live Map** tab for an interactive aerial radar view of the parking facility along the IGI Airport T3 / Aerocity / NH-48 Corridor:
+- **Live Vehicle Traffic Simulation:** Animated vehicles moving along approach roads, passing through the Gate 1 FASTag barrier, and navigating to parking bays.
+- **360° Rotating Radar Sweep:** Rotating sonar/radar beam scanning incoming and outgoing traffic with dynamic blip echoes.
+- **Facility Architecture:** Top-down architectural view showing Entry/Exit gates, EV charging bays, Divyangjan ramps, VIP bays, and pedestrian corridors.
+- **Interactive CCTV Hotspot Pins:** Clickable camera pins (CAM-01 through CAM-04) that let you jump directly into that camera's live 360° view.
+- **Quick Controls:** Zoom in/out, re-center, toggle radar sweep, and simulate traffic spawns on demand.
+
+---
+
+## 📹 360° Virtual CCTV Surveillance Suite
+Navigate to the **📹 360° Camera** tab for an immersive virtual CCTV monitoring experience:
+- **Interactive 360° Pan & Tilt:** Drag to look around (full 360° yaw, ±28° pitch), tilt controls, and zoom (0.75× to 2.5×).
+- **Auto-Patrol Mode:** Continuous 360° surveillance sweep around the selected zone.
+- **Multi-Camera Feeds:**
+  - **CAM-01:** Gate 1 — FASTag Entry Boom Barrier (RFID 865 MHz)
+  - **CAM-02:** Central Aisle — 22kW Bharat AC001 EV Fast Chargers
+  - **CAM-03:** Zone B Deck — Divyangjan Ramp & Standard Bays
+  - **CAM-04:** Gate 2 — Exit Barrier & NETC FASTag Auto-Debit
+- **3 Vision Modes:**
+  - **4K UltraHD Color:** Crisp daytime clarity with optical anti-glare.
+  - **Night Vision (IR):** Infrared night vision with phosphor green tint and scanning raster lines.
+  - **FLIR Thermal Heatmap:** False-color thermal view highlighting engine heat signatures and EV battery cooling.
+- **AI-ANPR (Automatic Number Plate Recognition):** Real-time bounding boxes detecting Indian HSRP & EV plates (`DL 01 AB 1234`, `DL 3C EV 2024`, etc.) with AI confidence ratings.
+- **3D Hotspot Tags:** Floating clickable bay markers in 360° space — click any bay tag to view sensor status or book instantly!
+- **Snapshot Capture:** One-click CCTV snapshot button with instant confirmation.
 
 ---
 
@@ -45,6 +74,7 @@ A modern, responsive, real-time dashboard and architectural simulation for an Io
 ## 🛠️ Tech Stack
 
 - **Vanilla HTML5, CSS3, & Modern JavaScript (ES6+):** Zero build steps, zero npm dependencies to compile.
+- **HTML5 Canvas:** Custom-built rendering engines for the 360° CCTV camera panorama and the Live GPS Radar Map.
 - **Chart.js:** Responsive occupancy velocity charts, doughnut distributions, and peak-hour histograms.
 - **Web Audio API:** Lightweight, synthesized zero-asset audio haptics.
 - **Integrated QR Engine:** Multi-layer QR generator with built-in SVG matrix fallback for 100% offline reliability.
@@ -58,5 +88,5 @@ A modern, responsive, real-time dashboard and architectural simulation for an Io
 .
 ├── index.html     # Primary web application (GitHub Pages entry point)
 ├── parking.html   # Standalone localized application file
-└── README.md      # Indian localization, architecture, and feature guide
+└── README.md      # Documentation & architectural guide
 ```

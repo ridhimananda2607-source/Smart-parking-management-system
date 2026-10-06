@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>SmartPark India — Smart City IoT Parking & FASTag Management</title>
+<title>SmartPark India — Smart City IoT Parking, Live GPS Map & 360° CCTV</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -67,10 +67,10 @@
   .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--available);box-shadow:0 0 0 4px var(--accent-glow);}
   .brand-sub{font-size:10px;font-weight:600;color:#94A3B8;margin-left:4px;background:#1E293B;padding:2px 6px;border-radius:4px;border:1px solid #334155;}
   
-  .navlinks{display:flex;align-items:center;gap:3px;}
+  .navlinks{display:flex;align-items:center;gap:2px;}
   .navlinks button{
-    background:transparent;border:none;color:#AAB4C8;font-weight:600;font-size:13.5px;
-    padding:8px 11px;border-radius:8px;transition:color .15s, background .15s;
+    background:transparent;border:none;color:#AAB4C8;font-weight:600;font-size:13px;
+    padding:8px 10px;border-radius:8px;transition:color .15s, background .15s;
   }
   .navlinks button:hover{color:#fff;background:var(--navy-800);}
   .navlinks button.active{color:#fff;background:var(--navy-700);}
@@ -100,7 +100,7 @@
     box-shadow:0 6px 16px -4px rgba(14,164,114,.45);
   }
   .hamburger{display:none;background:transparent;border:none;color:#fff;padding:8px;}
-  @media (max-width:1020px){
+  @media (max-width:1100px){
     .navlinks{display:none;}
     .hamburger{display:flex;}
   }
@@ -142,7 +142,6 @@
     background:#0B3B8B; color:#fff; font-size:7px; font-weight:900;
     padding:1px 3px; border-radius:2px; margin-right:4px; line-height:1; letter-spacing:-0.02em;
   }
-  /* EV Green Number Plate (Indian Standard by MoRTH) */
   .plate-hsrp.ev{
     background:#047857; color:#FFFFFF; border-color:#065F46;
   }
@@ -169,6 +168,8 @@
   .btn-primary:hover{transform:translateY(-1px);}
   .btn-secondary{background:transparent;color:#fff;font-weight:700;padding:12px 22px;border-radius:10px;border:1px solid var(--navy-600);font-size:14.5px;transition:background .15s;}
   .btn-secondary:hover{background:var(--navy-800);}
+  .btn-cctv{background:#6366F1;color:#fff;font-weight:700;padding:12px 20px;border-radius:10px;border:none;font-size:14.5px;transition:transform .15s;display:flex;align-items:center;gap:6px;}
+  .btn-cctv:hover{transform:translateY(-1px);background:#4F46E5;}
   .btn-fastag{background:#EA580C;color:#fff;font-weight:700;padding:12px 20px;border-radius:10px;border:none;font-size:14.5px;transition:transform .15s;}
   .btn-fastag:hover{transform:translateY(-1px);}
 
@@ -293,7 +294,7 @@
   .zone-legend{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;}
   .zone-legend .li{display:flex;align-items:center;gap:6px;font-size:12px;color:#AAB4C8;}
 
-  /* ---------- REALISTIC INTERACTIVE 2D MAP WITH FASTAG ---------- */
+  /* ---------- 1. 🗺️ REALISTIC 2D ARCHITECTURAL MAP WITH FASTAG ---------- */
   .map-wrapper{background:var(--navy-950);border:1px solid var(--navy-700);border-radius:20px;padding:24px;position:relative;overflow:hidden;}
   .map-deck-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;}
   .map-deck-title{color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;gap:10px;}
@@ -303,6 +304,14 @@
     padding:5px 12px; border-radius:100px; cursor:pointer; transition:all .15s;
   }
   .map-pill.active{background:var(--available); color:#04231A; border-color:var(--available);}
+
+  /* View Mode Selector (2D Plan vs Live Radar GPS Map) */
+  .map-mode-tabs{display:flex; gap:6px; background:#162035; padding:4px; border-radius:10px; border:1px solid #233458;}
+  .map-mode-tab{
+    background:transparent; border:none; color:#94A3B8; font-size:12px; font-weight:700;
+    padding:6px 14px; border-radius:8px; cursor:pointer; transition:all .15s;
+  }
+  .map-mode-tab.active{background:var(--available); color:#04231A;}
 
   /* Parking Lot Floor Canvas Layout */
   .garage-canvas{
@@ -359,6 +368,69 @@
     border-radius:10px; padding:10px 14px; font-size:12px; pointer-events:none; display:none;
     box-shadow:0 12px 28px rgba(0,0,0,.65); max-width:240px;
   }
+
+  /* Live Radar GPS Facility Map */
+  .radar-map-box{
+    position:relative; width:100%; border-radius:14px; overflow:hidden; background:#060C18;
+    border:1px solid #1E293B; display:none;
+  }
+  .radar-map-box.active{display:block;}
+  #radarCanvas{display:block; width:100%; height:460px; background:#070E1A;}
+  
+  .radar-hud-bar{
+    position:absolute; top:14px; left:14px; right:14px; display:flex; justify-content:space-between;
+    align-items:center; background:rgba(11,18,32,0.85); backdrop-filter:blur(6px); border:1px solid #233458;
+    border-radius:10px; padding:8px 14px; font-size:12px; color:#93C5FD;
+  }
+
+  /* ---------- 2. 📹 360° CCTV CAMERA SURVEILLANCE SUITE ---------- */
+  .cctv-shell{
+    background:#060A14; border:1px solid #1E293B; border-radius:20px; overflow:hidden;
+    position:relative; box-shadow:0 25px 60px -15px rgba(0,0,0,0.7);
+  }
+  .cctv-viewport-wrap{position:relative; width:100%; height:500px; background:#000; overflow:hidden; cursor:grab;}
+  .cctv-viewport-wrap:active{cursor:grabbing;}
+  #cctvCanvas360{display:block; width:100%; height:100%;}
+
+  /* CCTV Surveillance HUD Overlay */
+  .cctv-hud{
+    position:absolute; inset:0; pointer-events:none; padding:16px 20px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .cctv-hud-top{display:flex; justify-content:space-between; align-items:flex-start;}
+  .cctv-rec-badge{
+    display:inline-flex; align-items:center; gap:6px; background:rgba(0,0,0,0.65);
+    border:1px solid rgba(239,68,68,0.5); padding:4px 10px; border-radius:6px;
+    color:#EF4444; font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:800;
+  }
+  .cctv-rec-dot{width:8px; height:8px; border-radius:50%; background:#EF4444; animation:cctvBlink 1s infinite;}
+  @keyframes cctvBlink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+  .cctv-hud-bottom{display:flex; justify-content:space-between; align-items:flex-end; font-family:'JetBrains Mono',monospace; font-size:11px; color:#94A3B8;}
+  .cctv-crosshair{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:32px; height:32px;
+    border:1px dashed rgba(255,255,255,0.3); border-radius:50%; pointer-events:none;
+  }
+  .cctv-crosshair::before{content:""; position:absolute; top:50%; left:0; width:100%; height:1px; background:rgba(255,255,255,0.3);}
+  .cctv-crosshair::after{content:""; position:absolute; left:50%; top:0; width:1px; height:100%; background:rgba(255,255,255,0.3);}
+
+  /* CCTV Controls Toolbar */
+  .cctv-dock{
+    background:#0A111E; border-top:1px solid #1E293B; padding:14px 20px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+  }
+  .cctv-cam-btns{display:flex; gap:6px; flex-wrap:wrap;}
+  .cctv-cam-btn{
+    background:#162035; border:1px solid #233458; color:#93C5FD; font-size:12px; font-weight:700;
+    padding:6px 12px; border-radius:8px; cursor:pointer; transition:all .15s;
+  }
+  .cctv-cam-btn.active{background:#4F46E5; color:#fff; border-color:#4F46E5;}
+  .cctv-mode-btns{display:flex; gap:6px;}
+  .cctv-mode-btn{
+    background:#162035; border:1px solid #233458; color:#CBD5E1; font-size:11px; font-weight:700;
+    padding:5px 10px; border-radius:6px; cursor:pointer;
+  }
+  .cctv-mode-btn.active{background:var(--available); color:#04231A; border-color:var(--available);}
 
   /* ---------- IOT ARCHITECTURE ANIMATION ---------- */
   .arch-card{background:var(--navy-900);border-radius:16px;padding:22px;margin-bottom:18px;position:relative;}
@@ -542,7 +614,8 @@
       <button data-page="landing" class="active">Home</button>
       <button data-page="find">Find Parking</button>
       <button data-page="dashboard">Live Dashboard</button>
-      <button data-page="map">🗺️ 2D Map</button>
+      <button data-page="map">🗺️ Live Map</button>
+      <button data-page="camera">📹 360° Camera</button>
       <button data-page="sensors">🔌 Sensors</button>
       <button data-page="analytics">📊 Analytics</button>
       <button data-page="history">🚗 History</button>
@@ -571,7 +644,8 @@
     <button data-page="landing" class="active">Home</button>
     <button data-page="find">Find Parking</button>
     <button data-page="dashboard">Live Dashboard</button>
-    <button data-page="map">Interactive 2D Map</button>
+    <button data-page="map">🗺️ Live GPS & 2D Map</button>
+    <button data-page="camera">📹 360° Virtual Camera</button>
     <button data-page="sensors">Sensors & IoT</button>
     <button data-page="analytics">Analytics & Heatmap</button>
     <button data-page="history">Vehicle History</button>
@@ -591,12 +665,12 @@
           <span>📍 IGI Airport T3 & DLF CyberHub Smart Metro Facility, New Delhi</span>
         </div>
         <div class="eyebrow"><span class="swatch" style="background:var(--available);"></span> India's First FASTag-Integrated IoT Parking System</div>
-        <h1>Hassle-free parking with live IoT & automated FASTag entry</h1>
-        <p class="sub">Overhead ultrasonic & infrared edge sensors detect real-time bay occupancy. Pay seamlessly via FASTag auto-debit or UPI (Google Pay, PhonePe, Paytm). Enjoy dedicated EV fast charging and Divyangjan accessible bays.</p>
+        <h1>Hassle-free parking with live IoT, 360° CCTV & automated FASTag</h1>
+        <p class="sub">Overhead ultrasonic & infrared edge sensors detect real-time bay occupancy. Inspect the lot with 360° virtual dome cameras, view live approach radar, pay via FASTag or UPI, and recharge your EV at 22kW fast bays.</p>
         <div class="hero-ctas">
-          <button class="btn-primary" data-page="map">🗺️ Open Live Floor Plan</button>
-          <button class="btn-fastag" id="heroSmartAssignBtn">⚡ 1-Click Best Slot (Smart Auto-Assign)</button>
-          <button class="btn-secondary" data-page="find">Find Open Bay</button>
+          <button class="btn-primary" data-page="map">🗺️ Open Live GPS & 2D Map</button>
+          <button class="btn-cctv" data-page="camera">📹 360° Virtual CCTV Tour</button>
+          <button class="btn-fastag" id="heroSmartAssignBtn">⚡ 1-Click Best Slot (Smart Assign)</button>
         </div>
       </div>
       <div>
@@ -632,8 +706,8 @@
       </div>
       <div class="how-step">
         <div class="icn">🏷️</div>
-        <h3>2. FASTag & ANPR Boom Barriers</h3>
-        <p>High-speed RFID FASTag readers and ANPR cameras detect your HSRP vehicle registration at Gate 1, automatically raising the boom barrier.</p>
+        <h3>2. FASTag & 360° CCTV</h3>
+        <p>High-speed RFID FASTag readers lift boom barriers automatically while 360° PTZ dome cameras track slots with AI license plate recognition.</p>
       </div>
       <div class="how-step">
         <div class="icn">📱</div>
@@ -685,6 +759,7 @@
         <option value="duration">Sort by Dwell Time</option>
       </select>
       <button class="quick-sim-btn" id="dashSmartAssignBtn" style="padding:8px 14px;background:#EA580C;color:#fff;border-color:#EA580C;">⚡ Auto-Assign Nearest Bay</button>
+      <button class="quick-sim-btn" data-page="camera" style="padding:8px 14px;background:#4F46E5;color:#fff;border-color:#4F46E5;">📹 Open 360° Camera View</button>
     </div>
 
     <div class="slot-grid" id="slotGrid"></div>
@@ -728,21 +803,24 @@
   </div>
 </section>
 
-<!-- ===================== 1. 🗺️ REALISTIC 2D ARCHITECTURAL MAP WITH FASTAG ===================== -->
+<!-- ===================== 1. 🗺️ LIVE MAP (2D PLAN & LIVE GPS RADAR) ===================== -->
 <section class="page" id="page-map">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>🗺️ 2D Interactive Garage Floor Plan</h2><p>Live architectural layout with FASTag barrier gates, driving aisles, and turn-by-turn wayfinding</p></div>
-      <div class="toolbar" style="margin:0;">
-        <div class="level-tabs" id="levelTabs">
-          <button class="level-tab active" data-level="1">Level 1 (Ground Deck)</button>
-          <button class="level-tab" data-level="2">Level 2 (Upper Deck)</button>
-        </div>
+      <div><h2>🗺️ Live Map & Facility Navigation</h2><p>Toggle between real-time 2D architectural bay layout and live GPS approach radar</p></div>
+      <div class="map-mode-tabs">
+        <button class="map-mode-tab active" id="tabModeFloorPlan">🏢 2D Bay Floor Plan</button>
+        <button class="map-mode-tab" id="tabModeRadar">🛰️ Live Traffic & Radar GPS Map</button>
       </div>
     </div>
 
-    <div class="toolbar" style="margin-top:16px;">
-      <div class="map-filter-pills">
+    <!-- Toolbar for Floor Plan View -->
+    <div id="floorPlanToolbar" class="toolbar" style="margin-top:16px;">
+      <div class="level-tabs" id="levelTabs" style="display:flex;gap:4px;background:#EEF1F6;padding:3px;border-radius:9px;">
+        <button class="level-tab active" data-level="1">Level 1 (Ground Deck)</button>
+        <button class="level-tab" data-level="2">Level 2 (Upper Deck)</button>
+      </div>
+      <div class="map-filter-pills" style="margin-left:10px;">
         <button class="map-pill active" data-filter="all">All Bays</button>
         <button class="map-pill" data-filter="available">🟢 Available Only</button>
         <button class="map-pill" data-filter="ev">⚡ EV Fast Chargers</button>
@@ -750,6 +828,7 @@
         <button class="map-pill" data-filter="occupied">🔴 Occupied</button>
       </div>
       <button class="quick-sim-btn" id="mapSmartAssignBtn" style="margin-left:auto;padding:6px 12px;background:#EA580C;color:#fff;border-color:#EA580C;">⚡ Smart Auto-Assign Nearest Slot</button>
+      <button class="quick-sim-btn" data-page="camera" style="padding:6px 12px;background:#4F46E5;color:#fff;border-color:#4F46E5;">📹 360° Camera View</button>
     </div>
 
     <!-- Live Wayfinding Guidance Route Banner -->
@@ -764,7 +843,8 @@
       <button class="quick-sim-btn" id="closeWayfindingBtn">✕ Clear Route</button>
     </div>
 
-    <div class="map-wrapper" style="margin-top:12px;">
+    <!-- Floor Plan 2D Container -->
+    <div id="floorPlanContainer" class="map-wrapper" style="margin-top:12px;">
       <div class="map-deck-head">
         <div class="map-deck-title" id="mapDeckTitle">
           <span>🏢 Facility Floor Plan — Level 1</span>
@@ -823,13 +903,108 @@
         </div>
       </div>
     </div>
+
+    <!-- Live Traffic & Radar GPS Map Container -->
+    <div id="radarContainer" class="radar-map-box" style="margin-top:14px;">
+      <div class="radar-hud-bar">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="pulse-dot"></span>
+          <b>LIVE GPS FACILITY RADAR:</b> IGI Airport T3 & Aerocity Flyover (28.5562° N, 77.1000° E)
+        </div>
+        <div style="display:flex; gap:12px;">
+          <span>Approach Traffic: <b style="color:#86EFAC;">Flowing (48 km/h)</b></span>
+          <span>Gate 1 Queue: <b style="color:#FDE047;">1 Vehicle (~15s)</b></span>
+        </div>
+      </div>
+      <canvas id="radarCanvas"></canvas>
+      <div style="background:#0F172A; padding:10px 16px; border-top:1px solid #1E293B; display:flex; justify-content:space-between; align-items:center; font-size:12px; color:#94A3B8;">
+        <span>💡 Green dots = Moving approach vehicles · Blue circles = CCTV 360° Camera locations (click to view) · Rotating line = IoT distance radar sweep</span>
+        <button class="quick-sim-btn" data-page="camera" style="background:#4F46E5;color:#fff;border-color:#4F46E5;">📹 Open Selected 360° Camera</button>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- Floating Map Tooltip -->
 <div class="map-tooltip" id="mapTooltip"></div>
 
-<!-- ===================== 2. 🔌 SENSORS & SYSTEM HEALTH ===================== -->
+<!-- ===================== 2. 📹 360° CAMERA SURVEILLANCE SUITE ===================== -->
+<section class="page" id="page-camera">
+  <div class="wrap page-body">
+    <div class="section-head">
+      <div>
+        <h2>📹 360° Virtual CCTV Surveillance Camera</h2>
+        <p>Interactive panoramic dome camera view of parking bays, FASTag boom barriers, and EV fast chargers</p>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="quick-sim-btn" data-page="map" style="padding:8px 14px;background:var(--navy-900);color:#fff;">🗺️ View on Live Map</button>
+        <button class="quick-sim-btn" id="cctvSnapshotBtn" style="padding:8px 14px;background:#047857;color:#fff;border-color:#047857;">📸 Capture 4K Snapshot</button>
+      </div>
+    </div>
+
+    <!-- 360 Camera Shell -->
+    <div class="cctv-shell" style="margin-top:16px;">
+      <div class="cctv-viewport-wrap" id="cctvWrap">
+        <canvas id="cctvCanvas360"></canvas>
+        <div class="cctv-crosshair"></div>
+
+        <!-- CCTV HUD Overlay -->
+        <div class="cctv-hud">
+          <div class="cctv-hud-top">
+            <div class="cctv-rec-badge">
+              <span class="cctv-rec-dot"></span>
+              <span id="cctvRecText">● LIVE REC [00:48:19]</span>
+            </div>
+            <div style="text-align:right; color:#E2E8F0; font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(0,0,0,0.6); padding:4px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.15);">
+              <div id="cctvCamNameTag" style="font-weight:800; color:#38BDF8;">CAM-01 [360° DOME] — GATE 1 FASTAG ENTRY</div>
+              <div id="cctvTimeTag" style="color:#94A3B8; font-size:10px;">2026-10-06 23:14:02.812 IST</div>
+            </div>
+          </div>
+
+          <div class="cctv-hud-bottom">
+            <div>
+              <span style="color:#60A5FA;">PTZ TELEMETRY:</span> <span id="cctvPtzTelemetry">YAW: 142.4° | PITCH: -8.2° | ZOOM: 1.0x</span>
+            </div>
+            <div style="text-align:right;">
+              <span style="color:#86EFAC;">AI-ANPR ENGINE:</span> <span id="cctvAiTelemetry">DETECTION ACTIVE (30.0 FPS · 4.8 Mbps)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CCTV Dock Controls -->
+      <div class="cctv-dock">
+        <!-- Camera Selector -->
+        <div class="cctv-cam-btns">
+          <button class="cctv-cam-btn active" data-cam="1">📷 CAM-01: Gate 1 (FASTag Entry)</button>
+          <button class="cctv-cam-btn" data-cam="2">📷 CAM-02: Central Aisle & EV Hub</button>
+          <button class="cctv-cam-btn" data-cam="3">📷 CAM-03: Zone B & Divyangjan</button>
+          <button class="cctv-cam-btn" data-cam="4">📷 CAM-04: Gate 2 (Exit Barrier)</button>
+        </div>
+
+        <!-- Vision Mode Selector -->
+        <div class="cctv-mode-btns">
+          <button class="cctv-mode-btn active" data-mode="normal">🟢 4K Color</button>
+          <button class="cctv-mode-btn" data-mode="night">🌙 Night Vision IR</button>
+          <button class="cctv-mode-btn" data-mode="thermal">🔥 FLIR Thermal</button>
+          <button class="cctv-mode-btn" id="cctvAutoSpinBtn">🔄 360° Auto-Patrol [ON]</button>
+          <button class="cctv-mode-btn" id="cctvZoomInBtn">🔍 Zoom In</button>
+          <button class="cctv-mode-btn" id="cctvZoomOutBtn">🔍 Zoom Out</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instructions / Guide for 360 Camera -->
+    <div style="margin-top:14px; background:var(--paper-card); border:1px solid #E7EAF1; border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <div style="font-size:13px; color:var(--muted); line-height:1.5;">
+        <b style="color:var(--ink);">💡 Interactive 360° Controls:</b> Click and drag anywhere on the video screen to look 360° around the parking lot. Click on floating bay tags (e.g., <b>[Bay P01]</b>) to inspect or reserve the slot directly from the camera!
+      </div>
+      <button class="quick-sim-btn" id="camSmartAssignBtn" style="background:#EA580C;color:#fff;border-color:#EA580C;padding:7px 12px;">⚡ Auto-Assign Nearest Slot</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3. 🔌 SENSORS & SYSTEM HEALTH ===================== -->
 <section class="page" id="page-sensors">
   <div class="wrap page-body">
     <div class="section-head">
@@ -926,7 +1101,7 @@
       </div>
     </div>
 
-    <!-- ===================== 3. 🎮 DEMO & SIMULATION CONTROLS ===================== -->
+    <!-- Simulation Controls Panel -->
     <div class="sim-panel">
       <h4>🎮 DEMO & HARDWARE SIMULATION CONTROL CENTER</h4>
       <p class="sim-sub">Trigger real-world Indian traffic scenarios to test live FASTag barriers, UPI pass generation, and sensor alerts.</p>
@@ -1002,7 +1177,7 @@
       <div class="kpi"><div class="val" id="kpiUptime">99.8%</div><div class="lbl">7-Day Edge Availability</div></div>
     </div>
 
-    <!-- 4. Occupancy Heatmap -->
+    <!-- Occupancy Heatmap -->
     <div class="chart-card" style="margin-top:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
@@ -1036,7 +1211,7 @@
   </div>
 </section>
 
-<!-- ===================== 6. 🚗 VEHICLE & PARKING HISTORY ===================== -->
+<!-- ===================== 5. 🚗 VEHICLE & PARKING HISTORY ===================== -->
 <section class="page" id="page-history">
   <div class="wrap page-body">
     <div class="section-head">
@@ -1152,25 +1327,25 @@
   <div class="wrap foot-grid">
     <div>
       <div class="brand" style="margin-bottom:10px;"><span class="dot"></span>SmartPark India</div>
-      <p style="font-size:13.5px;color:#8593AC;max-width:320px;line-height:1.6;">Next-generation IoT smart parking with NPCI NETC FASTag integration and instant UPI payment flow across Indian urban centers.</p>
+      <p style="font-size:13.5px;color:#8593AC;max-width:320px;line-height:1.6;">Next-generation IoT smart parking with NPCI NETC FASTag integration, 360° virtual camera surveillance, and instant UPI payment flow across Indian urban centers.</p>
     </div>
     <div class="flinks">
       <h5>Platform</h5>
-      <a href="#" data-page="map">2D Floor Plan</a>
+      <a href="#" data-page="map">Live GPS Map</a>
+      <a href="#" data-page="camera">360° Virtual CCTV</a>
       <a href="#" data-page="dashboard">Live Dashboard</a>
-      <a href="#" data-page="sensors">IoT Network</a>
       <a href="#" data-page="analytics">Analytics & Heatmap</a>
     </div>
     <div class="flinks">
       <h5>Features</h5>
       <a href="#" data-page="history">FASTag Session Logs</a>
+      <a href="#" data-page="sensors">IoT Mesh Health</a>
       <a href="#" data-page="admin">Facility Admin</a>
-      <a href="#" data-page="alerts">System Alerts</a>
     </div>
   </div>
   <div class="wrap fbottom">
     <span>© 2026 SmartPark India Pvt. Ltd. All rights reserved. GSTIN: 07AABCS1429B1Z8</span>
-    <span>Ultrasonic HC-SR04 · Sharp IR · FASTag RFID 865 MHz · NPCI NETC</span>
+    <span>Ultrasonic HC-SR04 · Sharp IR · FASTag RFID 865 MHz · 360° 4K PTZ Surveillance</span>
   </div>
 </footer>
 
@@ -1193,12 +1368,17 @@
     <div class="row"><span>Active dwell time</span><span id="modalDuration">—</span></div>
     <div class="row"><span>Hourly rate (शुल्क)</span><span id="modalFee">—</span></div>
 
+    <!-- View in 360 Camera Shortcut Button -->
+    <div style="margin:10px 0;">
+      <button class="quick-sim-btn" id="modalViewCctvBtn" style="background:#4F46E5;color:#fff;border-color:#4F46E5;width:100%;padding:7px 0;font-size:12px;">📹 View this Bay in 360° Live Camera</button>
+    </div>
+
     <!-- Enter Custom Vehicle Registration Plate -->
     <div id="modalBookingForm" style="margin-top:14px;">
       <label style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;">Your Vehicle Plate (वाहन नंबर):</label>
       <input type="text" id="userPlateInput" placeholder="e.g. DL 01 AB 1234 or HR 26..." style="width:100%;font-family:'JetBrains Mono',monospace;font-weight:700;text-transform:uppercase;">
       
-      <!-- 5. 🎟️ QR RESERVATION FLOW -->
+      <!-- QR Reservation Flow -->
       <button class="reserve-btn" id="modalReserveBtn">Reserve Bay & Generate UPI / QR Pass</button>
     </div>
 
@@ -1298,7 +1478,7 @@
 (function(){
   "use strict";
 
-  // ---------------- WEB AUDIO SYNTHESIZER (INTERACTIVE SOUND FEEDBACK) ----------------
+  // ---------------- WEB AUDIO SYNTHESIZER ----------------
   var audioCtx = null;
   var soundEnabled = true;
 
@@ -1322,11 +1502,11 @@
   }
 
   function soundChime() {
-    playTone(523.25, 'sine', 0.22, 0, 0.08); // C5
-    playTone(659.25, 'sine', 0.32, 0.1, 0.08); // E5
+    playTone(523.25, 'sine', 0.22, 0, 0.08);
+    playTone(659.25, 'sine', 0.32, 0.1, 0.08);
   }
   function soundFastagBeep() {
-    playTone(880, 'triangle', 0.12, 0, 0.1); // High A5 FASTag RFID Beep
+    playTone(880, 'triangle', 0.12, 0, 0.1);
   }
   function soundGateOpen() {
     playTone(440, 'sine', 0.15, 0, 0.06);
@@ -1373,7 +1553,6 @@
         return;
       } catch(e){}
     }
-    // High-fidelity SVG QR Matrix generator
     var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('width', size); svg.setAttribute('height', size); svg.setAttribute('viewBox', '0 0 25 25');
     svg.style.borderRadius = '6px';
@@ -1419,7 +1598,7 @@
     }[s] || s;
   }
 
-  // ---------------- INDIAN REGISTRATION PLATES GENERATOR ----------------
+  // ---------------- INDIAN REGISTRATION PLATES ----------------
   var INDIAN_ICE_PLATES = [
     'DL 01 AB 1234', 'HR 26 DQ 7890', 'MH 02 CB 9876', 'KA 05 MN 4521',
     'UP 16 AZ 3321', 'TS 08 EF 2468', 'GJ 01 ER 5512', 'TN 09 BK 6543',
@@ -1498,7 +1677,6 @@
       });
     });
 
-    // Seed realistic previous sessions for history
     for (var k=0; k<12; k++){
       var stype = (k%3===0)?'ev':((k%5===0)?'accessibility':'standard');
       var durMins = Math.floor(Math.random()*75 + 20);
@@ -1591,7 +1769,6 @@
         }
       }
 
-      // Trickle EV charge progress
       slots.forEach(function(s){
         if (s.type === 'ev' && s.status === 'occupied' && s.evCharge != null){
           s.evCharge = Math.min(100, s.evCharge + Math.random()*4.5);
@@ -1680,7 +1857,6 @@
       return null;
     }
 
-    // Traffic Presets
     function runRushHour(){
       var avail = slots.filter(function(s){return s.status==='available';});
       var count = Math.min(avail.length, 6);
@@ -1809,6 +1985,8 @@
     navButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.page === name); });
     document.getElementById('mobileMenu').classList.remove('open');
     window.scrollTo({top:0, behavior:'smooth'});
+    if (name === 'camera') initCctv360();
+    if (name === 'map' && activeMapMode === 'radar') initRadarMap();
   }
   navButtons.forEach(function(b){ b.addEventListener('click', function(){ goToPage(b.dataset.page); }); });
   document.getElementById('hamburger').addEventListener('click', function(){
@@ -1887,7 +2065,17 @@
   document.getElementById('modalClose').addEventListener('click', function(){ modalBackdrop.classList.remove('open'); });
   modalBackdrop.addEventListener('click', function(e){ if (e.target === modalBackdrop) modalBackdrop.classList.remove('open'); });
 
-  // ---------------- 5. UPI / QR RESERVATION FLOW ----------------
+  document.getElementById('modalViewCctvBtn').addEventListener('click', function(){
+    modalBackdrop.classList.remove('open');
+    goToPage('camera');
+    // Map slot to best camera
+    var num = parseInt(currentModalSlot.replace(/\D/g,'')) || 1;
+    var camNum = (num <= 6) ? 1 : (num <= 12 ? 2 : (num <= 18 ? 3 : 4));
+    switchCctvCamera(camNum);
+    showToast('Switched to CAM-0' + camNum + ' for Bay ' + currentModalSlot);
+  });
+
+  // ---------------- UPI / QR RESERVATION FLOW ----------------
   var ticketModalBackdrop = document.getElementById('ticketModalBackdrop');
   document.getElementById('ticketModalClose').addEventListener('click', function(){ ticketModalBackdrop.classList.remove('open'); });
   ticketModalBackdrop.addEventListener('click', function(e){ if (e.target === ticketModalBackdrop) ticketModalBackdrop.classList.remove('open'); });
@@ -1907,7 +2095,6 @@
     }
   });
 
-  // UPI App Quick Clickers
   function handleUpiClick(appName){
     soundChime();
     showToast('Redirecting to ' + appName + ' for instant UPI payment…');
@@ -1960,7 +2147,6 @@
     clearWayfindingRoute();
   });
 
-  // Countdown timer for active pass
   setInterval(function(){
     var st = ParkingDataService.getState();
     var pass = st.activeReservation;
@@ -1981,11 +2167,38 @@
     }
   }, 1000);
 
-  // ---------------- 1. 🗺️ REALISTIC 2D ARCHITECTURAL MAP WITH WAYFINDING ----------------
+  // ---------------- 1. 🗺️ LIVE MAP (2D PLAN & LIVE RADAR GPS MAP) ----------------
   var currentMapLevel = '1';
   var currentMapFilter = 'all';
+  var activeMapMode = 'floorplan'; // 'floorplan' or 'radar'
   var mapTooltip = document.getElementById('mapTooltip');
   var activeRouteSlotId = null;
+
+  var tabModeFloorPlan = document.getElementById('tabModeFloorPlan');
+  var tabModeRadar = document.getElementById('tabModeRadar');
+  var floorPlanContainer = document.getElementById('floorPlanContainer');
+  var floorPlanToolbar = document.getElementById('floorPlanToolbar');
+  var radarContainer = document.getElementById('radarContainer');
+
+  tabModeFloorPlan.addEventListener('click', function(){
+    activeMapMode = 'floorplan';
+    tabModeFloorPlan.classList.add('active');
+    tabModeRadar.classList.remove('active');
+    floorPlanContainer.style.display = 'block';
+    floorPlanToolbar.style.display = 'flex';
+    radarContainer.classList.remove('active');
+    renderMap(ParkingDataService.getState().slots);
+  });
+
+  tabModeRadar.addEventListener('click', function(){
+    activeMapMode = 'radar';
+    tabModeRadar.classList.add('active');
+    tabModeFloorPlan.classList.remove('active');
+    floorPlanContainer.style.display = 'none';
+    floorPlanToolbar.style.display = 'none';
+    radarContainer.classList.add('active');
+    initRadarMap();
+  });
 
   document.querySelectorAll('.level-tab').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -2088,6 +2301,547 @@
     row2Slots.forEach(function(s){ bottomRow.appendChild(createBayEl(s)); });
   }
 
+  // ---------------- LIVE SATELLITE RADAR & VEHICLE ENGINE ----------------
+  var radarCanvas = document.getElementById('radarCanvas');
+  var radarCtx = null;
+  var radarAngle = 0;
+  var radarVehicles = [
+    { x: 120, y: 380, speed: 1.4, path: 'approach' },
+    { x: 340, y: 220, speed: 0.8, path: 'aisle' },
+    { x: 580, y: 160, speed: 1.2, path: 'exit' },
+    { x: 80, y: 395, speed: 1.8, path: 'approach' }
+  ];
+
+  function initRadarMap(){
+    if (!radarCanvas) return;
+    radarCtx = radarCanvas.getContext('2d');
+    resizeRadarCanvas();
+    window.addEventListener('resize', resizeRadarCanvas);
+    requestAnimationFrame(renderRadarFrame);
+  }
+
+  function resizeRadarCanvas(){
+    if (!radarCanvas) return;
+    var rect = radarCanvas.parentElement.getBoundingClientRect();
+    radarCanvas.width = rect.width || 1000;
+    radarCanvas.height = 460;
+  }
+
+  function renderRadarFrame(){
+    if (!radarCtx || activeMapMode !== 'radar') return;
+    var w = radarCanvas.width, h = radarCanvas.height;
+    radarCtx.clearRect(0,0,w,h);
+
+    // Dark grid background
+    radarCtx.fillStyle = '#060B14';
+    radarCtx.fillRect(0,0,w,h);
+
+    // Grid lines
+    radarCtx.strokeStyle = 'rgba(30, 58, 100, 0.25)';
+    radarCtx.lineWidth = 1;
+    for (var x=0; x<w; x+=50){
+      radarCtx.beginPath(); radarCtx.moveTo(x,0); radarCtx.lineTo(x,h); radarCtx.stroke();
+    }
+    for (var y=0; y<h; y+=50){
+      radarCtx.beginPath(); radarCtx.moveTo(0,y); radarCtx.lineTo(w,y); radarCtx.stroke();
+    }
+
+    // Approach Highway & Flyover Roads (NH-48 & Aerocity Corridor)
+    radarCtx.strokeStyle = '#1E293B';
+    radarCtx.lineWidth = 26;
+    radarCtx.beginPath();
+    radarCtx.moveTo(0, 390); radarCtx.lineTo(w, 390); // Main Highway
+    radarCtx.stroke();
+
+    radarCtx.strokeStyle = '#334155';
+    radarCtx.lineWidth = 2;
+    radarCtx.setLineDash([8, 8]);
+    radarCtx.beginPath();
+    radarCtx.moveTo(0, 390); radarCtx.lineTo(w, 390);
+    radarCtx.stroke();
+    radarCtx.setLineDash([]);
+
+    // Facility Access Ramp into Gate 1
+    radarCtx.strokeStyle = '#1E293B';
+    radarCtx.lineWidth = 22;
+    radarCtx.beginPath();
+    radarCtx.moveTo(180, 390);
+    radarCtx.quadraticCurveTo(240, 260, 320, 230);
+    radarCtx.lineTo(550, 230); // Central Facility Loop
+    radarCtx.quadraticCurveTo(650, 230, 720, 390); // Exit Ramp to Gate 2
+    radarCtx.stroke();
+
+    // Road Labels
+    radarCtx.fillStyle = '#64748B';
+    radarCtx.font = '10px Manrope';
+    radarCtx.fillText('NH-48 EXPRESS HIGHWAY (GURUGRAM ➔ DELHI AEROCITY)', 40, 415);
+    radarCtx.fillText('GATE 1 ENTRY RAMP', 210, 290);
+    radarCtx.fillText('GATE 2 EXIT RAMP', 660, 290);
+
+    // Facility Perimeter Boundary
+    radarCtx.strokeStyle = '#2563EB';
+    radarCtx.lineWidth = 2;
+    radarCtx.fillStyle = 'rgba(15, 23, 42, 0.75)';
+    radarCtx.roundRect(280, 70, 380, 220, 14);
+    radarCtx.fill();
+    radarCtx.stroke();
+
+    radarCtx.fillStyle = '#93C5FD';
+    radarCtx.font = 'bold 12px Manrope';
+    radarCtx.fillText('SMARTPARK IGI T3 METRO FACILITY (24 BAYS)', 300, 95);
+
+    // Bay slots visual representation on radar
+    var st = ParkingDataService.getState();
+    st.slots.forEach(function(s, idx){
+      var bx = 300 + (idx % 6) * 58;
+      var by = (idx < 12) ? 120 : 180;
+      radarCtx.fillStyle = statusColor(s.status);
+      radarCtx.fillRect(bx, by, 48, 22);
+      radarCtx.fillStyle = '#fff';
+      radarCtx.font = 'bold 9px monospace';
+      radarCtx.fillText(s.id, bx + 6, by + 15);
+    });
+
+    // 4 CCTV Camera Pin Markers (Clickable in 360 viewer)
+    var cctvPins = [
+      { id:1, x:310, y:230, label:'CAM-01 (Gate 1 Entry)' },
+      { id:2, x:460, y:150, label:'CAM-02 (EV Hub)' },
+      { id:3, x:610, y:150, label:'CAM-03 (Zone B Deck)' },
+      { id:4, x:640, y:230, label:'CAM-04 (Gate 2 Exit)' }
+    ];
+    cctvPins.forEach(function(c){
+      radarCtx.beginPath();
+      radarCtx.arc(c.x, c.y, 8, 0, Math.PI*2);
+      radarCtx.fillStyle = '#4F46E5';
+      radarCtx.fill();
+      radarCtx.strokeStyle = '#818CF8';
+      radarCtx.lineWidth = 2;
+      radarCtx.stroke();
+      radarCtx.fillStyle = '#C7D2FE';
+      radarCtx.font = 'bold 9px Manrope';
+      radarCtx.fillText('📹 ' + c.label, c.x - 20, c.y - 12);
+    });
+
+    // Moving Vehicles Simulation
+    radarVehicles.forEach(function(v){
+      v.x += v.speed;
+      if (v.x > w + 20) v.x = -20;
+      radarCtx.beginPath();
+      radarCtx.arc(v.x, v.y, 5, 0, Math.PI*2);
+      radarCtx.fillStyle = '#F59E0B';
+      radarCtx.fill();
+      radarCtx.strokeStyle = '#FEF3C7';
+      radarCtx.lineWidth = 1.5;
+      radarCtx.stroke();
+    });
+
+    // 360-Degree Sonar / Radar Sweep Beam
+    radarAngle = (radarAngle + 0.02) % (Math.PI * 2);
+    var cx = 470, cy = 180, rRadius = 140;
+
+    radarCtx.save();
+    radarCtx.beginPath();
+    radarCtx.arc(cx, cy, rRadius, 0, Math.PI*2);
+    radarCtx.strokeStyle = 'rgba(14, 164, 114, 0.4)';
+    radarCtx.lineWidth = 1.5;
+    radarCtx.stroke();
+
+    // Radar beam cone
+    var grad = radarCtx.createRadialGradient(cx, cy, 5, cx, cy, rRadius);
+    grad.addColorStop(0, 'rgba(14, 164, 114, 0.3)');
+    grad.addColorStop(1, 'rgba(14, 164, 114, 0.0)');
+    radarCtx.beginPath();
+    radarCtx.moveTo(cx, cy);
+    radarCtx.arc(cx, cy, rRadius, radarAngle - 0.4, radarAngle);
+    radarCtx.closePath();
+    radarCtx.fillStyle = grad;
+    radarCtx.fill();
+
+    // Leading radar sweep line
+    radarCtx.beginPath();
+    radarCtx.moveTo(cx, cy);
+    radarCtx.lineTo(cx + Math.cos(radarAngle)*rRadius, cy + Math.sin(radarAngle)*rRadius);
+    radarCtx.strokeStyle = '#34D399';
+    radarCtx.lineWidth = 2;
+    radarCtx.stroke();
+    radarCtx.restore();
+
+    requestAnimationFrame(renderRadarFrame);
+  }
+
+  // Click on Radar Canvas to Jump to CCTV Camera
+  if (radarCanvas){
+    radarCanvas.addEventListener('click', function(e){
+      var rect = radarCanvas.getBoundingClientRect();
+      var mx = e.clientX - rect.left;
+      var my = e.clientY - rect.top;
+      var cctvPins = [
+        { id:1, x:310, y:230 },
+        { id:2, x:460, y:150 },
+        { id:3, x:610, y:150 },
+        { id:4, x:640, y:230 }
+      ];
+      cctvPins.forEach(function(c){
+        var dist = Math.hypot(mx - c.x, my - c.y);
+        if (dist < 20){
+          goToPage('camera');
+          switchCctvCamera(c.id);
+          showToast('Opened CAM-0' + c.id + ' 360° Live View from Radar Map');
+        }
+      });
+    });
+  }
+
+  // ---------------- 2. 📹 360° CCTV CAMERA ENGINE ----------------
+  var cctvCanvas = document.getElementById('cctvCanvas360');
+  var cctvCtx = null;
+  var cctvYaw = 142; // Horizontal angle (0 - 360)
+  var cctvPitch = -6; // Vertical tilt (-30 to +30)
+  var cctvZoom = 1.0;
+  var cctvActiveCam = 1;
+  var cctvVisionMode = 'normal'; // 'normal', 'night', 'thermal'
+  var cctvAutoSpin = true;
+  var isDraggingCctv = false;
+  var lastMouseX = 0, lastMouseY = 0;
+
+  var CAM_NAMES = {
+    1: 'CAM-01 [360° DOME] — GATE 1 FASTAG ENTRY',
+    2: 'CAM-02 [360° DOME] — CENTRAL AISLE & EV FAST HUB',
+    3: 'CAM-03 [360° DOME] — ZONE B & DIVYANGJAN DECK',
+    4: 'CAM-04 [360° DOME] — GATE 2 ANPR EXIT BARRIER'
+  };
+
+  function switchCctvCamera(camNum){
+    cctvActiveCam = camNum;
+    cctvYaw = (camNum === 1) ? 140 : (camNum === 2 ? 210 : (camNum === 3 ? 60 : 320));
+    document.querySelectorAll('.cctv-cam-btn').forEach(function(b){
+      b.classList.toggle('active', parseInt(b.dataset.cam) === camNum);
+    });
+    document.getElementById('cctvCamNameTag').textContent = CAM_NAMES[camNum];
+    showToast('Switched to ' + CAM_NAMES[camNum]);
+  }
+
+  document.querySelectorAll('.cctv-cam-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      switchCctvCamera(parseInt(btn.dataset.cam));
+    });
+  });
+
+  document.querySelectorAll('.cctv-mode-btn[data-mode]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.cctv-mode-btn[data-mode]').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      cctvVisionMode = btn.dataset.mode;
+      showToast('Vision Mode: ' + btn.textContent);
+    });
+  });
+
+  var cctvAutoSpinBtn = document.getElementById('cctvAutoSpinBtn');
+  cctvAutoSpinBtn.addEventListener('click', function(){
+    cctvAutoSpin = !cctvAutoSpin;
+    cctvAutoSpinBtn.classList.toggle('active', cctvAutoSpin);
+    cctvAutoSpinBtn.textContent = cctvAutoSpin ? '🔄 360° Auto-Patrol [ON]' : '⏸ 360° Patrol [OFF]';
+  });
+
+  document.getElementById('cctvZoomInBtn').addEventListener('click', function(){
+    cctvZoom = Math.min(2.5, cctvZoom + 0.25);
+  });
+  document.getElementById('cctvZoomOutBtn').addEventListener('click', function(){
+    cctvZoom = Math.max(0.75, cctvZoom - 0.25);
+  });
+
+  document.getElementById('cctvSnapshotBtn').addEventListener('click', function(){
+    if (!cctvCanvas) return;
+    soundChime();
+    var link = document.createElement('a');
+    link.download = 'smartpark_cctv_cam' + cctvActiveCam + '_' + Date.now() + '.jpg';
+    link.href = cctvCanvas.toDataURL('image/jpeg', 0.95);
+    link.click();
+    showToast('📸 4K CCTV Snapshot downloaded');
+  });
+
+  // Mouse & Touch Dragging for 360 rotation
+  var cctvWrap = document.getElementById('cctvWrap');
+  if (cctvWrap){
+    cctvWrap.addEventListener('mousedown', function(e){
+      isDraggingCctv = true;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+    });
+    window.addEventListener('mouseup', function(){ isDraggingCctv = false; });
+    window.addEventListener('mousemove', function(e){
+      if (!isDraggingCctv) return;
+      var dx = e.clientX - lastMouseX;
+      var dy = e.clientY - lastMouseY;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      cctvYaw = (cctvYaw - dx * 0.35 + 360) % 360;
+      cctvPitch = Math.max(-28, Math.min(28, cctvPitch + dy * 0.25));
+    });
+
+    cctvWrap.addEventListener('touchstart', function(e){
+      if (e.touches.length === 1){
+        isDraggingCctv = true;
+        lastMouseX = e.touches[0].clientX;
+        lastMouseY = e.touches[0].clientY;
+      }
+    });
+    window.addEventListener('touchend', function(){ isDraggingCctv = false; });
+    window.addEventListener('touchmove', function(e){
+      if (!isDraggingCctv || e.touches.length !== 1) return;
+      var dx = e.touches[0].clientX - lastMouseX;
+      var dy = e.touches[0].clientY - lastMouseY;
+      lastMouseX = e.touches[0].clientX;
+      lastMouseY = e.touches[0].clientY;
+      cctvYaw = (cctvYaw - dx * 0.45 + 360) % 360;
+      cctvPitch = Math.max(-28, Math.min(28, cctvPitch + dy * 0.3));
+    });
+
+    // Click on Hotspot tag in 360 Canvas to open slot modal
+    cctvWrap.addEventListener('click', function(e){
+      var rect = cctvCanvas.getBoundingClientRect();
+      var cx = e.clientX - rect.left;
+      var cy = e.clientY - rect.top;
+      // Check hotspots
+      if (currentCctvHotspots){
+        currentCctvHotspots.forEach(function(h){
+          if (cx >= h.x - 40 && cx <= h.x + 40 && cy >= h.y - 18 && cy <= h.y + 18){
+            var st = ParkingDataService.getState();
+            var target = st.slots.filter(function(s){return s.id===h.slotId;})[0];
+            if (target){
+              openModal(target);
+              showToast('Opened Bay ' + h.slotId + ' from 360° Camera View');
+            }
+          }
+        });
+      }
+    });
+  }
+
+  var currentCctvHotspots = [];
+
+  function initCctv360(){
+    if (!cctvCanvas) return;
+    cctvCtx = cctvCanvas.getContext('2d');
+    resizeCctvCanvas();
+    window.addEventListener('resize', resizeCctvCanvas);
+    requestAnimationFrame(renderCctvFrame);
+  }
+
+  function resizeCctvCanvas(){
+    if (!cctvCanvas) return;
+    var rect = cctvWrap.getBoundingClientRect();
+    cctvCanvas.width = rect.width || 1000;
+    cctvCanvas.height = rect.height || 500;
+  }
+
+  function renderCctvFrame(){
+    var pageCam = document.getElementById('page-camera');
+    if (!cctvCtx || !pageCam.classList.contains('active')) return;
+
+    var w = cctvCanvas.width, h = cctvCanvas.height;
+    currentCctvHotspots = [];
+
+    // Auto patrol spin
+    if (cctvAutoSpin && !isDraggingCctv){
+      cctvYaw = (cctvYaw + 0.22) % 360;
+    }
+
+    // Update telemetry text
+    var now = new Date();
+    document.getElementById('cctvTimeTag').textContent = now.toISOString().replace('T',' ').slice(0,23) + ' IST';
+    document.getElementById('cctvPtzTelemetry').textContent = 'YAW: ' + cctvYaw.toFixed(1) + '° | PITCH: ' + cctvPitch.toFixed(1) + '° | ZOOM: ' + cctvZoom.toFixed(1) + 'x';
+
+    // Clear Screen
+    cctvCtx.clearRect(0, 0, w, h);
+
+    // Apply Vision Mode Background
+    if (cctvVisionMode === 'night'){
+      cctvCtx.fillStyle = '#021208'; // IR Green background
+    } else if (cctvVisionMode === 'thermal'){
+      cctvCtx.fillStyle = '#100326'; // Thermal purple
+    } else {
+      cctvCtx.fillStyle = '#0A1220'; // Standard parking garage dark tone
+    }
+    cctvCtx.fillRect(0, 0, w, h);
+
+    // Horizon & Pitch offset
+    var horizonY = (h / 2) + (cctvPitch * 3.8);
+
+    // Ceiling Structure
+    cctvCtx.fillStyle = (cctvVisionMode==='night'?'#042211':(cctvVisionMode==='thermal'?'#280A48':'#0F192E'));
+    cctvCtx.fillRect(0, 0, w, horizonY - 40);
+
+    // Overhead Concrete Beams & Lighting Troffers
+    for (var bi = -2; bi <= 8; bi++){
+      var bx = ((bi * 160 - (cctvYaw * 2.8) % 160) + w) % w;
+      cctvCtx.fillStyle = (cctvVisionMode==='night'?'#063318':(cctvVisionMode==='thermal'?'#3D1068':'#16233F'));
+      cctvCtx.fillRect(bx, 0, 36, horizonY - 50);
+
+      // Overhead fluorescent LED light fixture
+      cctvCtx.fillStyle = (cctvVisionMode==='night'?'#86EFAC':(cctvVisionMode==='thermal'?'#FDE047':'#FFFFFF'));
+      cctvCtx.shadowColor = cctvCtx.fillStyle;
+      cctvCtx.shadowBlur = 10;
+      cctvCtx.fillRect(bx + 4, horizonY - 60, 28, 5);
+      cctvCtx.shadowBlur = 0;
+    }
+
+    // Floor Asphalt / Epoxy Deck
+    var floorGrad = cctvCtx.createLinearGradient(0, horizonY - 40, 0, h);
+    if (cctvVisionMode === 'night'){
+      floorGrad.addColorStop(0, '#062814'); floorGrad.addColorStop(1, '#021609');
+    } else if (cctvVisionMode === 'thermal'){
+      floorGrad.addColorStop(0, '#36094D'); floorGrad.addColorStop(1, '#1A042B');
+    } else {
+      floorGrad.addColorStop(0, '#10192C'); floorGrad.addColorStop(1, '#080E1A');
+    }
+    cctvCtx.fillStyle = floorGrad;
+    cctvCtx.fillRect(0, horizonY - 40, w, h - (horizonY - 40));
+
+    // Floor Driving Lane Striping (Yellow lines)
+    cctvCtx.strokeStyle = (cctvVisionMode==='night'?'#86EFAC':(cctvVisionMode==='thermal'?'#F97316':'#F59E0B'));
+    cctvCtx.lineWidth = 3;
+    cctvCtx.beginPath();
+    cctvCtx.moveTo(0, horizonY + 70);
+    cctvCtx.lineTo(w, horizonY + 70);
+    cctvCtx.stroke();
+
+    // Concrete Support Pillars (Repeated every 90 degrees around 360)
+    for (var p = 0; p < 4; p++){
+      var pAngle = (p * 90 + 30);
+      var pRel = (pAngle - cctvYaw + 540) % 360 - 180;
+      if (Math.abs(pRel) < 70){
+        var px = (pRel / 70 + 1) * 0.5 * w;
+        var pw = 75 * cctvZoom;
+        cctvCtx.fillStyle = (cctvVisionMode==='night'?'#0A3E1E':(cctvVisionMode==='thermal'?'#581C87':'#1B2844'));
+        cctvCtx.fillRect(px - pw/2, horizonY - 120, pw, h - (horizonY - 120));
+
+        // Pillar Yellow Hazard Stripes (Indian standard)
+        cctvCtx.fillStyle = (cctvVisionMode==='thermal'?'#FDE047':'#F59E0B');
+        cctvCtx.fillRect(px - pw/2, horizonY + 20, pw, 12);
+        cctvCtx.fillRect(px - pw/2, horizonY + 45, pw, 12);
+
+        // Pillar Code Badge
+        cctvCtx.fillStyle = '#fff';
+        cctvCtx.font = 'bold 11px monospace';
+        cctvCtx.fillText('PILLAR A-' + (p+1), px - 28, horizonY - 20);
+      }
+    }
+
+    // Render 360 Parking Bays & Parked Vehicles
+    var st = ParkingDataService.getState();
+    var slots = st.slots;
+
+    slots.forEach(function(s, idx){
+      // Calculate 360-degree angle position for each bay
+      var slotAngle = (idx * (360 / slots.length) + 15) % 360;
+      var relAngle = (slotAngle - cctvYaw + 540) % 360 - 180;
+
+      // Only render if within camera field of view (~75 degrees left/right)
+      if (Math.abs(relAngle) < 65){
+        var sx = (relAngle / 65 + 1) * 0.5 * w;
+        var sy = horizonY + 10;
+        var sw = 85 * cctvZoom;
+        var sh = 100 * cctvZoom;
+
+        // Bay demarcation boundary
+        cctvCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        cctvCtx.lineWidth = 2;
+        cctvCtx.strokeRect(sx - sw/2, sy, sw, sh);
+
+        // Overhead Sensor Status Light (Green / Red / Amber)
+        var ledCol = statusColor(s.status);
+        cctvCtx.beginPath();
+        cctvCtx.arc(sx, sy - 28, 6, 0, Math.PI*2);
+        cctvCtx.fillStyle = (cctvVisionMode==='night'?'#86EFAC':(cctvVisionMode==='thermal'?'#EF4444':ledCol));
+        cctvCtx.shadowColor = cctvCtx.fillStyle;
+        cctvCtx.shadowBlur = 12;
+        cctvCtx.fill();
+        cctvCtx.shadowBlur = 0;
+
+        // Vehicle drawing if occupied
+        if (s.status === 'occupied'){
+          var isEv = (s.type === 'ev');
+          cctvCtx.fillStyle = (cctvVisionMode==='night'?'#0F5128':(cctvVisionMode==='thermal'?(isEv?'#06B6D4':'#EA580C'):(isEv?'#047857':'#1E293B')));
+          cctvCtx.roundRect(sx - sw/2 + 6, sy + 15, sw - 12, sh - 25, 8);
+          cctvCtx.fill();
+
+          // Vehicle Windshield
+          cctvCtx.fillStyle = (cctvVisionMode==='thermal'?'#FDE047':'rgba(255,255,255,0.4)');
+          cctvCtx.roundRect(sx - sw/2 + 14, sy + 25, sw - 28, 20, 4);
+          cctvCtx.fill();
+
+          // ANPR AI Bounding Box
+          cctvCtx.strokeStyle = (cctvVisionMode==='thermal'?'#FACC15':'#38BDF8');
+          cctvCtx.lineWidth = 1.5;
+          cctvCtx.strokeRect(sx - sw/2 + 2, sy + 8, sw - 4, sh - 14);
+
+          // AI Plate Label
+          cctvCtx.fillStyle = '#38BDF8';
+          cctvCtx.font = 'bold 9px monospace';
+          cctvCtx.fillText('[AI-ANPR: ' + (s.plate || 'DL 01') + ']', sx - sw/2, sy + 5);
+        } else {
+          // Vacant slot ground text
+          cctvCtx.fillStyle = 'rgba(14, 164, 114, 0.4)';
+          cctvCtx.font = 'bold 12px monospace';
+          cctvCtx.fillText('OPEN', sx - 16, sy + 50);
+        }
+
+        // Floating Interactive 3D Hotspot Badge
+        var badgeY = sy - 45;
+        cctvCtx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        cctvCtx.strokeStyle = (s.status==='available'?'#0EA472':'#38BDF8');
+        cctvCtx.lineWidth = 1.5;
+        cctvCtx.roundRect(sx - 36, badgeY - 12, 72, 22, 6);
+        cctvCtx.fill();
+        cctvCtx.stroke();
+
+        cctvCtx.fillStyle = '#fff';
+        cctvCtx.font = 'bold 10px Manrope';
+        cctvCtx.fillText(s.id + (s.type==='ev'?' ⚡':(s.type==='accessibility'?' ♿':'')), sx - 28, badgeY + 3);
+
+        // Store hotspot for click detection
+        currentCctvHotspots.push({ slotId: s.id, x: sx, y: badgeY });
+      }
+    });
+
+    // Special Feature: Gate 1 FASTag Boom Barrier in 360 View (at angle ~140)
+    var gateRel = (140 - cctvYaw + 540) % 360 - 180;
+    if (Math.abs(gateRel) < 65){
+      var gx = (gateRel / 65 + 1) * 0.5 * w;
+      var gy = horizonY + 20;
+
+      // FASTag RFID Scanner Tower
+      cctvCtx.fillStyle = '#EA580C';
+      cctvCtx.fillRect(gx - 8, gy - 80, 16, 90);
+      cctvCtx.fillStyle = '#fff';
+      cctvCtx.font = 'bold 9px monospace';
+      cctvCtx.fillText('FASTag', gx - 16, gy - 90);
+
+      // Barrier Arm
+      cctvCtx.strokeStyle = '#EF4444';
+      cctvCtx.lineWidth = 5;
+      cctvCtx.beginPath();
+      cctvCtx.moveTo(gx + 8, gy - 20);
+      cctvCtx.lineTo(gx + 80, gy - 20);
+      cctvCtx.stroke();
+    }
+
+    // Vision Mode Scanlines & Phosphor Filter Effects
+    if (cctvVisionMode === 'night'){
+      cctvCtx.fillStyle = 'rgba(134, 239, 172, 0.08)';
+      cctvCtx.fillRect(0, 0, w, h);
+      // Scanlines
+      cctvCtx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+      for (var sl = 0; sl < h; sl += 4) cctvCtx.fillRect(0, sl, w, 1.5);
+    } else if (cctvVisionMode === 'thermal'){
+      cctvCtx.fillStyle = 'rgba(234, 88, 12, 0.06)';
+      cctvCtx.fillRect(0, 0, w, h);
+    }
+
+    requestAnimationFrame(renderCctvFrame);
+  }
+
   // ---------------- 1-CLICK SMART AUTO-ASSIGN WIZARD ----------------
   function smartAutoAssignNearestSlot(){
     var state = ParkingDataService.getState();
@@ -2096,7 +2850,6 @@
       alert('❌ All bays currently occupied! Please check back in a few minutes.');
       return;
     }
-    // Prefer Level 1 Zone A (closest to main entrance / elevator)
     var best = avail.sort(function(a,b){
       var scoreA = (a.level==='1'?0:10) + (a.zone==='A'?0:(a.zone==='B'?2:4)) + parseInt(a.id.slice(1));
       var scoreB = (b.level==='1'?0:10) + (b.zone==='A'?0:(b.zone==='B'?2:4)) + parseInt(b.id.slice(1));
@@ -2112,6 +2865,7 @@
   document.getElementById('dashSmartAssignBtn').addEventListener('click', smartAutoAssignNearestSlot);
   document.getElementById('findSmartAssignBtn').addEventListener('click', smartAutoAssignNearestSlot);
   document.getElementById('mapSmartAssignBtn').addEventListener('click', smartAutoAssignNearestSlot);
+  document.getElementById('camSmartAssignBtn').addEventListener('click', smartAutoAssignNearestSlot);
 
   // ---------------- 6. GST TAX INVOICE RECEIPT MODAL ----------------
   var receiptModalBackdrop = document.getElementById('receiptModalBackdrop');
@@ -2358,7 +3112,6 @@
     document.getElementById('healthUptime').textContent = '99.8%';
     document.getElementById('healthBattery').textContent = Math.round(avgBattery) + '%';
     
-    // Live MQTT JSON sample
     var randNode = sensors[Math.floor(Math.random()*sensors.length)];
     if (randNode){
       document.getElementById('mqttTime').textContent = new Date().toLocaleTimeString();
@@ -2418,7 +3171,7 @@
     if (slots.some(function(s){return s.id===current;})) simForceSlotSel.value = current;
   }
 
-  // ---------------- 6. VEHICLE HISTORY TABLE WITH RUPEE FORMATTING ----------------
+  // ---------------- 6. VEHICLE HISTORY TABLE ----------------
   var histSearch = document.getElementById('histSearch');
   var histTypeFilter = document.getElementById('histTypeFilter');
   if (histSearch) histSearch.addEventListener('input', function(){ renderHistory(ParkingDataService.getState().history); });
@@ -2498,7 +3251,7 @@
     a.click();
   });
 
-  // ---------------- AI SMART INSIGHTS (INDIA LOCALIZED) ----------------
+  // ---------------- AI SMART INSIGHTS ----------------
   function renderInsights(state){
     var el = document.getElementById('insightsList');
     if (!el) return;
