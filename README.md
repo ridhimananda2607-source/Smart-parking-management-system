@@ -1,38 +1,34 @@
-# SmartPark India (स्मार्टपार्क) — Smart City IoT Parking, FASTag & 360° CCTV Management
+# SmartPark India (स्मार्टपार्क) — Smart City IoT Parking, Google Maps & Street View 360° Management
 
-A modern, responsive, real-time dashboard, interactive live GPS radar map, and 360-degree virtual CCTV surveillance suite for an IoT-based smart parking system localized for Indian urban hubs (IGI Airport Terminal 3, DLF CyberHub Gurugram, Kempegowda T2, Phoenix Marketcity). Integrates real-time ultrasonic & infrared edge sensors, NETC FASTag automated boom barriers, UPI payments (Google Pay, PhonePe, Paytm), Indian HSRP and green EV plates, turn-by-turn wayfinding, and interactive Web Audio synthesis.
+A modern, responsive, real-time dashboard featuring **Google Maps Navigation** and an authentic **Google Street View 360° Panorama Suite** for an IoT-based smart parking system localized for Indian urban hubs (IGI Airport Terminal 3, DLF CyberHub Gurugram, Kempegowda T2, Phoenix Marketcity). Integrates real-time ultrasonic & infrared edge sensors, NETC FASTag automated boom barriers, UPI payments (Google Pay, PhonePe, Paytm), Indian HSRP and green EV plates, turn-by-turn wayfinding, and interactive Web Audio synthesis.
 
 🔗 **Live Web Demo:** [https://ridhimananda2607-source.github.io/Smart-parking-management-system/](https://ridhimananda2607-source.github.io/Smart-parking-management-system/)  
 *(Or open `parking.html` / `index.html` directly in any web browser)*
 
 ---
 
-## 🗺️ Live GPS Facility & Approach Radar Map
-Navigate to the **🗺️ Live Map** tab for an interactive aerial radar view of the parking facility along the IGI Airport T3 / Aerocity / NH-48 Corridor:
-- **Live Vehicle Traffic Simulation:** Animated vehicles moving along approach roads, passing through the Gate 1 FASTag barrier, and navigating to parking bays.
-- **360° Rotating Radar Sweep:** Rotating sonar/radar beam scanning incoming and outgoing traffic with dynamic blip echoes.
-- **Facility Architecture:** Top-down architectural view showing Entry/Exit gates, EV charging bays, Divyangjan ramps, VIP bays, and pedestrian corridors.
-- **Interactive CCTV Hotspot Pins:** Clickable camera pins (CAM-01 through CAM-04) that let you jump directly into that camera's live 360° view.
-- **Quick Controls:** Zoom in/out, re-center, toggle radar sweep, and simulate traffic spawns on demand.
+## 🗺️ Google Maps Navigation & Corridor View (`🗺️ Google Maps` tab)
+Navigate to the **🗺️ Google Maps** tab for an authentic Google Maps experience centered on the IGI Airport T3 / Aerocity / NH-48 Corridor (28.5562° N, 77.1000° E):
+- **Google Maps Search Bar:** Full Google Maps search header with search suggestions, POI chips (IGI Terminal 3, Gate 1 FASTag, 22kW EV Hub, Divyangjan Deck, Aerocity Metro), clear button, and voice search simulation.
+- **Map & Satellite Layer Switcher:** Toggle between **🗺️ Map (Roadmap)** and **🛰️ Satellite (Google Earth Aerial)** modes.
+- **🚦 Live Google Traffic Layer:** Dynamic green, yellow, and red traffic velocity lines along approach roads with real speed metrics (54 km/h flowing on NH-48, 15 km/h at toll queue).
+- **Official Google POI Markers:** Red pin for SmartPark Multi-Level Car Parking (4.8 ★), Terminal 3 airport terminal badge, Delhi Metro Airport Express station, and FASTag boom barrier entrance.
+- **1-Click Google Directions:** Direct navigation integration opening official Google Maps turn-by-turn directions.
+- **Live Moving GPS Vehicles:** Animated cars navigating down the highway, turning onto the approach ramp, and entering Gate 1.
+- **Facility 2D Bay Floor Plan Toggle:** Switch instantly between geospatial Google Maps view and internal bay floor plans.
 
 ---
 
-## 📹 360° Virtual CCTV Surveillance Suite
-Navigate to the **📹 360° Camera** tab for an immersive virtual CCTV monitoring experience:
-- **Interactive 360° Pan & Tilt:** Drag to look around (full 360° yaw, ±28° pitch), tilt controls, and zoom (0.75× to 2.5×).
-- **Auto-Patrol Mode:** Continuous 360° surveillance sweep around the selected zone.
-- **Multi-Camera Feeds:**
-  - **CAM-01:** Gate 1 — FASTag Entry Boom Barrier (RFID 865 MHz)
-  - **CAM-02:** Central Aisle — 22kW Bharat AC001 EV Fast Chargers
-  - **CAM-03:** Zone B Deck — Divyangjan Ramp & Standard Bays
-  - **CAM-04:** Gate 2 — Exit Barrier & NETC FASTag Auto-Debit
-- **3 Vision Modes:**
-  - **4K UltraHD Color:** Crisp daytime clarity with optical anti-glare.
-  - **Night Vision (IR):** Infrared night vision with phosphor green tint and scanning raster lines.
-  - **FLIR Thermal Heatmap:** False-color thermal view highlighting engine heat signatures and EV battery cooling.
-- **AI-ANPR (Automatic Number Plate Recognition):** Real-time bounding boxes detecting Indian HSRP & EV plates (`DL 01 AB 1234`, `DL 3C EV 2024`, etc.) with AI confidence ratings.
-- **3D Hotspot Tags:** Floating clickable bay markers in 360° space — click any bay tag to view sensor status or book instantly!
-- **Snapshot Capture:** One-click CCTV snapshot button with instant confirmation.
+## 📹 Google Street View 360° Panorama Suite (`📹 Street View 360°` tab)
+Navigate to the **📹 Street View 360°** tab for an immersive Google Street View walkthrough:
+- **Full 360° Spherical Photosphere:** Drag in any direction (360° yaw, vertical pitch from ground to ceiling), and smooth mouse wheel / pinch zoom.
+- **Google Street View Top Card:** Verified address banner: *SmartPark Terminal 3 — Multi-Level Car Parking, New Delhi, Delhi 110037 • Street View Oct 2026*.
+- **Interactive Rotating Compass Rose:** Top-right Google Street View compass dial with red North needle. Rotates in real time as the camera pans; clicking the compass snaps the view back to True North (0°)!
+- **Ground Navigation Chevrons (Step Forward Arrows):** 3D elliptical navigation discs projected on the asphalt floor with directional chevrons (`^`). Hovering displays a Street View address pill, and clicking smoothly steps forward to that location with a Street View camera warp effect!
+- **Split Minimap with Rotating Flashlight Cone:** Bottom-left collapsible mini Google Map showing the yellow **Pegman** figure and a real-time rotating flashlight beam showing the exact field of view!
+- **3D AR Hotspots on Parking Bays:** Floating markers in 360 space showing bay status (🟢 Vacant / 🔴 Occupied), vehicle details, and 1-click bay reservation dialog.
+- **ANPR License Plate Recognition:** Tracks Indian HSRP private plates (`DL 01 AB 1234`) and green EV plates (`DL 3C EV 2024`).
+- **Vision Modes & Snapshot:** Daylight 4K, Night IR, FLIR Thermal, and instant photo capture.
 
 ---
 
@@ -74,7 +70,7 @@ Navigate to the **📹 360° Camera** tab for an immersive virtual CCTV monitori
 ## 🛠️ Tech Stack
 
 - **Vanilla HTML5, CSS3, & Modern JavaScript (ES6+):** Zero build steps, zero npm dependencies to compile.
-- **HTML5 Canvas:** Custom-built rendering engines for the 360° CCTV camera panorama and the Live GPS Radar Map.
+- **Google Maps & Street View 360 Engines:** Custom-built canvas projection engines with Google Maps styling, Street View compass, ground chevrons, and Pegman minimap.
 - **Chart.js:** Responsive occupancy velocity charts, doughnut distributions, and peak-hour histograms.
 - **Web Audio API:** Lightweight, synthesized zero-asset audio haptics.
 - **Integrated QR Engine:** Multi-layer QR generator with built-in SVG matrix fallback for 100% offline reliability.

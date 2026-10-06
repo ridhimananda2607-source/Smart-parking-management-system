@@ -369,68 +369,195 @@
     box-shadow:0 12px 28px rgba(0,0,0,.65); max-width:240px;
   }
 
-  /* Live Radar GPS Facility Map */
-  .radar-map-box{
-    position:relative; width:100%; border-radius:14px; overflow:hidden; background:#060C18;
-    border:1px solid #1E293B; display:none;
+  /* ---------- 1. 🗺️ GOOGLE MAPS NAVIGATION & CORRIDOR ---------- */
+  .gmaps-box{
+    position:relative; width:100%; border-radius:16px; overflow:hidden; background:#E5E3DF;
+    border:1px solid #CBD5E1; box-shadow:0 12px 32px rgba(15,23,42,0.15); display:none; min-height:560px;
   }
-  .radar-map-box.active{display:block;}
-  #radarCanvas{display:block; width:100%; height:460px; background:#070E1A;}
-  
-  .radar-hud-bar{
-    position:absolute; top:14px; left:14px; right:14px; display:flex; justify-content:space-between;
-    align-items:center; background:rgba(11,18,32,0.85); backdrop-filter:blur(6px); border:1px solid #233458;
-    border-radius:10px; padding:8px 14px; font-size:12px; color:#93C5FD;
+  .gmaps-box.active{display:block;}
+  #gmapsCanvas{display:block; width:100%; height:560px; background:#E5E3DF; cursor:crosshair;}
+
+  /* Floating Google Maps Search Header */
+  .gmaps-search-float{
+    position:absolute; top:16px; left:16px; z-index:25; max-width:420px; width:calc(100% - 32px);
+  }
+  .gmaps-search-card{
+    background:#FFFFFF; border-radius:10px; box-shadow:0 3px 10px rgba(0,0,0,0.22);
+    display:flex; align-items:center; padding:5px 12px; gap:8px; border:1px solid rgba(0,0,0,0.08);
+  }
+  .gmaps-logo-badge{
+    display:flex; align-items:center; gap:4px; font-weight:800; font-size:13px; color:#1A73E8;
+  }
+  .gmaps-search-input{
+    flex:1; border:none; outline:none; font-size:13.5px; font-family:inherit; color:#202124; background:transparent;
+  }
+  .gmaps-icon-btn{
+    background:transparent; border:none; color:#5F6368; padding:6px; border-radius:50%;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s;
+  }
+  .gmaps-icon-btn:hover{background:#F1F3F4; color:#202124;}
+  .gmaps-dir-btn{
+    background:#1A73E8; color:#fff; border:none; border-radius:8px; padding:6px 12px;
+    font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;
+  }
+  .gmaps-dir-btn:hover{background:#1557B0;}
+
+  /* Quick Suggestion Chips below Search */
+  .gmaps-chips{
+    display:flex; gap:6px; margin-top:8px; overflow-x:auto; padding-bottom:4px;
+  }
+  .gmaps-chip{
+    background:rgba(255,255,255,0.95); backdrop-filter:blur(6px); border:1px solid rgba(0,0,0,0.1);
+    color:#3C4043; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:100px;
+    white-space:nowrap; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.12); transition:all .15s;
+  }
+  .gmaps-chip:hover{background:#1A73E8; color:#fff; border-color:#1A73E8;}
+
+  /* Google Maps Floating Place Card */
+  .gmaps-place-card{
+    position:absolute; bottom:18px; left:16px; z-index:20; background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(10px); border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,0.22);
+    padding:16px; max-width:340px; width:calc(100% - 32px); border:1px solid rgba(0,0,0,0.06);
+  }
+  .gmaps-place-title{font-size:15px; font-weight:800; color:#202124; margin:0 0 4px;}
+  .gmaps-place-rating{font-size:12px; color:#E37400; font-weight:700; display:flex; align-items:center; gap:4px; margin-bottom:6px;}
+  .gmaps-place-meta{font-size:12px; color:#5F6368; line-height:1.45; margin-bottom:12px;}
+  .gmaps-place-actions{display:flex; gap:8px;}
+  .gmaps-place-actions button{
+    flex:1; padding:7px 10px; border-radius:8px; font-size:11.5px; font-weight:700; cursor:pointer;
   }
 
-  /* ---------- 2. 📹 360° CCTV CAMERA SURVEILLANCE SUITE ---------- */
-  .cctv-shell{
-    background:#060A14; border:1px solid #1E293B; border-radius:20px; overflow:hidden;
+  /* Google Maps Top-Right Layer Switcher */
+  .gmaps-layer-controls{
+    position:absolute; top:16px; right:16px; z-index:25; display:flex; flex-direction:column; gap:6px;
+  }
+  .gmaps-layer-btn{
+    background:#FFFFFF; border:1px solid rgba(0,0,0,0.12); border-radius:8px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.15); padding:6px 12px; font-size:12px; font-weight:700;
+    color:#3C4043; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all .15s;
+  }
+  .gmaps-layer-btn.active{background:#1A73E8; color:#FFFFFF; border-color:#1A73E8;}
+
+  /* Google Maps Bottom-Right Zoom & Pegman Controls */
+  .gmaps-fab-controls{
+    position:absolute; bottom:20px; right:16px; z-index:25; display:flex; flex-direction:column;
+    background:#FFFFFF; border-radius:8px; box-shadow:0 3px 10px rgba(0,0,0,0.2); overflow:hidden;
+    border:1px solid rgba(0,0,0,0.1);
+  }
+  .gmaps-fab-btn{
+    background:#FFFFFF; border:none; width:40px; height:40px; display:flex; align-items:center;
+    justify-content:center; color:#5F6368; font-size:18px; cursor:pointer; transition:background .15s;
+    border-bottom:1px solid #E8EAED;
+  }
+  .gmaps-fab-btn:last-child{border-bottom:none;}
+  .gmaps-fab-btn:hover{background:#F8F9FA; color:#202124;}
+  .gmaps-pegman-btn{color:#F9AB00; font-size:20px;}
+
+  /* ---------- 2. 📹 GOOGLE STREET VIEW 360° PANORAMA SUITE ---------- */
+  .streetview-shell{
+    background:#0B101B; border:1px solid #1E293B; border-radius:20px; overflow:hidden;
     position:relative; box-shadow:0 25px 60px -15px rgba(0,0,0,0.7);
   }
-  .cctv-viewport-wrap{position:relative; width:100%; height:500px; background:#000; overflow:hidden; cursor:grab;}
-  .cctv-viewport-wrap:active{cursor:grabbing;}
-  #cctvCanvas360{display:block; width:100%; height:100%;}
-
-  /* CCTV Surveillance HUD Overlay */
-  .cctv-hud{
-    position:absolute; inset:0; pointer-events:none; padding:16px 20px;
-    display:flex; flex-direction:column; justify-content:space-between;
+  .streetview-viewport-wrap{
+    position:relative; width:100%; height:540px; background:#000; overflow:hidden; cursor:grab; user-select:none;
   }
-  .cctv-hud-top{display:flex; justify-content:space-between; align-items:flex-start;}
-  .cctv-rec-badge{
-    display:inline-flex; align-items:center; gap:6px; background:rgba(0,0,0,0.65);
-    border:1px solid rgba(239,68,68,0.5); padding:4px 10px; border-radius:6px;
-    color:#EF4444; font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:800;
-  }
-  .cctv-rec-dot{width:8px; height:8px; border-radius:50%; background:#EF4444; animation:cctvBlink 1s infinite;}
-  @keyframes cctvBlink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+  .streetview-viewport-wrap:active{cursor:grabbing;}
+  #streetviewCanvas360{display:block; width:100%; height:100%;}
 
-  .cctv-hud-bottom{display:flex; justify-content:space-between; align-items:flex-end; font-family:'JetBrains Mono',monospace; font-size:11px; color:#94A3B8;}
-  .cctv-crosshair{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:32px; height:32px;
-    border:1px dashed rgba(255,255,255,0.3); border-radius:50%; pointer-events:none;
+  /* Google Street View Top Header Card */
+  .streetview-top-card{
+    position:absolute; top:16px; left:16px; z-index:25; background:rgba(0,0,0,0.75);
+    backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.18); border-radius:12px;
+    padding:10px 16px; display:flex; align-items:center; gap:12px; color:#FFFFFF; max-width:440px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.5);
   }
-  .cctv-crosshair::before{content:""; position:absolute; top:50%; left:0; width:100%; height:1px; background:rgba(255,255,255,0.3);}
-  .cctv-crosshair::after{content:""; position:absolute; left:50%; top:0; width:1px; height:100%; background:rgba(255,255,255,0.3);}
+  .streetview-back-btn{
+    background:rgba(255,255,255,0.12); border:none; width:34px; height:34px; border-radius:50%;
+    color:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px;
+    transition:background .15s;
+  }
+  .streetview-back-btn:hover{background:rgba(255,255,255,0.25);}
+  .streetview-title{font-size:14px; font-weight:800; color:#FFFFFF; line-height:1.2;}
+  .streetview-subtitle{font-size:11px; color:#94A3B8; margin-top:2px; display:flex; align-items:center; gap:6px;}
+  .streetview-badge{
+    background:#F9AB00; color:#202124; font-size:9.5px; font-weight:800; padding:1px 6px;
+    border-radius:4px; text-transform:uppercase; letter-spacing:0.04em;
+  }
 
-  /* CCTV Controls Toolbar */
-  .cctv-dock{
-    background:#0A111E; border-top:1px solid #1E293B; padding:14px 20px;
+  /* Google Street View Top-Right Compass Dial */
+  .streetview-compass{
+    position:absolute; top:18px; right:18px; z-index:25; width:52px; height:52px; border-radius:50%;
+    background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); border:2px solid rgba(255,255,255,0.25);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.4);
+    transition:transform .2s ease, border-color .15s;
+  }
+  .streetview-compass:hover{border-color:#F9AB00; transform:scale(1.08);}
+  .streetview-compass-needle{
+    position:relative; width:4px; height:34px; transition:transform .1s linear;
+  }
+  .needle-north{
+    position:absolute; top:0; left:0; width:100%; height:50%; background:#EA4335; border-radius:2px 2px 0 0;
+  }
+  .needle-north::after{
+    content:"N"; position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+    font-size:8px; font-weight:900; color:#EA4335; font-family:sans-serif;
+  }
+  .needle-south{
+    position:absolute; bottom:0; left:0; width:100%; height:50%; background:#CBD5E1; border-radius:0 0 2px 2px;
+  }
+
+  /* Google Street View Collapsible Split Minimap (Bottom-Left) */
+  .streetview-minimap{
+    position:absolute; bottom:18px; left:18px; z-index:25; width:220px; height:150px;
+    background:#1E293B; border-radius:12px; overflow:hidden; border:2px solid rgba(255,255,255,0.3);
+    box-shadow:0 12px 30px rgba(0,0,0,0.6); transition:all .25s ease;
+  }
+  .streetview-minimap.expanded{
+    width:360px; height:240px;
+  }
+  .streetview-minimap.hidden{
+    width:42px; height:42px; border-radius:50%; overflow:hidden;
+  }
+  #streetviewMiniCanvas{width:100%; height:100%; display:block; background:#0B1220;}
+  .streetview-minimap-toggle{
+    position:absolute; top:6px; right:6px; z-index:30; background:rgba(0,0,0,0.6);
+    border:none; color:#fff; width:24px; height:24px; border-radius:50%; font-size:11px;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+
+  /* Google Street View Bottom-Right Action Controls */
+  .streetview-hud-controls{
+    position:absolute; bottom:18px; right:18px; z-index:25; display:flex; flex-direction:column; gap:6px;
+  }
+  .streetview-hud-btn{
+    background:rgba(0,0,0,0.72); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,0.22);
+    color:#FFFFFF; width:40px; height:40px; border-radius:8px; display:flex; align-items:center;
+    justify-content:center; font-size:16px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.35);
+    transition:all .15s;
+  }
+  .streetview-hud-btn:hover{background:rgba(255,255,255,0.2); transform:scale(1.05);}
+  .streetview-hud-btn.active{background:#F9AB00; color:#202124; border-color:#F9AB00;}
+
+  /* Street View Dock Bar */
+  .streetview-dock{
+    background:#070C16; border-top:1px solid #1E293B; padding:12px 20px;
     display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
   }
-  .cctv-cam-btns{display:flex; gap:6px; flex-wrap:wrap;}
-  .cctv-cam-btn{
-    background:#162035; border:1px solid #233458; color:#93C5FD; font-size:12px; font-weight:700;
-    padding:6px 12px; border-radius:8px; cursor:pointer; transition:all .15s;
+  .streetview-pano-selector{display:flex; gap:6px; flex-wrap:wrap;}
+  .streetview-pano-btn{
+    background:#162035; border:1px solid #233458; color:#CBD5E1; font-size:12px; font-weight:700;
+    padding:7px 14px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px;
+    transition:all .15s;
   }
-  .cctv-cam-btn.active{background:#4F46E5; color:#fff; border-color:#4F46E5;}
-  .cctv-mode-btns{display:flex; gap:6px;}
-  .cctv-mode-btn{
-    background:#162035; border:1px solid #233458; color:#CBD5E1; font-size:11px; font-weight:700;
+  .streetview-pano-btn:hover{background:#233557; color:#fff;}
+  .streetview-pano-btn.active{background:#1A73E8; color:#fff; border-color:#1A73E8;}
+
+  .streetview-mode-tabs{display:flex; gap:6px;}
+  .streetview-mode-tab{
+    background:#162035; border:1px solid #233458; color:#94A3B8; font-size:11.5px; font-weight:700;
     padding:5px 10px; border-radius:6px; cursor:pointer;
   }
-  .cctv-mode-btn.active{background:var(--available); color:#04231A; border-color:var(--available);}
+  .streetview-mode-tab.active{background:var(--available); color:#04231A; border-color:var(--available);}
 
   /* ---------- IOT ARCHITECTURE ANIMATION ---------- */
   .arch-card{background:var(--navy-900);border-radius:16px;padding:22px;margin-bottom:18px;position:relative;}
@@ -614,8 +741,8 @@
       <button data-page="landing" class="active">Home</button>
       <button data-page="find">Find Parking</button>
       <button data-page="dashboard">Live Dashboard</button>
-      <button data-page="map">🗺️ Live Map</button>
-      <button data-page="camera">📹 360° Camera</button>
+      <button data-page="map">🗺️ Google Maps</button>
+      <button data-page="camera">📹 Street View 360°</button>
       <button data-page="sensors">🔌 Sensors</button>
       <button data-page="analytics">📊 Analytics</button>
       <button data-page="history">🚗 History</button>
@@ -644,8 +771,8 @@
     <button data-page="landing" class="active">Home</button>
     <button data-page="find">Find Parking</button>
     <button data-page="dashboard">Live Dashboard</button>
-    <button data-page="map">🗺️ Live GPS & 2D Map</button>
-    <button data-page="camera">📹 360° Virtual Camera</button>
+    <button data-page="map">🗺️ Google Maps Navigation</button>
+    <button data-page="camera">📹 Google Street View 360°</button>
     <button data-page="sensors">Sensors & IoT</button>
     <button data-page="analytics">Analytics & Heatmap</button>
     <button data-page="history">Vehicle History</button>
@@ -665,11 +792,11 @@
           <span>📍 IGI Airport T3 & DLF CyberHub Smart Metro Facility, New Delhi</span>
         </div>
         <div class="eyebrow"><span class="swatch" style="background:var(--available);"></span> India's First FASTag-Integrated IoT Parking System</div>
-        <h1>Hassle-free parking with live IoT, 360° CCTV & automated FASTag</h1>
-        <p class="sub">Overhead ultrasonic & infrared edge sensors detect real-time bay occupancy. Inspect the lot with 360° virtual dome cameras, view live approach radar, pay via FASTag or UPI, and recharge your EV at 22kW fast bays.</p>
+        <h1>Hassle-free parking with Google Maps, Street View 360° & FASTag</h1>
+        <p class="sub">Overhead ultrasonic & infrared edge sensors detect real-time bay occupancy. Explore the facility with immersive Google Street View 360° panoramas, live Google Maps satellite navigation, automated FASTag barriers, and 22kW EV fast charging.</p>
         <div class="hero-ctas">
-          <button class="btn-primary" data-page="map">🗺️ Open Live GPS & 2D Map</button>
-          <button class="btn-cctv" data-page="camera">📹 360° Virtual CCTV Tour</button>
+          <button class="btn-primary" data-page="map">🗺️ Explore Google Maps</button>
+          <button class="btn-cctv" data-page="camera">📹 Google Street View 360°</button>
           <button class="btn-fastag" id="heroSmartAssignBtn">⚡ 1-Click Best Slot (Smart Assign)</button>
         </div>
       </div>
@@ -803,19 +930,88 @@
   </div>
 </section>
 
-<!-- ===================== 1. 🗺️ LIVE MAP (2D PLAN & LIVE GPS RADAR) ===================== -->
+<!-- ===================== 1. 🗺️ GOOGLE MAPS NAVIGATION & 2D BAY PLAN ===================== -->
 <section class="page" id="page-map">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>🗺️ Live Map & Facility Navigation</h2><p>Toggle between real-time 2D architectural bay layout and live GPS approach radar</p></div>
+      <div>
+        <h2>🗺️ Google Maps Navigation & Facility Layout</h2>
+        <p>Explore real-time Google Maps satellite & traffic corridor, approach roads, and architectural bay floor plan</p>
+      </div>
       <div class="map-mode-tabs">
-        <button class="map-mode-tab active" id="tabModeFloorPlan">🏢 2D Bay Floor Plan</button>
-        <button class="map-mode-tab" id="tabModeRadar">🛰️ Live Traffic & Radar GPS Map</button>
+        <button class="map-mode-tab active" id="tabModeGmaps">🌐 Google Maps (Live View)</button>
+        <button class="map-mode-tab" id="tabModeFloorPlan">🏢 Facility 2D Floor Plan</button>
       </div>
     </div>
 
+    <!-- Google Maps Interactive View Container -->
+    <div id="gmapsContainer" class="gmaps-box active" style="margin-top:16px;">
+      <!-- Floating Google Maps Search Bar & Suggestions -->
+      <div class="gmaps-search-float">
+        <div class="gmaps-search-card">
+          <div class="gmaps-logo-badge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#EA4335"/><circle cx="12" cy="9" r="2.5" fill="#FFFFFF"/></svg>
+            <span style="color:#202124;">Google</span><span style="color:#1A73E8;margin-left:1px;">Maps</span>
+          </div>
+          <input type="text" id="gmapsSearchInput" class="gmaps-search-input" value="SmartPark IGI Terminal 3, New Delhi" placeholder="Search Google Maps...">
+          <button class="gmaps-icon-btn" id="gmapsClearSearchBtn" title="Clear search">✕</button>
+          <button class="gmaps-icon-btn" id="gmapsVoiceSearchBtn" title="Voice Search">🎙️</button>
+          <button class="gmaps-dir-btn" id="gmapsOpenNavBtn" title="Navigate in Google Maps">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Directions
+          </button>
+        </div>
+        <!-- Quick Chips -->
+        <div class="gmaps-chips">
+          <button class="gmaps-chip active" data-poi="t3">📍 IGI Terminal 3 Parking</button>
+          <button class="gmaps-chip" data-poi="gate1">🏷️ Gate 1 FASTag Boom Barrier</button>
+          <button class="gmaps-chip" data-poi="evhub">⚡ 22kW EV Fast Hub</button>
+          <button class="gmaps-chip" data-poi="divyang">♿ Divyangjan Deck B</button>
+          <button class="gmaps-chip" data-poi="aerocity">✈️ Aerocity Metro Corridor</button>
+        </div>
+      </div>
+
+      <!-- Google Maps Layer Switcher (Top-Right) -->
+      <div class="gmaps-layer-controls">
+        <button class="gmaps-layer-btn active" id="gmapsToggleMapBtn">🗺️ Map</button>
+        <button class="gmaps-layer-btn" id="gmapsToggleSatBtn">🛰️ Satellite</button>
+        <button class="gmaps-layer-btn active" id="gmapsToggleTrafficBtn">🚦 Traffic: Live</button>
+      </div>
+
+      <!-- Floating Google Maps Place Card (Bottom-Left) -->
+      <div class="gmaps-place-card">
+        <div class="gmaps-place-title">SmartPark Multi-Level Car Parking (IGI T3)</div>
+        <div class="gmaps-place-rating">
+          <span>4.8</span>
+          <span>★★★★★</span>
+          <span style="color:#5F6368;font-weight:500;">(2,419 reviews) · Car park</span>
+        </div>
+        <div class="gmaps-place-meta">
+          <div>📍 Terminal 3, Indira Gandhi Intl Airport, New Delhi 110037</div>
+          <div>🕒 <b>Open 24 hours</b> · ₹40 / hour · NETC FASTag Accepted</div>
+          <div style="color:#059669; font-weight:700; margin-top:2px;" id="gmapsLiveBaysMeta">🟢 12 Bays Vacant · 22kW Fast Chargers Ready</div>
+        </div>
+        <div class="gmaps-place-actions">
+          <button style="background:#1A73E8;color:#fff;border:none;" id="gmapsCardDirBtn">🧭 Directions</button>
+          <button style="background:#F1F3F4;color:#1A73E8;border:1px solid #DADCE0;" data-page="camera">🚶 Street View</button>
+          <button style="background:#F1F3F4;color:#3C4043;border:1px solid #DADCE0;" id="gmapsCardShareBtn">🔗 Share</button>
+        </div>
+      </div>
+
+      <!-- Floating Google Maps Bottom-Right Controls -->
+      <div class="gmaps-fab-controls">
+        <button class="gmaps-fab-btn" id="gmapsZoomInBtn" title="Zoom in">+</button>
+        <button class="gmaps-fab-btn" id="gmapsZoomOutBtn" title="Zoom out">−</button>
+        <button class="gmaps-fab-btn gmaps-pegman-btn" id="gmapsPegmanBtn" title="Open Google Street View (360°)" data-page="camera">🚶</button>
+        <button class="gmaps-fab-btn" id="gmapsRecenterBtn" title="My Location (Recenter)">◎</button>
+      </div>
+
+      <!-- Google Maps Canvas Engine -->
+      <canvas id="gmapsCanvas"></canvas>
+    </div>
+
     <!-- Toolbar for Floor Plan View -->
-    <div id="floorPlanToolbar" class="toolbar" style="margin-top:16px;">
+    <div id="floorPlanToolbar" class="toolbar" style="margin-top:16px; display:none;">
       <div class="level-tabs" id="levelTabs" style="display:flex;gap:4px;background:#EEF1F6;padding:3px;border-radius:9px;">
         <button class="level-tab active" data-level="1">Level 1 (Ground Deck)</button>
         <button class="level-tab" data-level="2">Level 2 (Upper Deck)</button>
@@ -828,7 +1024,7 @@
         <button class="map-pill" data-filter="occupied">🔴 Occupied</button>
       </div>
       <button class="quick-sim-btn" id="mapSmartAssignBtn" style="margin-left:auto;padding:6px 12px;background:#EA580C;color:#fff;border-color:#EA580C;">⚡ Smart Auto-Assign Nearest Slot</button>
-      <button class="quick-sim-btn" data-page="camera" style="padding:6px 12px;background:#4F46E5;color:#fff;border-color:#4F46E5;">📹 360° Camera View</button>
+      <button class="quick-sim-btn" data-page="camera" style="padding:6px 12px;background:#1A73E8;color:#fff;border-color:#1A73E8;">📹 Street View 360°</button>
     </div>
 
     <!-- Live Wayfinding Guidance Route Banner -->
@@ -844,7 +1040,7 @@
     </div>
 
     <!-- Floor Plan 2D Container -->
-    <div id="floorPlanContainer" class="map-wrapper" style="margin-top:12px;">
+    <div id="floorPlanContainer" class="map-wrapper" style="margin-top:12px; display:none;">
       <div class="map-deck-head">
         <div class="map-deck-title" id="mapDeckTitle">
           <span>🏢 Facility Floor Plan — Level 1</span>
@@ -903,101 +1099,92 @@
         </div>
       </div>
     </div>
-
-    <!-- Live Traffic & Radar GPS Map Container -->
-    <div id="radarContainer" class="radar-map-box" style="margin-top:14px;">
-      <div class="radar-hud-bar">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="pulse-dot"></span>
-          <b>LIVE GPS FACILITY RADAR:</b> IGI Airport T3 & Aerocity Flyover (28.5562° N, 77.1000° E)
-        </div>
-        <div style="display:flex; gap:12px;">
-          <span>Approach Traffic: <b style="color:#86EFAC;">Flowing (48 km/h)</b></span>
-          <span>Gate 1 Queue: <b style="color:#FDE047;">1 Vehicle (~15s)</b></span>
-        </div>
-      </div>
-      <canvas id="radarCanvas"></canvas>
-      <div style="background:#0F172A; padding:10px 16px; border-top:1px solid #1E293B; display:flex; justify-content:space-between; align-items:center; font-size:12px; color:#94A3B8;">
-        <span>💡 Green dots = Moving approach vehicles · Blue circles = CCTV 360° Camera locations (click to view) · Rotating line = IoT distance radar sweep</span>
-        <button class="quick-sim-btn" data-page="camera" style="background:#4F46E5;color:#fff;border-color:#4F46E5;">📹 Open Selected 360° Camera</button>
-      </div>
-    </div>
   </div>
 </section>
 
 <!-- Floating Map Tooltip -->
 <div class="map-tooltip" id="mapTooltip"></div>
 
-<!-- ===================== 2. 📹 360° CAMERA SURVEILLANCE SUITE ===================== -->
+<!-- ===================== 2. 📹 GOOGLE STREET VIEW 360° PANORAMA SUITE ===================== -->
 <section class="page" id="page-camera">
   <div class="wrap page-body">
     <div class="section-head">
       <div>
-        <h2>📹 360° Virtual CCTV Surveillance Camera</h2>
-        <p>Interactive panoramic dome camera view of parking bays, FASTag boom barriers, and EV fast chargers</p>
+        <h2>📹 Google Street View 360° Panorama</h2>
+        <p>Immersive Google Street View spherical walkthrough with interactive ground navigation arrows, rotating compass & split minimap</p>
       </div>
       <div style="display:flex; gap:8px;">
-        <button class="quick-sim-btn" data-page="map" style="padding:8px 14px;background:var(--navy-900);color:#fff;">🗺️ View on Live Map</button>
-        <button class="quick-sim-btn" id="cctvSnapshotBtn" style="padding:8px 14px;background:#047857;color:#fff;border-color:#047857;">📸 Capture 4K Snapshot</button>
+        <button class="quick-sim-btn" data-page="map" style="padding:8px 14px;background:#1A73E8;color:#fff;border-color:#1A73E8;">🗺️ Open in Google Maps</button>
+        <button class="quick-sim-btn" id="streetviewSnapshotBtn" style="padding:8px 14px;background:#047857;color:#fff;border-color:#047857;">📸 Save Street View Photo</button>
       </div>
     </div>
 
-    <!-- 360 Camera Shell -->
-    <div class="cctv-shell" style="margin-top:16px;">
-      <div class="cctv-viewport-wrap" id="cctvWrap">
-        <canvas id="cctvCanvas360"></canvas>
-        <div class="cctv-crosshair"></div>
+    <!-- Google Street View Stage -->
+    <div class="streetview-shell" style="margin-top:16px;">
+      <div class="streetview-viewport-wrap" id="streetviewWrap">
+        <!-- 360 Canvas -->
+        <canvas id="streetviewCanvas360"></canvas>
 
-        <!-- CCTV HUD Overlay -->
-        <div class="cctv-hud">
-          <div class="cctv-hud-top">
-            <div class="cctv-rec-badge">
-              <span class="cctv-rec-dot"></span>
-              <span id="cctvRecText">● LIVE REC [00:48:19]</span>
-            </div>
-            <div style="text-align:right; color:#E2E8F0; font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(0,0,0,0.6); padding:4px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.15);">
-              <div id="cctvCamNameTag" style="font-weight:800; color:#38BDF8;">CAM-01 [360° DOME] — GATE 1 FASTAG ENTRY</div>
-              <div id="cctvTimeTag" style="color:#94A3B8; font-size:10px;">2026-10-06 23:14:02.812 IST</div>
+        <!-- Top Left Google Street View Address Card -->
+        <div class="streetview-top-card">
+          <button class="streetview-back-btn" data-page="map" title="Return to Google Maps">←</button>
+          <div>
+            <div class="streetview-title" id="streetviewTitle">SmartPark Terminal 3 — Multi-Level Car Parking</div>
+            <div class="streetview-subtitle">
+              <span>New Delhi, Delhi 110037</span>
+              <span>•</span>
+              <span class="streetview-badge">Street View</span>
+              <span id="streetviewCaptureDate">Oct 2026</span>
             </div>
           </div>
+        </div>
 
-          <div class="cctv-hud-bottom">
-            <div>
-              <span style="color:#60A5FA;">PTZ TELEMETRY:</span> <span id="cctvPtzTelemetry">YAW: 142.4° | PITCH: -8.2° | ZOOM: 1.0x</span>
-            </div>
-            <div style="text-align:right;">
-              <span style="color:#86EFAC;">AI-ANPR ENGINE:</span> <span id="cctvAiTelemetry">DETECTION ACTIVE (30.0 FPS · 4.8 Mbps)</span>
-            </div>
+        <!-- Top Right Google Street View Rotating Compass -->
+        <div class="streetview-compass" id="streetviewCompass" title="Click to align camera to True North (0°)">
+          <div class="streetview-compass-needle" id="streetviewNeedle">
+            <div class="needle-north"></div>
+            <div class="needle-south"></div>
           </div>
+        </div>
+
+        <!-- Bottom Left Collapsible Split Minimap with Rotating Flashlight Beam -->
+        <div class="streetview-minimap" id="streetviewMiniWrap">
+          <button class="streetview-minimap-toggle" id="streetviewMiniToggle" title="Expand / Collapse Mini-Map">⛶</button>
+          <canvas id="streetviewMiniCanvas"></canvas>
+        </div>
+
+        <!-- Bottom Right Street View Action Controls -->
+        <div class="streetview-hud-controls">
+          <button class="streetview-hud-btn" id="streetviewZoomInBtn" title="Zoom in">+</button>
+          <button class="streetview-hud-btn" id="streetviewZoomOutBtn" title="Zoom out">−</button>
+          <button class="streetview-hud-btn" id="streetviewAutoTourBtn" title="Toggle 360° Auto-Tour">🔄</button>
+          <button class="streetview-hud-btn active" id="streetviewPegmanMiniBtn" title="Toggle Street View Pegman Minimap">🚶</button>
         </div>
       </div>
 
-      <!-- CCTV Dock Controls -->
-      <div class="cctv-dock">
-        <!-- Camera Selector -->
-        <div class="cctv-cam-btns">
-          <button class="cctv-cam-btn active" data-cam="1">📷 CAM-01: Gate 1 (FASTag Entry)</button>
-          <button class="cctv-cam-btn" data-cam="2">📷 CAM-02: Central Aisle & EV Hub</button>
-          <button class="cctv-cam-btn" data-cam="3">📷 CAM-03: Zone B & Divyangjan</button>
-          <button class="cctv-cam-btn" data-cam="4">📷 CAM-04: Gate 2 (Exit Barrier)</button>
+      <!-- Street View Bottom Dock -->
+      <div class="streetview-dock">
+        <!-- Street View Panorama Locations Filmstrip -->
+        <div class="streetview-pano-selector">
+          <button class="streetview-pano-btn active" data-pano="1">📍 Gate 1 (FASTag Boom Barrier)</button>
+          <button class="streetview-pano-btn" data-pano="2">📍 Central Aisle & 22kW EV Hub</button>
+          <button class="streetview-pano-btn" data-pano="3">📍 Zone B & Divyangjan Deck</button>
+          <button class="streetview-pano-btn" data-pano="4">📍 Gate 2 (Exit Barrier)</button>
         </div>
 
-        <!-- Vision Mode Selector -->
-        <div class="cctv-mode-btns">
-          <button class="cctv-mode-btn active" data-mode="normal">🟢 4K Color</button>
-          <button class="cctv-mode-btn" data-mode="night">🌙 Night Vision IR</button>
-          <button class="cctv-mode-btn" data-mode="thermal">🔥 FLIR Thermal</button>
-          <button class="cctv-mode-btn" id="cctvAutoSpinBtn">🔄 360° Auto-Patrol [ON]</button>
-          <button class="cctv-mode-btn" id="cctvZoomInBtn">🔍 Zoom In</button>
-          <button class="cctv-mode-btn" id="cctvZoomOutBtn">🔍 Zoom Out</button>
+        <!-- Vision Mode Tabs -->
+        <div class="streetview-mode-tabs">
+          <button class="streetview-mode-tab active" data-svmode="normal">Daylight 4K</button>
+          <button class="streetview-mode-tab" data-svmode="night">🌙 Night IR</button>
+          <button class="streetview-mode-tab" data-svmode="thermal">🔥 FLIR Thermal</button>
         </div>
       </div>
     </div>
 
-    <!-- Instructions / Guide for 360 Camera -->
+    <!-- Instructions / Guide for Google Street View -->
     <div style="margin-top:14px; background:var(--paper-card); border:1px solid #E7EAF1; border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
       <div style="font-size:13px; color:var(--muted); line-height:1.5;">
-        <b style="color:var(--ink);">💡 Interactive 360° Controls:</b> Click and drag anywhere on the video screen to look 360° around the parking lot. Click on floating bay tags (e.g., <b>[Bay P01]</b>) to inspect or reserve the slot directly from the camera!
+        <b style="color:var(--ink);">💡 Google Street View Navigation:</b> Click and drag in any direction to look around 360°. Click the ground <b>navigation chevron arrows (↑)</b> to step through aisles and gates. Click the <b>rotating compass</b> to snap North, or click any floating <b>[Bay Tag]</b> to reserve a spot directly!
       </div>
       <button class="quick-sim-btn" id="camSmartAssignBtn" style="background:#EA580C;color:#fff;border-color:#EA580C;padding:7px 12px;">⚡ Auto-Assign Nearest Slot</button>
     </div>
@@ -1985,8 +2172,11 @@
     navButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.page === name); });
     document.getElementById('mobileMenu').classList.remove('open');
     window.scrollTo({top:0, behavior:'smooth'});
-    if (name === 'camera') initCctv360();
-    if (name === 'map' && activeMapMode === 'radar') initRadarMap();
+    if (name === 'camera') initStreetView360();
+    if (name === 'map') {
+      if (activeMapMode === 'gmaps') initGoogleMapsView();
+      else renderMap(ParkingDataService.getState().slots);
+    }
   }
   navButtons.forEach(function(b){ b.addEventListener('click', function(){ goToPage(b.dataset.page); }); });
   document.getElementById('hamburger').addEventListener('click', function(){
@@ -2167,38 +2357,42 @@
     }
   }, 1000);
 
-  // ---------------- 1. 🗺️ LIVE MAP (2D PLAN & LIVE RADAR GPS MAP) ----------------
+  // ---------------- 1. 🗺️ GOOGLE MAPS NAVIGATION & 2D BAY PLAN ----------------
   var currentMapLevel = '1';
   var currentMapFilter = 'all';
-  var activeMapMode = 'floorplan'; // 'floorplan' or 'radar'
+  var activeMapMode = 'gmaps'; // 'gmaps' or 'floorplan'
   var mapTooltip = document.getElementById('mapTooltip');
   var activeRouteSlotId = null;
 
+  var tabModeGmaps = document.getElementById('tabModeGmaps');
   var tabModeFloorPlan = document.getElementById('tabModeFloorPlan');
-  var tabModeRadar = document.getElementById('tabModeRadar');
+  var gmapsContainer = document.getElementById('gmapsContainer');
   var floorPlanContainer = document.getElementById('floorPlanContainer');
   var floorPlanToolbar = document.getElementById('floorPlanToolbar');
-  var radarContainer = document.getElementById('radarContainer');
 
-  tabModeFloorPlan.addEventListener('click', function(){
-    activeMapMode = 'floorplan';
-    tabModeFloorPlan.classList.add('active');
-    tabModeRadar.classList.remove('active');
-    floorPlanContainer.style.display = 'block';
-    floorPlanToolbar.style.display = 'flex';
-    radarContainer.classList.remove('active');
-    renderMap(ParkingDataService.getState().slots);
-  });
+  if (tabModeGmaps){
+    tabModeGmaps.addEventListener('click', function(){
+      activeMapMode = 'gmaps';
+      tabModeGmaps.classList.add('active');
+      tabModeFloorPlan.classList.remove('active');
+      gmapsContainer.classList.add('active');
+      floorPlanContainer.style.display = 'none';
+      floorPlanToolbar.style.display = 'none';
+      initGoogleMapsView();
+    });
+  }
 
-  tabModeRadar.addEventListener('click', function(){
-    activeMapMode = 'radar';
-    tabModeRadar.classList.add('active');
-    tabModeFloorPlan.classList.remove('active');
-    floorPlanContainer.style.display = 'none';
-    floorPlanToolbar.style.display = 'none';
-    radarContainer.classList.add('active');
-    initRadarMap();
-  });
+  if (tabModeFloorPlan){
+    tabModeFloorPlan.addEventListener('click', function(){
+      activeMapMode = 'floorplan';
+      tabModeFloorPlan.classList.add('active');
+      tabModeGmaps.classList.remove('active');
+      gmapsContainer.classList.remove('active');
+      floorPlanContainer.style.display = 'block';
+      floorPlanToolbar.style.display = 'flex';
+      renderMap(ParkingDataService.getState().slots);
+    });
+  }
 
   document.querySelectorAll('.level-tab').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -2301,545 +2495,971 @@
     row2Slots.forEach(function(s){ bottomRow.appendChild(createBayEl(s)); });
   }
 
-  // ---------------- LIVE SATELLITE RADAR & VEHICLE ENGINE ----------------
-  var radarCanvas = document.getElementById('radarCanvas');
-  var radarCtx = null;
-  var radarAngle = 0;
-  var radarVehicles = [
-    { x: 120, y: 380, speed: 1.4, path: 'approach' },
-    { x: 340, y: 220, speed: 0.8, path: 'aisle' },
-    { x: 580, y: 160, speed: 1.2, path: 'exit' },
-    { x: 80, y: 395, speed: 1.8, path: 'approach' }
+  // ==================== 1. 🗺️ GOOGLE MAPS NAVIGATION ENGINE ====================
+  var gmapsCanvas = document.getElementById('gmapsCanvas');
+  var gmapsCtx = null;
+  var gmapsMapType = 'roadmap'; // 'roadmap' or 'satellite'
+  var gmapsShowTraffic = true;
+  var gmapsZoom = 1.0;
+  var gmapsPanX = 0, gmapsPanY = 0;
+  var isDraggingGmaps = false;
+  var gmapsDragStartX = 0, gmapsDragStartY = 0;
+
+  var gmapsVehicles = [
+    { x: 80, y: 440, speed: 2.2, type: 'ice', plate: 'DL 01 AB 1234', state: 'approaching' },
+    { x: 260, y: 310, speed: 1.4, type: 'ev', plate: 'DL 3C EV 2024', state: 'barrier' },
+    { x: 420, y: 220, speed: 0.9, type: 'ice', plate: 'HR 26 DQ 7890', state: 'parking' },
+    { x: 610, y: 220, speed: 1.6, type: 'ice', plate: 'UP 16 CZ 5566', state: 'exiting' },
+    { x: 20, y: 440, speed: 2.5, type: 'ev', plate: 'MH 14 EV 4004', state: 'approaching' }
   ];
 
-  function initRadarMap(){
-    if (!radarCanvas) return;
-    radarCtx = radarCanvas.getContext('2d');
-    resizeRadarCanvas();
-    window.addEventListener('resize', resizeRadarCanvas);
-    requestAnimationFrame(renderRadarFrame);
+  var GMAPS_POIS = [
+    { id: 't3', x: 450, y: 220, title: 'SmartPark Multi-Level Car Parking (IGI T3)', rating: '4.8 ★★★★★', sub: 'Terminal 3 Airport Corridor · 24 Bays', type: 'parking' },
+    { id: 'gate1', x: 290, y: 280, title: 'Gate 1 — NETC FASTag Auto-Barrier', rating: 'RFID 865 MHz', sub: 'Auto-Boom Arm & ANPR Cameras', type: 'fastag' },
+    { id: 'evhub', x: 470, y: 155, title: '22kW Bharat AC001 EV Fast Hub', rating: 'Tata Power EZ', sub: 'Dedicated Green EV Bays (P01–P04)', type: 'ev' },
+    { id: 'divyang', x: 570, y: 155, title: 'Divyangjan Priority Accessible Deck', rating: 'Accessible Ramp', sub: 'Zero-step Lift Proximity (P05–P06)', type: 'ramp' },
+    { id: 'aerocity', x: 140, y: 460, title: 'Delhi Metro Airport Express Line', rating: 'DMRC Metro', sub: 'IGI Terminal 3 Metro Link', type: 'metro' }
+  ];
+
+  function initGoogleMapsView(){
+    if (!gmapsCanvas) return;
+    gmapsCtx = gmapsCanvas.getContext('2d');
+    resizeGmapsCanvas();
+    window.addEventListener('resize', resizeGmapsCanvas);
+    requestAnimationFrame(renderGmapsFrame);
   }
 
-  function resizeRadarCanvas(){
-    if (!radarCanvas) return;
-    var rect = radarCanvas.parentElement.getBoundingClientRect();
-    radarCanvas.width = rect.width || 1000;
-    radarCanvas.height = 460;
+  function resizeGmapsCanvas(){
+    if (!gmapsCanvas) return;
+    var rect = gmapsCanvas.parentElement.getBoundingClientRect();
+    gmapsCanvas.width = rect.width || 1000;
+    gmapsCanvas.height = 560;
   }
 
-  function renderRadarFrame(){
-    if (!radarCtx || activeMapMode !== 'radar') return;
-    var w = radarCanvas.width, h = radarCanvas.height;
-    radarCtx.clearRect(0,0,w,h);
+  // Google Maps Layer & Control Button Listeners
+  var gmapsToggleMapBtn = document.getElementById('gmapsToggleMapBtn');
+  var gmapsToggleSatBtn = document.getElementById('gmapsToggleSatBtn');
+  var gmapsToggleTrafficBtn = document.getElementById('gmapsToggleTrafficBtn');
 
-    // Dark grid background
-    radarCtx.fillStyle = '#060B14';
-    radarCtx.fillRect(0,0,w,h);
-
-    // Grid lines
-    radarCtx.strokeStyle = 'rgba(30, 58, 100, 0.25)';
-    radarCtx.lineWidth = 1;
-    for (var x=0; x<w; x+=50){
-      radarCtx.beginPath(); radarCtx.moveTo(x,0); radarCtx.lineTo(x,h); radarCtx.stroke();
-    }
-    for (var y=0; y<h; y+=50){
-      radarCtx.beginPath(); radarCtx.moveTo(0,y); radarCtx.lineTo(w,y); radarCtx.stroke();
-    }
-
-    // Approach Highway & Flyover Roads (NH-48 & Aerocity Corridor)
-    radarCtx.strokeStyle = '#1E293B';
-    radarCtx.lineWidth = 26;
-    radarCtx.beginPath();
-    radarCtx.moveTo(0, 390); radarCtx.lineTo(w, 390); // Main Highway
-    radarCtx.stroke();
-
-    radarCtx.strokeStyle = '#334155';
-    radarCtx.lineWidth = 2;
-    radarCtx.setLineDash([8, 8]);
-    radarCtx.beginPath();
-    radarCtx.moveTo(0, 390); radarCtx.lineTo(w, 390);
-    radarCtx.stroke();
-    radarCtx.setLineDash([]);
-
-    // Facility Access Ramp into Gate 1
-    radarCtx.strokeStyle = '#1E293B';
-    radarCtx.lineWidth = 22;
-    radarCtx.beginPath();
-    radarCtx.moveTo(180, 390);
-    radarCtx.quadraticCurveTo(240, 260, 320, 230);
-    radarCtx.lineTo(550, 230); // Central Facility Loop
-    radarCtx.quadraticCurveTo(650, 230, 720, 390); // Exit Ramp to Gate 2
-    radarCtx.stroke();
-
-    // Road Labels
-    radarCtx.fillStyle = '#64748B';
-    radarCtx.font = '10px Manrope';
-    radarCtx.fillText('NH-48 EXPRESS HIGHWAY (GURUGRAM ➔ DELHI AEROCITY)', 40, 415);
-    radarCtx.fillText('GATE 1 ENTRY RAMP', 210, 290);
-    radarCtx.fillText('GATE 2 EXIT RAMP', 660, 290);
-
-    // Facility Perimeter Boundary
-    radarCtx.strokeStyle = '#2563EB';
-    radarCtx.lineWidth = 2;
-    radarCtx.fillStyle = 'rgba(15, 23, 42, 0.75)';
-    radarCtx.roundRect(280, 70, 380, 220, 14);
-    radarCtx.fill();
-    radarCtx.stroke();
-
-    radarCtx.fillStyle = '#93C5FD';
-    radarCtx.font = 'bold 12px Manrope';
-    radarCtx.fillText('SMARTPARK IGI T3 METRO FACILITY (24 BAYS)', 300, 95);
-
-    // Bay slots visual representation on radar
-    var st = ParkingDataService.getState();
-    st.slots.forEach(function(s, idx){
-      var bx = 300 + (idx % 6) * 58;
-      var by = (idx < 12) ? 120 : 180;
-      radarCtx.fillStyle = statusColor(s.status);
-      radarCtx.fillRect(bx, by, 48, 22);
-      radarCtx.fillStyle = '#fff';
-      radarCtx.font = 'bold 9px monospace';
-      radarCtx.fillText(s.id, bx + 6, by + 15);
-    });
-
-    // 4 CCTV Camera Pin Markers (Clickable in 360 viewer)
-    var cctvPins = [
-      { id:1, x:310, y:230, label:'CAM-01 (Gate 1 Entry)' },
-      { id:2, x:460, y:150, label:'CAM-02 (EV Hub)' },
-      { id:3, x:610, y:150, label:'CAM-03 (Zone B Deck)' },
-      { id:4, x:640, y:230, label:'CAM-04 (Gate 2 Exit)' }
-    ];
-    cctvPins.forEach(function(c){
-      radarCtx.beginPath();
-      radarCtx.arc(c.x, c.y, 8, 0, Math.PI*2);
-      radarCtx.fillStyle = '#4F46E5';
-      radarCtx.fill();
-      radarCtx.strokeStyle = '#818CF8';
-      radarCtx.lineWidth = 2;
-      radarCtx.stroke();
-      radarCtx.fillStyle = '#C7D2FE';
-      radarCtx.font = 'bold 9px Manrope';
-      radarCtx.fillText('📹 ' + c.label, c.x - 20, c.y - 12);
-    });
-
-    // Moving Vehicles Simulation
-    radarVehicles.forEach(function(v){
-      v.x += v.speed;
-      if (v.x > w + 20) v.x = -20;
-      radarCtx.beginPath();
-      radarCtx.arc(v.x, v.y, 5, 0, Math.PI*2);
-      radarCtx.fillStyle = '#F59E0B';
-      radarCtx.fill();
-      radarCtx.strokeStyle = '#FEF3C7';
-      radarCtx.lineWidth = 1.5;
-      radarCtx.stroke();
-    });
-
-    // 360-Degree Sonar / Radar Sweep Beam
-    radarAngle = (radarAngle + 0.02) % (Math.PI * 2);
-    var cx = 470, cy = 180, rRadius = 140;
-
-    radarCtx.save();
-    radarCtx.beginPath();
-    radarCtx.arc(cx, cy, rRadius, 0, Math.PI*2);
-    radarCtx.strokeStyle = 'rgba(14, 164, 114, 0.4)';
-    radarCtx.lineWidth = 1.5;
-    radarCtx.stroke();
-
-    // Radar beam cone
-    var grad = radarCtx.createRadialGradient(cx, cy, 5, cx, cy, rRadius);
-    grad.addColorStop(0, 'rgba(14, 164, 114, 0.3)');
-    grad.addColorStop(1, 'rgba(14, 164, 114, 0.0)');
-    radarCtx.beginPath();
-    radarCtx.moveTo(cx, cy);
-    radarCtx.arc(cx, cy, rRadius, radarAngle - 0.4, radarAngle);
-    radarCtx.closePath();
-    radarCtx.fillStyle = grad;
-    radarCtx.fill();
-
-    // Leading radar sweep line
-    radarCtx.beginPath();
-    radarCtx.moveTo(cx, cy);
-    radarCtx.lineTo(cx + Math.cos(radarAngle)*rRadius, cy + Math.sin(radarAngle)*rRadius);
-    radarCtx.strokeStyle = '#34D399';
-    radarCtx.lineWidth = 2;
-    radarCtx.stroke();
-    radarCtx.restore();
-
-    requestAnimationFrame(renderRadarFrame);
-  }
-
-  // Click on Radar Canvas to Jump to CCTV Camera
-  if (radarCanvas){
-    radarCanvas.addEventListener('click', function(e){
-      var rect = radarCanvas.getBoundingClientRect();
-      var mx = e.clientX - rect.left;
-      var my = e.clientY - rect.top;
-      var cctvPins = [
-        { id:1, x:310, y:230 },
-        { id:2, x:460, y:150 },
-        { id:3, x:610, y:150 },
-        { id:4, x:640, y:230 }
-      ];
-      cctvPins.forEach(function(c){
-        var dist = Math.hypot(mx - c.x, my - c.y);
-        if (dist < 20){
-          goToPage('camera');
-          switchCctvCamera(c.id);
-          showToast('Opened CAM-0' + c.id + ' 360° Live View from Radar Map');
-        }
-      });
+  if (gmapsToggleMapBtn){
+    gmapsToggleMapBtn.addEventListener('click', function(){
+      gmapsMapType = 'roadmap';
+      gmapsToggleMapBtn.classList.add('active');
+      gmapsToggleSatBtn.classList.remove('active');
+      showToast('Switched to Google Maps Roadmap View');
     });
   }
 
-  // ---------------- 2. 📹 360° CCTV CAMERA ENGINE ----------------
-  var cctvCanvas = document.getElementById('cctvCanvas360');
-  var cctvCtx = null;
-  var cctvYaw = 142; // Horizontal angle (0 - 360)
-  var cctvPitch = -6; // Vertical tilt (-30 to +30)
-  var cctvZoom = 1.0;
-  var cctvActiveCam = 1;
-  var cctvVisionMode = 'normal'; // 'normal', 'night', 'thermal'
-  var cctvAutoSpin = true;
-  var isDraggingCctv = false;
-  var lastMouseX = 0, lastMouseY = 0;
-
-  var CAM_NAMES = {
-    1: 'CAM-01 [360° DOME] — GATE 1 FASTAG ENTRY',
-    2: 'CAM-02 [360° DOME] — CENTRAL AISLE & EV FAST HUB',
-    3: 'CAM-03 [360° DOME] — ZONE B & DIVYANGJAN DECK',
-    4: 'CAM-04 [360° DOME] — GATE 2 ANPR EXIT BARRIER'
-  };
-
-  function switchCctvCamera(camNum){
-    cctvActiveCam = camNum;
-    cctvYaw = (camNum === 1) ? 140 : (camNum === 2 ? 210 : (camNum === 3 ? 60 : 320));
-    document.querySelectorAll('.cctv-cam-btn').forEach(function(b){
-      b.classList.toggle('active', parseInt(b.dataset.cam) === camNum);
+  if (gmapsToggleSatBtn){
+    gmapsToggleSatBtn.addEventListener('click', function(){
+      gmapsMapType = 'satellite';
+      gmapsToggleSatBtn.classList.add('active');
+      gmapsToggleMapBtn.classList.remove('active');
+      showToast('Switched to Google Earth Satellite Imagery');
     });
-    document.getElementById('cctvCamNameTag').textContent = CAM_NAMES[camNum];
-    showToast('Switched to ' + CAM_NAMES[camNum]);
   }
 
-  document.querySelectorAll('.cctv-cam-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      switchCctvCamera(parseInt(btn.dataset.cam));
+  if (gmapsToggleTrafficBtn){
+    gmapsToggleTrafficBtn.addEventListener('click', function(){
+      gmapsShowTraffic = !gmapsShowTraffic;
+      gmapsToggleTrafficBtn.classList.toggle('active', gmapsShowTraffic);
+      gmapsToggleTrafficBtn.textContent = gmapsShowTraffic ? '🚦 Traffic: Live' : '🚦 Traffic: OFF';
+      showToast(gmapsShowTraffic ? 'Live Traffic Flow Enabled (Green = Flowing)' : 'Traffic Flow Disabled');
+    });
+  }
+
+  var gmapsZoomInBtn = document.getElementById('gmapsZoomInBtn');
+  var gmapsZoomOutBtn = document.getElementById('gmapsZoomOutBtn');
+  var gmapsRecenterBtn = document.getElementById('gmapsRecenterBtn');
+
+  if (gmapsZoomInBtn){
+    gmapsZoomInBtn.addEventListener('click', function(){
+      gmapsZoom = Math.min(2.0, gmapsZoom + 0.2);
+    });
+  }
+  if (gmapsZoomOutBtn){
+    gmapsZoomOutBtn.addEventListener('click', function(){
+      gmapsZoom = Math.max(0.65, gmapsZoom - 0.2);
+    });
+  }
+  if (gmapsRecenterBtn){
+    gmapsRecenterBtn.addEventListener('click', function(){
+      gmapsPanX = 0; gmapsPanY = 0; gmapsZoom = 1.0;
+      showToast('📍 Re-centered to SmartPark IGI T3 (28.5562° N, 77.1000° E)');
+    });
+  }
+
+  // Google Maps Directions link
+  function openGoogleMapsNavigation(){
+    window.open('https://www.google.com/maps/dir/?api=1&destination=28.5562,77.1000', '_blank');
+  }
+  var gmapsOpenNavBtn = document.getElementById('gmapsOpenNavBtn');
+  var gmapsCardDirBtn = document.getElementById('gmapsCardDirBtn');
+  if (gmapsOpenNavBtn) gmapsOpenNavBtn.addEventListener('click', openGoogleMapsNavigation);
+  if (gmapsCardDirBtn) gmapsCardDirBtn.addEventListener('click', openGoogleMapsNavigation);
+
+  var gmapsCardShareBtn = document.getElementById('gmapsCardShareBtn');
+  if (gmapsCardShareBtn){
+    gmapsCardShareBtn.addEventListener('click', function(){
+      soundChime();
+      navigator.clipboard ? navigator.clipboard.writeText(window.location.href) : null;
+      showToast('🔗 Location Link Copied: SmartPark IGI Terminal 3, New Delhi');
+    });
+  }
+
+  // Quick Chips
+  document.querySelectorAll('.gmaps-chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      document.querySelectorAll('.gmaps-chip').forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+      var poiId = chip.dataset.poi;
+      var target = GMAPS_POIS.filter(function(p){ return p.id === poiId; })[0];
+      if (target){
+        gmapsPanX = (gmapsCanvas.width / 2) - target.x;
+        gmapsPanY = (gmapsCanvas.height / 2) - target.y;
+        gmapsZoom = 1.25;
+        showToast('Focused on ' + target.title);
+      }
     });
   });
 
-  document.querySelectorAll('.cctv-mode-btn[data-mode]').forEach(function(btn){
+  // Search Clear & Voice Search
+  var gmapsClearSearchBtn = document.getElementById('gmapsClearSearchBtn');
+  var gmapsSearchInput = document.getElementById('gmapsSearchInput');
+  if (gmapsClearSearchBtn && gmapsSearchInput){
+    gmapsClearSearchBtn.addEventListener('click', function(){
+      gmapsSearchInput.value = '';
+      gmapsSearchInput.focus();
+    });
+  }
+  var gmapsVoiceSearchBtn = document.getElementById('gmapsVoiceSearchBtn');
+  if (gmapsVoiceSearchBtn){
+    gmapsVoiceSearchBtn.addEventListener('click', function(){
+      showToast('🎙️ Voice Search listening... "SmartPark IGI Terminal 3"');
+    });
+  }
+
+  // Canvas Drag Pan & Wheel Zoom for Google Maps
+  if (gmapsCanvas){
+    gmapsCanvas.addEventListener('mousedown', function(e){
+      isDraggingGmaps = true;
+      gmapsDragStartX = e.clientX - gmapsPanX;
+      gmapsDragStartY = e.clientY - gmapsPanY;
+    });
+    window.addEventListener('mouseup', function(){ isDraggingGmaps = false; });
+    window.addEventListener('mousemove', function(e){
+      if (!isDraggingGmaps) return;
+      gmapsPanX = e.clientX - gmapsDragStartX;
+      gmapsPanY = e.clientY - gmapsDragStartY;
+    });
+    gmapsCanvas.addEventListener('wheel', function(e){
+      e.preventDefault();
+      var zoomDelta = (e.deltaY < 0) ? 0.08 : -0.08;
+      gmapsZoom = Math.max(0.65, Math.min(2.2, gmapsZoom + zoomDelta));
+    }, { passive:false });
+
+    // Touch support for map
+    gmapsCanvas.addEventListener('touchstart', function(e){
+      if (e.touches.length === 1){
+        isDraggingGmaps = true;
+        gmapsDragStartX = e.touches[0].clientX - gmapsPanX;
+        gmapsDragStartY = e.touches[0].clientY - gmapsPanY;
+      }
+    });
+    window.addEventListener('touchend', function(){ isDraggingGmaps = false; });
+    window.addEventListener('touchmove', function(e){
+      if (!isDraggingGmaps || e.touches.length !== 1) return;
+      gmapsPanX = e.touches[0].clientX - gmapsDragStartX;
+      gmapsPanY = e.touches[0].clientY - gmapsDragStartY;
+    });
+  }
+
+  function renderGmapsFrame(){
+    var pageMap = document.getElementById('page-map');
+    if (!gmapsCtx || !pageMap.classList.contains('active') || activeMapMode !== 'gmaps') return;
+
+    var w = gmapsCanvas.width, h = gmapsCanvas.height;
+    gmapsCtx.clearRect(0, 0, w, h);
+
+    gmapsCtx.save();
+    // Apply pan & zoom
+    gmapsCtx.translate(w/2 + gmapsPanX, h/2 + gmapsPanY);
+    gmapsCtx.scale(gmapsZoom, gmapsZoom);
+    gmapsCtx.translate(-w/2, -h/2);
+
+    // 1. Google Maps Base Layer
+    if (gmapsMapType === 'roadmap'){
+      // Classic Google Maps Cream/Beige Canvas
+      gmapsCtx.fillStyle = '#E5E3DF';
+      gmapsCtx.fillRect(-400, -300, w + 800, h + 600);
+
+      // Airport green parklands
+      gmapsCtx.fillStyle = '#C8E6C9';
+      gmapsCtx.beginPath();
+      gmapsCtx.ellipse(160, 160, 260, 140, Math.PI/12, 0, Math.PI*2);
+      gmapsCtx.fill();
+      gmapsCtx.beginPath();
+      gmapsCtx.ellipse(780, 480, 200, 120, -Math.PI/8, 0, Math.PI*2);
+      gmapsCtx.fill();
+
+      // Najafgarh Airport Storm Drain / Waterway
+      gmapsCtx.strokeStyle = '#AAD3DF';
+      gmapsCtx.lineWidth = 14;
+      gmapsCtx.beginPath();
+      gmapsCtx.moveTo(-200, 520);
+      gmapsCtx.bezierCurveTo(200, 520, 500, 540, w + 200, 530);
+      gmapsCtx.stroke();
+
+      // Terminal 3 Building Footprint
+      gmapsCtx.fillStyle = '#DCDCDC';
+      gmapsCtx.strokeStyle = '#CFD8DC';
+      gmapsCtx.lineWidth = 2;
+      gmapsCtx.beginPath();
+      gmapsCtx.roundRect(140, 20, 360, 80, 8);
+      gmapsCtx.fill();
+      gmapsCtx.stroke();
+
+      gmapsCtx.fillStyle = '#546E7A';
+      gmapsCtx.font = 'bold 12px sans-serif';
+      gmapsCtx.fillText('✈️ INDIRA GANDHI INTERNATIONAL AIRPORT (TERMINAL 3)', 160, 65);
+
+    } else {
+      // Google Satellite Aerial View
+      gmapsCtx.fillStyle = '#121A24';
+      gmapsCtx.fillRect(-400, -300, w + 800, h + 600);
+
+      // Satellite Runway Stripes
+      gmapsCtx.strokeStyle = '#1E2B3C';
+      gmapsCtx.lineWidth = 36;
+      gmapsCtx.beginPath();
+      gmapsCtx.moveTo(-200, 60); gmapsCtx.lineTo(w + 200, 60);
+      gmapsCtx.stroke();
+
+      gmapsCtx.strokeStyle = '#F1F5F9';
+      gmapsCtx.lineWidth = 2;
+      gmapsCtx.setLineDash([20, 15]);
+      gmapsCtx.beginPath();
+      gmapsCtx.moveTo(-200, 60); gmapsCtx.lineTo(w + 200, 60);
+      gmapsCtx.stroke();
+      gmapsCtx.setLineDash([]);
+
+      gmapsCtx.fillStyle = '#94A3B8';
+      gmapsCtx.font = 'bold 11px monospace';
+      gmapsCtx.fillText('RUNWAY 28/10 (DEL T3 IFR)', 220, 65);
+    }
+
+    // 2. Road Network
+    // NH-48 Express Highway Arterial
+    var hwCol = (gmapsMapType === 'roadmap') ? '#FFD54F' : '#2D3748';
+    var hwBrd = (gmapsMapType === 'roadmap') ? '#FFA000' : '#4A5568';
+    gmapsCtx.strokeStyle = hwBrd;
+    gmapsCtx.lineWidth = 32;
+    gmapsCtx.beginPath();
+    gmapsCtx.moveTo(-200, 440); gmapsCtx.lineTo(w + 200, 440);
+    gmapsCtx.stroke();
+
+    gmapsCtx.strokeStyle = hwCol;
+    gmapsCtx.lineWidth = 26;
+    gmapsCtx.beginPath();
+    gmapsCtx.moveTo(-200, 440); gmapsCtx.lineTo(w + 200, 440);
+    gmapsCtx.stroke();
+
+    // NH-48 Highway Shield Badge
+    gmapsCtx.fillStyle = '#2563EB';
+    gmapsCtx.roundRect(80, 428, 48, 22, 4);
+    gmapsCtx.fill();
+    gmapsCtx.fillStyle = '#fff';
+    gmapsCtx.font = 'bold 10px sans-serif';
+    gmapsCtx.fillText('NH 48', 90, 443);
+
+    // T3 Flyover / Approach Ramp into SmartPark
+    var rampCol = (gmapsMapType === 'roadmap') ? '#FFFFFF' : '#334155';
+    var rampBrd = (gmapsMapType === 'roadmap') ? '#CFD8DC' : '#1E293B';
+
+    gmapsCtx.strokeStyle = rampBrd;
+    gmapsCtx.lineWidth = 22;
+    gmapsCtx.beginPath();
+    gmapsCtx.moveTo(180, 440);
+    gmapsCtx.quadraticCurveTo(240, 310, 310, 260);
+    gmapsCtx.lineTo(580, 260); // Facility Loop
+    gmapsCtx.quadraticCurveTo(680, 260, 740, 440); // Exit Ramp
+    gmapsCtx.stroke();
+
+    gmapsCtx.strokeStyle = rampCol;
+    gmapsCtx.lineWidth = 18;
+    gmapsCtx.beginPath();
+    gmapsCtx.moveTo(180, 440);
+    gmapsCtx.quadraticCurveTo(240, 310, 310, 260);
+    gmapsCtx.lineTo(580, 260);
+    gmapsCtx.quadraticCurveTo(680, 260, 740, 440);
+    gmapsCtx.stroke();
+
+    // 3. Live Google Traffic Overlay Lines
+    if (gmapsShowTraffic){
+      // Flowing traffic on NH-48 (Green: 54 km/h)
+      gmapsCtx.strokeStyle = '#0F9D58';
+      gmapsCtx.lineWidth = 4;
+      gmapsCtx.beginPath();
+      gmapsCtx.moveTo(-200, 432); gmapsCtx.lineTo(w + 200, 432);
+      gmapsCtx.stroke();
+
+      // Ramp traffic (Green)
+      gmapsCtx.strokeStyle = '#0F9D58';
+      gmapsCtx.beginPath();
+      gmapsCtx.moveTo(180, 432);
+      gmapsCtx.quadraticCurveTo(240, 305, 290, 265);
+      gmapsCtx.stroke();
+
+      // Gate 1 Toll/Barrier queue (Orange/Yellow: 15 km/h delay)
+      gmapsCtx.strokeStyle = '#F4B400';
+      gmapsCtx.beginPath();
+      gmapsCtx.moveTo(290, 265);
+      gmapsCtx.lineTo(330, 265);
+      gmapsCtx.stroke();
+    }
+
+    // 4. SmartPark Multi-Level Facility Boundary
+    gmapsCtx.fillStyle = (gmapsMapType==='roadmap' ? '#FFFFFF' : '#1E293B');
+    gmapsCtx.strokeStyle = '#1A73E8';
+    gmapsCtx.lineWidth = 2.5;
+    gmapsCtx.roundRect(280, 130, 380, 180, 12);
+    gmapsCtx.fill();
+    gmapsCtx.stroke();
+
+    // Building Header Tag
+    gmapsCtx.fillStyle = '#1A73E8';
+    gmapsCtx.font = 'bold 12px sans-serif';
+    gmapsCtx.fillText('🅿️ SMARTPARK IGI T3 (MULTI-LEVEL FACILITY)', 296, 155);
+
+    // Internal parking bay previews
+    var st = ParkingDataService.getState();
+    st.slots.forEach(function(s, idx){
+      var bx = 300 + (idx % 6) * 58;
+      var by = (idx < 12) ? 175 : 230;
+      gmapsCtx.fillStyle = statusColor(s.status);
+      gmapsCtx.roundRect(bx, by, 48, 20, 3);
+      gmapsCtx.fill();
+      gmapsCtx.fillStyle = '#fff';
+      gmapsCtx.font = 'bold 9px monospace';
+      gmapsCtx.fillText(s.id, bx + 6, by + 14);
+    });
+
+    // Gate 1 & Gate 2 Markers
+    gmapsCtx.fillStyle = '#EA580C';
+    gmapsCtx.font = 'bold 10px sans-serif';
+    gmapsCtx.fillText('GATE 1 [FASTag ENTRY] ➔', 220, 252);
+    gmapsCtx.fillText('➔ GATE 2 [EXIT DEBIT]', 580, 252);
+
+    // 5. Live Moving GPS Vehicles
+    gmapsVehicles.forEach(function(v){
+      v.x += v.speed;
+      if (v.x > w + 200) v.x = -200;
+
+      // Draw vehicle dot
+      gmapsCtx.beginPath();
+      gmapsCtx.arc(v.x, v.y, 6, 0, Math.PI*2);
+      gmapsCtx.fillStyle = (v.type === 'ev' ? '#059669' : '#1A73E8');
+      gmapsCtx.fill();
+      gmapsCtx.strokeStyle = '#FFFFFF';
+      gmapsCtx.lineWidth = 2;
+      gmapsCtx.stroke();
+
+      // Vehicle Plate Pill
+      gmapsCtx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      gmapsCtx.roundRect(v.x - 30, v.y - 20, 60, 14, 3);
+      gmapsCtx.fill();
+      gmapsCtx.fillStyle = '#FFFFFF';
+      gmapsCtx.font = 'bold 8px monospace';
+      gmapsCtx.fillText(v.plate.split(' ')[0] + ' ' + (v.plate.split(' ')[2]||''), v.x - 24, v.y - 10);
+    });
+
+    // 6. Google Maps Official Red Pin Marker for SmartPark T3
+    var pinX = 470, pinY = 220;
+    gmapsCtx.save();
+    // Drop shadow
+    gmapsCtx.beginPath();
+    gmapsCtx.ellipse(pinX, pinY + 8, 10, 4, 0, 0, Math.PI*2);
+    gmapsCtx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+    gmapsCtx.fill();
+
+    // Red Pin Head
+    gmapsCtx.beginPath();
+    gmapsCtx.arc(pinX, pinY - 14, 12, 0, Math.PI*2);
+    gmapsCtx.fillStyle = '#EA4335';
+    gmapsCtx.fill();
+    gmapsCtx.strokeStyle = '#B31412';
+    gmapsCtx.lineWidth = 1;
+    gmapsCtx.stroke();
+
+    // Pin Point
+    gmapsCtx.beginPath();
+    gmapsCtx.moveTo(pinX - 9, pinY - 8);
+    gmapsCtx.lineTo(pinX, pinY + 6);
+    gmapsCtx.lineTo(pinX + 9, pinY - 8);
+    gmapsCtx.fillStyle = '#EA4335';
+    gmapsCtx.fill();
+
+    // Inner White Dot
+    gmapsCtx.beginPath();
+    gmapsCtx.arc(pinX, pinY - 14, 5, 0, Math.PI*2);
+    gmapsCtx.fillStyle = '#FFFFFF';
+    gmapsCtx.fill();
+    gmapsCtx.restore();
+
+    gmapsCtx.restore(); // Restore pan & zoom
+
+    // 7. Scale Bar & Google Watermark (Static UI on canvas bottom)
+    gmapsCtx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+    gmapsCtx.roundRect(w - 180, h - 26, 170, 20, 4);
+    gmapsCtx.fill();
+    gmapsCtx.fillStyle = '#5F6368';
+    gmapsCtx.font = '10px sans-serif';
+    gmapsCtx.fillText('Google Maps · 28.5562° N', w - 170, h - 12);
+
+    requestAnimationFrame(renderGmapsFrame);
+  }
+
+  // ==================== 2. 📹 GOOGLE STREET VIEW 360° ENGINE ====================
+  var svCanvas = document.getElementById('streetviewCanvas360');
+  var svCtx = null;
+  var svMiniCanvas = document.getElementById('streetviewMiniCanvas');
+  var svMiniCtx = null;
+
+  var svYaw = 0; // 0 to 360 degrees (0 = True North)
+  var svPitch = -4; // -50 to +50 degrees vertical
+  var svFov = 75; // field of view in degrees
+  var svAutoTour = false;
+  var svActivePano = 1; // 1: Gate 1, 2: Central Aisle, 3: Zone B, 4: Gate 2
+  var svVisionMode = 'normal'; // 'normal', 'night', 'thermal'
+  var isDraggingSv = false;
+  var lastSvX = 0, lastSvY = 0;
+  var currentSvHotspots = [];
+  var currentSvChevrons = [];
+
+  var PANO_LOCATIONS = {
+    1: { name: 'Gate 1 [FASTag Entry Boom Barrier]', coords: '28.5562° N, 77.0995° E', desc: 'RFID 865 MHz Scanner & Automated Boom Barrier' },
+    2: { name: 'Central Aisle & 22kW EV Fast Hub', coords: '28.5564° N, 77.1002° E', desc: 'Tata Power 22kW Bharat AC001 Charging Bays' },
+    3: { name: 'Zone B Deck & Divyangjan Ramp', coords: '28.5565° N, 77.1008° E', desc: 'Accessible Priority Parking & Direct Lift Proximity' },
+    4: { name: 'Gate 2 [NETC Exit Auto-Debit Barrier]', coords: '28.5563° N, 77.1012° E', desc: 'Instant Exit Toll Settlement & Toll Receipt Terminal' }
+  };
+
+  function initStreetView360(){
+    if (!svCanvas) return;
+    svCtx = svCanvas.getContext('2d');
+    if (svMiniCanvas) svMiniCtx = svMiniCanvas.getContext('2d');
+    resizeStreetViewCanvas();
+    window.addEventListener('resize', resizeStreetViewCanvas);
+    requestAnimationFrame(renderStreetViewFrame);
+  }
+
+  function resizeStreetViewCanvas(){
+    if (!svCanvas) return;
+    var rect = svCanvas.parentElement.getBoundingClientRect();
+    svCanvas.width = rect.width || 1000;
+    svCanvas.height = rect.height || 540;
+    if (svMiniCanvas){
+      svMiniCanvas.width = svMiniCanvas.parentElement.clientWidth || 220;
+      svMiniCanvas.height = svMiniCanvas.parentElement.clientHeight || 150;
+    }
+  }
+
+  function switchStreetViewPano(panoId){
+    svActivePano = panoId;
+    document.querySelectorAll('.streetview-pano-btn').forEach(function(b){
+      b.classList.toggle('active', parseInt(b.dataset.pano) === panoId);
+    });
+    var loc = PANO_LOCATIONS[panoId];
+    if (loc){
+      document.getElementById('streetviewTitle').textContent = loc.name;
+      showToast('Street View Walkthrough: ' + loc.name);
+    }
+  }
+
+  document.querySelectorAll('.streetview-pano-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
-      document.querySelectorAll('.cctv-mode-btn[data-mode]').forEach(function(b){b.classList.remove('active');});
+      switchStreetViewPano(parseInt(btn.dataset.pano));
+    });
+  });
+
+  document.querySelectorAll('.streetview-mode-tab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.streetview-mode-tab').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
-      cctvVisionMode = btn.dataset.mode;
+      svVisionMode = btn.dataset.svmode;
       showToast('Vision Mode: ' + btn.textContent);
     });
   });
 
-  var cctvAutoSpinBtn = document.getElementById('cctvAutoSpinBtn');
-  cctvAutoSpinBtn.addEventListener('click', function(){
-    cctvAutoSpin = !cctvAutoSpin;
-    cctvAutoSpinBtn.classList.toggle('active', cctvAutoSpin);
-    cctvAutoSpinBtn.textContent = cctvAutoSpin ? '🔄 360° Auto-Patrol [ON]' : '⏸ 360° Patrol [OFF]';
-  });
-
-  document.getElementById('cctvZoomInBtn').addEventListener('click', function(){
-    cctvZoom = Math.min(2.5, cctvZoom + 0.25);
-  });
-  document.getElementById('cctvZoomOutBtn').addEventListener('click', function(){
-    cctvZoom = Math.max(0.75, cctvZoom - 0.25);
-  });
-
-  document.getElementById('cctvSnapshotBtn').addEventListener('click', function(){
-    if (!cctvCanvas) return;
-    soundChime();
-    var link = document.createElement('a');
-    link.download = 'smartpark_cctv_cam' + cctvActiveCam + '_' + Date.now() + '.jpg';
-    link.href = cctvCanvas.toDataURL('image/jpeg', 0.95);
-    link.click();
-    showToast('📸 4K CCTV Snapshot downloaded');
-  });
-
-  // Mouse & Touch Dragging for 360 rotation
-  var cctvWrap = document.getElementById('cctvWrap');
-  if (cctvWrap){
-    cctvWrap.addEventListener('mousedown', function(e){
-      isDraggingCctv = true;
-      lastMouseX = e.clientX;
-      lastMouseY = e.clientY;
+  // Google Street View Rotating Compass Click -> Snap North
+  var streetviewCompass = document.getElementById('streetviewCompass');
+  if (streetviewCompass){
+    streetviewCompass.addEventListener('click', function(){
+      soundChime();
+      svYaw = 0; // Snap to North
+      showToast('🧭 Street View aligned to True North (0°)');
     });
-    window.addEventListener('mouseup', function(){ isDraggingCctv = false; });
+  }
+
+  // Auto-tour toggle
+  var svAutoTourBtn = document.getElementById('streetviewAutoTourBtn');
+  if (svAutoTourBtn){
+    svAutoTourBtn.addEventListener('click', function(){
+      svAutoTour = !svAutoTour;
+      svAutoTourBtn.classList.toggle('active', svAutoTour);
+      showToast(svAutoTour ? '🔄 360° Street View Auto-Tour Active' : '⏸ Auto-Tour Paused');
+    });
+  }
+
+  // Zoom controls
+  var svZoomInBtn = document.getElementById('streetviewZoomInBtn');
+  var svZoomOutBtn = document.getElementById('streetviewZoomOutBtn');
+  if (svZoomInBtn){
+    svZoomInBtn.addEventListener('click', function(){ svFov = Math.max(45, svFov - 10); });
+  }
+  if (svZoomOutBtn){
+    svZoomOutBtn.addEventListener('click', function(){ svFov = Math.min(95, svFov + 10); });
+  }
+
+  // Minimap expand / collapse toggle
+  var svMiniToggle = document.getElementById('streetviewMiniToggle');
+  var svMiniWrap = document.getElementById('streetviewMiniWrap');
+  if (svMiniToggle && svMiniWrap){
+    svMiniToggle.addEventListener('click', function(){
+      svMiniWrap.classList.toggle('expanded');
+      resizeStreetViewCanvas();
+    });
+  }
+  var svPegmanMiniBtn = document.getElementById('streetviewPegmanMiniBtn');
+  if (svPegmanMiniBtn && svMiniWrap){
+    svPegmanMiniBtn.addEventListener('click', function(){
+      svMiniWrap.classList.toggle('hidden');
+    });
+  }
+
+  // Snapshot Button
+  var svSnapshotBtn = document.getElementById('streetviewSnapshotBtn');
+  if (svSnapshotBtn){
+    svSnapshotBtn.addEventListener('click', function(){
+      if (!svCanvas) return;
+      soundChime();
+      var link = document.createElement('a');
+      link.download = 'google_streetview_smartpark_pano' + svActivePano + '_' + Date.now() + '.jpg';
+      link.href = svCanvas.toDataURL('image/jpeg', 0.95);
+      link.click();
+      showToast('📸 Google Street View Photo Saved to Downloads');
+    });
+  }
+
+  // Drag and Swipe interaction for 360 viewer
+  var svWrap = document.getElementById('streetviewWrap');
+  if (svWrap){
+    svWrap.addEventListener('mousedown', function(e){
+      isDraggingSv = true;
+      lastSvX = e.clientX;
+      lastSvY = e.clientY;
+    });
+    window.addEventListener('mouseup', function(){ isDraggingSv = false; });
     window.addEventListener('mousemove', function(e){
-      if (!isDraggingCctv) return;
-      var dx = e.clientX - lastMouseX;
-      var dy = e.clientY - lastMouseY;
-      lastMouseX = e.clientX;
-      lastMouseY = e.clientY;
-      cctvYaw = (cctvYaw - dx * 0.35 + 360) % 360;
-      cctvPitch = Math.max(-28, Math.min(28, cctvPitch + dy * 0.25));
+      if (!isDraggingSv) return;
+      var dx = e.clientX - lastSvX;
+      var dy = e.clientY - lastSvY;
+      lastSvX = e.clientX;
+      lastSvY = e.clientY;
+      svYaw = (svYaw - dx * 0.35 + 360) % 360;
+      svPitch = Math.max(-45, Math.min(45, svPitch + dy * 0.25));
     });
 
-    cctvWrap.addEventListener('touchstart', function(e){
+    // Touch support
+    svWrap.addEventListener('touchstart', function(e){
       if (e.touches.length === 1){
-        isDraggingCctv = true;
-        lastMouseX = e.touches[0].clientX;
-        lastMouseY = e.touches[0].clientY;
+        isDraggingSv = true;
+        lastSvX = e.touches[0].clientX;
+        lastSvY = e.touches[0].clientY;
       }
     });
-    window.addEventListener('touchend', function(){ isDraggingCctv = false; });
+    window.addEventListener('touchend', function(){ isDraggingSv = false; });
     window.addEventListener('touchmove', function(e){
-      if (!isDraggingCctv || e.touches.length !== 1) return;
-      var dx = e.touches[0].clientX - lastMouseX;
-      var dy = e.touches[0].clientY - lastMouseY;
-      lastMouseX = e.touches[0].clientX;
-      lastMouseY = e.touches[0].clientY;
-      cctvYaw = (cctvYaw - dx * 0.45 + 360) % 360;
-      cctvPitch = Math.max(-28, Math.min(28, cctvPitch + dy * 0.3));
+      if (!isDraggingSv || e.touches.length !== 1) return;
+      var dx = e.touches[0].clientX - lastSvX;
+      var dy = e.touches[0].clientY - lastSvY;
+      lastSvX = e.touches[0].clientX;
+      lastSvY = e.touches[0].clientY;
+      svYaw = (svYaw - dx * 0.4 + 360) % 360;
+      svPitch = Math.max(-45, Math.min(45, svPitch + dy * 0.28));
     });
 
-    // Click on Hotspot tag in 360 Canvas to open slot modal
-    cctvWrap.addEventListener('click', function(e){
-      var rect = cctvCanvas.getBoundingClientRect();
+    // Mouse wheel zoom
+    svWrap.addEventListener('wheel', function(e){
+      e.preventDefault();
+      svFov = Math.max(40, Math.min(95, svFov + (e.deltaY > 0 ? 5 : -5)));
+    }, { passive:false });
+
+    // Click handler for Ground Chevrons and Bay Hotspots
+    svWrap.addEventListener('click', function(e){
+      var rect = svCanvas.getBoundingClientRect();
       var cx = e.clientX - rect.left;
       var cy = e.clientY - rect.top;
-      // Check hotspots
-      if (currentCctvHotspots){
-        currentCctvHotspots.forEach(function(h){
-          if (cx >= h.x - 40 && cx <= h.x + 40 && cy >= h.y - 18 && cy <= h.y + 18){
+
+      // 1. Check Chevron navigation arrows
+      if (currentSvChevrons){
+        for (var i = 0; i < currentSvChevrons.length; i++){
+          var ch = currentSvChevrons[i];
+          if (Math.hypot(cx - ch.x, cy - ch.y) < 32){
+            soundChime();
+            switchStreetViewPano(ch.targetPano);
+            return;
+          }
+        }
+      }
+
+      // 2. Check Bay tags
+      if (currentSvHotspots){
+        for (var j = 0; j < currentSvHotspots.length; j++){
+          var h = currentSvHotspots[j];
+          if (cx >= h.x - 42 && cx <= h.x + 42 && cy >= h.y - 18 && cy <= h.y + 18){
             var st = ParkingDataService.getState();
-            var target = st.slots.filter(function(s){return s.id===h.slotId;})[0];
+            var target = st.slots.filter(function(s){ return s.id === h.slotId; })[0];
             if (target){
               openModal(target);
-              showToast('Opened Bay ' + h.slotId + ' from 360° Camera View');
+              showToast('Opened Bay ' + h.slotId + ' from Street View');
+              return;
             }
           }
-        });
+        }
       }
     });
   }
 
-  var currentCctvHotspots = [];
-
-  function initCctv360(){
-    if (!cctvCanvas) return;
-    cctvCtx = cctvCanvas.getContext('2d');
-    resizeCctvCanvas();
-    window.addEventListener('resize', resizeCctvCanvas);
-    requestAnimationFrame(renderCctvFrame);
-  }
-
-  function resizeCctvCanvas(){
-    if (!cctvCanvas) return;
-    var rect = cctvWrap.getBoundingClientRect();
-    cctvCanvas.width = rect.width || 1000;
-    cctvCanvas.height = rect.height || 500;
-  }
-
-  function renderCctvFrame(){
+  // Render Google Street View Frame
+  function renderStreetViewFrame(){
     var pageCam = document.getElementById('page-camera');
-    if (!cctvCtx || !pageCam.classList.contains('active')) return;
+    if (!svCtx || !pageCam.classList.contains('active')) return;
 
-    var w = cctvCanvas.width, h = cctvCanvas.height;
-    currentCctvHotspots = [];
+    var w = svCanvas.width, h = svCanvas.height;
+    currentSvHotspots = [];
+    currentSvChevrons = [];
 
-    // Auto patrol spin
-    if (cctvAutoSpin && !isDraggingCctv){
-      cctvYaw = (cctvYaw + 0.22) % 360;
+    // Auto-Tour Rotation
+    if (svAutoTour && !isDraggingSv){
+      svYaw = (svYaw + 0.18) % 360;
     }
 
-    // Update telemetry text
-    var now = new Date();
-    document.getElementById('cctvTimeTag').textContent = now.toISOString().replace('T',' ').slice(0,23) + ' IST';
-    document.getElementById('cctvPtzTelemetry').textContent = 'YAW: ' + cctvYaw.toFixed(1) + '° | PITCH: ' + cctvPitch.toFixed(1) + '° | ZOOM: ' + cctvZoom.toFixed(1) + 'x';
+    // Update Compass Needle Rotation (-svYaw deg)
+    var streetviewNeedle = document.getElementById('streetviewNeedle');
+    if (streetviewNeedle){
+      streetviewNeedle.style.transform = 'rotate(' + (-svYaw) + 'deg)';
+    }
 
     // Clear Screen
-    cctvCtx.clearRect(0, 0, w, h);
+    svCtx.clearRect(0, 0, w, h);
 
-    // Apply Vision Mode Background
-    if (cctvVisionMode === 'night'){
-      cctvCtx.fillStyle = '#021208'; // IR Green background
-    } else if (cctvVisionMode === 'thermal'){
-      cctvCtx.fillStyle = '#100326'; // Thermal purple
+    // Dynamic Horizon based on Pitch and FOV
+    var horizonY = (h / 2) + (svPitch * (h / svFov));
+
+    // Base Atmosphere Color
+    if (svVisionMode === 'night'){
+      svCtx.fillStyle = '#021208';
+    } else if (svVisionMode === 'thermal'){
+      svCtx.fillStyle = '#100326';
     } else {
-      cctvCtx.fillStyle = '#0A1220'; // Standard parking garage dark tone
+      svCtx.fillStyle = '#0D131F';
     }
-    cctvCtx.fillRect(0, 0, w, h);
+    svCtx.fillRect(0, 0, w, h);
 
-    // Horizon & Pitch offset
-    var horizonY = (h / 2) + (cctvPitch * 3.8);
+    // 1. Concrete Structural Ceiling & Fluorescent Light Troffers
+    svCtx.fillStyle = (svVisionMode==='night'?'#042211':(svVisionMode==='thermal'?'#280A48':'#111B2E'));
+    svCtx.fillRect(0, 0, w, horizonY - 40);
 
-    // Ceiling Structure
-    cctvCtx.fillStyle = (cctvVisionMode==='night'?'#042211':(cctvVisionMode==='thermal'?'#280A48':'#0F192E'));
-    cctvCtx.fillRect(0, 0, w, horizonY - 40);
+    for (var bi = -3; bi <= 9; bi++){
+      var bx = ((bi * 170 - (svYaw * 3.2) % 170) + w) % w;
+      svCtx.fillStyle = (svVisionMode==='night'?'#063318':(svVisionMode==='thermal'?'#3D1068':'#1A2844'));
+      svCtx.fillRect(bx, 0, 38, horizonY - 45);
 
-    // Overhead Concrete Beams & Lighting Troffers
-    for (var bi = -2; bi <= 8; bi++){
-      var bx = ((bi * 160 - (cctvYaw * 2.8) % 160) + w) % w;
-      cctvCtx.fillStyle = (cctvVisionMode==='night'?'#063318':(cctvVisionMode==='thermal'?'#3D1068':'#16233F'));
-      cctvCtx.fillRect(bx, 0, 36, horizonY - 50);
-
-      // Overhead fluorescent LED light fixture
-      cctvCtx.fillStyle = (cctvVisionMode==='night'?'#86EFAC':(cctvVisionMode==='thermal'?'#FDE047':'#FFFFFF'));
-      cctvCtx.shadowColor = cctvCtx.fillStyle;
-      cctvCtx.shadowBlur = 10;
-      cctvCtx.fillRect(bx + 4, horizonY - 60, 28, 5);
-      cctvCtx.shadowBlur = 0;
+      // Fluorescent troffers
+      svCtx.fillStyle = (svVisionMode==='night'?'#86EFAC':(svVisionMode==='thermal'?'#FDE047':'#FFFFFF'));
+      svCtx.shadowColor = svCtx.fillStyle;
+      svCtx.shadowBlur = 8;
+      svCtx.fillRect(bx + 4, horizonY - 55, 30, 4);
+      svCtx.shadowBlur = 0;
     }
 
-    // Floor Asphalt / Epoxy Deck
-    var floorGrad = cctvCtx.createLinearGradient(0, horizonY - 40, 0, h);
-    if (cctvVisionMode === 'night'){
+    // 2. Asphalt Floor Deck
+    var floorGrad = svCtx.createLinearGradient(0, horizonY - 40, 0, h);
+    if (svVisionMode === 'night'){
       floorGrad.addColorStop(0, '#062814'); floorGrad.addColorStop(1, '#021609');
-    } else if (cctvVisionMode === 'thermal'){
+    } else if (svVisionMode === 'thermal'){
       floorGrad.addColorStop(0, '#36094D'); floorGrad.addColorStop(1, '#1A042B');
     } else {
-      floorGrad.addColorStop(0, '#10192C'); floorGrad.addColorStop(1, '#080E1A');
+      floorGrad.addColorStop(0, '#131D31'); floorGrad.addColorStop(1, '#080E18');
     }
-    cctvCtx.fillStyle = floorGrad;
-    cctvCtx.fillRect(0, horizonY - 40, w, h - (horizonY - 40));
+    svCtx.fillStyle = floorGrad;
+    svCtx.fillRect(0, horizonY - 40, w, h - (horizonY - 40));
 
-    // Floor Driving Lane Striping (Yellow lines)
-    cctvCtx.strokeStyle = (cctvVisionMode==='night'?'#86EFAC':(cctvVisionMode==='thermal'?'#F97316':'#F59E0B'));
-    cctvCtx.lineWidth = 3;
-    cctvCtx.beginPath();
-    cctvCtx.moveTo(0, horizonY + 70);
-    cctvCtx.lineTo(w, horizonY + 70);
-    cctvCtx.stroke();
+    // Yellow Driving Lane Dividing Stripe
+    svCtx.strokeStyle = (svVisionMode==='night'?'#86EFAC':(svVisionMode==='thermal'?'#F97316':'#F59E0B'));
+    svCtx.lineWidth = 3;
+    svCtx.beginPath();
+    svCtx.moveTo(0, horizonY + 75);
+    svCtx.lineTo(w, horizonY + 75);
+    svCtx.stroke();
 
-    // Concrete Support Pillars (Repeated every 90 degrees around 360)
+    // 3. Concrete Pillars with Safety Striping
     for (var p = 0; p < 4; p++){
-      var pAngle = (p * 90 + 30);
-      var pRel = (pAngle - cctvYaw + 540) % 360 - 180;
-      if (Math.abs(pRel) < 70){
-        var px = (pRel / 70 + 1) * 0.5 * w;
-        var pw = 75 * cctvZoom;
-        cctvCtx.fillStyle = (cctvVisionMode==='night'?'#0A3E1E':(cctvVisionMode==='thermal'?'#581C87':'#1B2844'));
-        cctvCtx.fillRect(px - pw/2, horizonY - 120, pw, h - (horizonY - 120));
+      var pAngle = (p * 90 + 25);
+      var pRel = (pAngle - svYaw + 540) % 360 - 180;
+      if (Math.abs(pRel) < (svFov / 2 + 10)){
+        var px = (pRel / (svFov / 2) + 1) * 0.5 * w;
+        var pw = (80 * 75) / svFov;
+        svCtx.fillStyle = (svVisionMode==='night'?'#0A3E1E':(svVisionMode==='thermal'?'#581C87':'#1E2C48'));
+        svCtx.fillRect(px - pw/2, horizonY - 120, pw, h - (horizonY - 120));
 
-        // Pillar Yellow Hazard Stripes (Indian standard)
-        cctvCtx.fillStyle = (cctvVisionMode==='thermal'?'#FDE047':'#F59E0B');
-        cctvCtx.fillRect(px - pw/2, horizonY + 20, pw, 12);
-        cctvCtx.fillRect(px - pw/2, horizonY + 45, pw, 12);
+        // Yellow Warning Stripes
+        svCtx.fillStyle = (svVisionMode==='thermal'?'#FDE047':'#F59E0B');
+        svCtx.fillRect(px - pw/2, horizonY + 20, pw, 12);
+        svCtx.fillRect(px - pw/2, horizonY + 45, pw, 12);
 
-        // Pillar Code Badge
-        cctvCtx.fillStyle = '#fff';
-        cctvCtx.font = 'bold 11px monospace';
-        cctvCtx.fillText('PILLAR A-' + (p+1), px - 28, horizonY - 20);
+        // Pillar Code
+        svCtx.fillStyle = '#FFFFFF';
+        svCtx.font = 'bold 11px monospace';
+        svCtx.fillText('PILLAR A-' + (p+1), px - 28, horizonY - 20);
       }
     }
 
-    // Render 360 Parking Bays & Parked Vehicles
+    // 4. Render 360 Parking Bays & Parked Vehicles
     var st = ParkingDataService.getState();
     var slots = st.slots;
 
     slots.forEach(function(s, idx){
-      // Calculate 360-degree angle position for each bay
       var slotAngle = (idx * (360 / slots.length) + 15) % 360;
-      var relAngle = (slotAngle - cctvYaw + 540) % 360 - 180;
+      var relAngle = (slotAngle - svYaw + 540) % 360 - 180;
 
-      // Only render if within camera field of view (~75 degrees left/right)
-      if (Math.abs(relAngle) < 65){
-        var sx = (relAngle / 65 + 1) * 0.5 * w;
+      if (Math.abs(relAngle) < (svFov / 2 + 8)){
+        var sx = (relAngle / (svFov / 2) + 1) * 0.5 * w;
         var sy = horizonY + 10;
-        var sw = 85 * cctvZoom;
-        var sh = 100 * cctvZoom;
+        var sw = (90 * 75) / svFov;
+        var sh = (110 * 75) / svFov;
 
-        // Bay demarcation boundary
-        cctvCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-        cctvCtx.lineWidth = 2;
-        cctvCtx.strokeRect(sx - sw/2, sy, sw, sh);
+        // Bay Outline
+        svCtx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+        svCtx.lineWidth = 2;
+        svCtx.strokeRect(sx - sw/2, sy, sw, sh);
 
-        // Overhead Sensor Status Light (Green / Red / Amber)
+        // Overhead Sensor Status Light
         var ledCol = statusColor(s.status);
-        cctvCtx.beginPath();
-        cctvCtx.arc(sx, sy - 28, 6, 0, Math.PI*2);
-        cctvCtx.fillStyle = (cctvVisionMode==='night'?'#86EFAC':(cctvVisionMode==='thermal'?'#EF4444':ledCol));
-        cctvCtx.shadowColor = cctvCtx.fillStyle;
-        cctvCtx.shadowBlur = 12;
-        cctvCtx.fill();
-        cctvCtx.shadowBlur = 0;
+        svCtx.beginPath();
+        svCtx.arc(sx, sy - 28, 6, 0, Math.PI*2);
+        svCtx.fillStyle = (svVisionMode==='night'?'#86EFAC':(svVisionMode==='thermal'?'#EF4444':ledCol));
+        svCtx.shadowColor = svCtx.fillStyle;
+        svCtx.shadowBlur = 10;
+        svCtx.fill();
+        svCtx.shadowBlur = 0;
 
-        // Vehicle drawing if occupied
+        // Occupied Vehicle
         if (s.status === 'occupied'){
           var isEv = (s.type === 'ev');
-          cctvCtx.fillStyle = (cctvVisionMode==='night'?'#0F5128':(cctvVisionMode==='thermal'?(isEv?'#06B6D4':'#EA580C'):(isEv?'#047857':'#1E293B')));
-          cctvCtx.roundRect(sx - sw/2 + 6, sy + 15, sw - 12, sh - 25, 8);
-          cctvCtx.fill();
+          svCtx.fillStyle = (svVisionMode==='night'?'#0F5128':(svVisionMode==='thermal'?(isEv?'#06B6D4':'#EA580C'):(isEv?'#047857':'#1E293B')));
+          svCtx.roundRect(sx - sw/2 + 6, sy + 15, sw - 12, sh - 25, 8);
+          svCtx.fill();
 
-          // Vehicle Windshield
-          cctvCtx.fillStyle = (cctvVisionMode==='thermal'?'#FDE047':'rgba(255,255,255,0.4)');
-          cctvCtx.roundRect(sx - sw/2 + 14, sy + 25, sw - 28, 20, 4);
-          cctvCtx.fill();
+          // Windshield
+          svCtx.fillStyle = (svVisionMode==='thermal'?'#FDE047':'rgba(255,255,255,0.4)');
+          svCtx.roundRect(sx - sw/2 + 14, sy + 25, sw - 28, 20, 4);
+          svCtx.fill();
 
-          // ANPR AI Bounding Box
-          cctvCtx.strokeStyle = (cctvVisionMode==='thermal'?'#FACC15':'#38BDF8');
-          cctvCtx.lineWidth = 1.5;
-          cctvCtx.strokeRect(sx - sw/2 + 2, sy + 8, sw - 4, sh - 14);
+          // AI-ANPR Bounding Box
+          svCtx.strokeStyle = (svVisionMode==='thermal'?'#FACC15':'#38BDF8');
+          svCtx.lineWidth = 1.5;
+          svCtx.strokeRect(sx - sw/2 + 2, sy + 8, sw - 4, sh - 14);
 
-          // AI Plate Label
-          cctvCtx.fillStyle = '#38BDF8';
-          cctvCtx.font = 'bold 9px monospace';
-          cctvCtx.fillText('[AI-ANPR: ' + (s.plate || 'DL 01') + ']', sx - sw/2, sy + 5);
+          // Plate Text
+          svCtx.fillStyle = '#38BDF8';
+          svCtx.font = 'bold 9px monospace';
+          svCtx.fillText('[AI: ' + (s.plate || 'DL 01') + ']', sx - sw/2, sy + 4);
         } else {
-          // Vacant slot ground text
-          cctvCtx.fillStyle = 'rgba(14, 164, 114, 0.4)';
-          cctvCtx.font = 'bold 12px monospace';
-          cctvCtx.fillText('OPEN', sx - 16, sy + 50);
+          svCtx.fillStyle = 'rgba(14, 164, 114, 0.4)';
+          svCtx.font = 'bold 11px monospace';
+          svCtx.fillText('VACANT', sx - 20, sy + 55);
         }
 
-        // Floating Interactive 3D Hotspot Badge
-        var badgeY = sy - 45;
-        cctvCtx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-        cctvCtx.strokeStyle = (s.status==='available'?'#0EA472':'#38BDF8');
-        cctvCtx.lineWidth = 1.5;
-        cctvCtx.roundRect(sx - 36, badgeY - 12, 72, 22, 6);
-        cctvCtx.fill();
-        cctvCtx.stroke();
+        // Google Street View 3D AR Hotspot Tag (Clickable to reserve)
+        var badgeY = sy - 46;
+        svCtx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        svCtx.strokeStyle = (s.status==='available' ? '#0EA472' : '#38BDF8');
+        svCtx.lineWidth = 1.5;
+        svCtx.roundRect(sx - 38, badgeY - 12, 76, 22, 6);
+        svCtx.fill();
+        svCtx.stroke();
 
-        cctvCtx.fillStyle = '#fff';
-        cctvCtx.font = 'bold 10px Manrope';
-        cctvCtx.fillText(s.id + (s.type==='ev'?' ⚡':(s.type==='accessibility'?' ♿':'')), sx - 28, badgeY + 3);
+        svCtx.fillStyle = '#FFFFFF';
+        svCtx.font = 'bold 10px sans-serif';
+        svCtx.fillText(s.id + (s.type==='ev'?' ⚡':(s.type==='accessibility'?' ♿':'')), sx - 28, badgeY + 3);
 
-        // Store hotspot for click detection
-        currentCctvHotspots.push({ slotId: s.id, x: sx, y: badgeY });
+        currentSvHotspots.push({ slotId: s.id, x: sx, y: badgeY });
       }
     });
 
-    // Special Feature: Gate 1 FASTag Boom Barrier in 360 View (at angle ~140)
-    var gateRel = (140 - cctvYaw + 540) % 360 - 180;
-    if (Math.abs(gateRel) < 65){
-      var gx = (gateRel / 65 + 1) * 0.5 * w;
+    // 5. Special Gate Features (Boom barrier at Gate 1 & Exit at Gate 4)
+    var gateRel = (140 - svYaw + 540) % 360 - 180;
+    if (Math.abs(gateRel) < (svFov / 2 + 5)){
+      var gx = (gateRel / (svFov / 2) + 1) * 0.5 * w;
       var gy = horizonY + 20;
 
-      // FASTag RFID Scanner Tower
-      cctvCtx.fillStyle = '#EA580C';
-      cctvCtx.fillRect(gx - 8, gy - 80, 16, 90);
-      cctvCtx.fillStyle = '#fff';
-      cctvCtx.font = 'bold 9px monospace';
-      cctvCtx.fillText('FASTag', gx - 16, gy - 90);
+      // FASTag RFID Scanner Post
+      svCtx.fillStyle = '#EA580C';
+      svCtx.fillRect(gx - 8, gy - 80, 16, 90);
+      svCtx.fillStyle = '#FFFFFF';
+      svCtx.font = 'bold 9px monospace';
+      svCtx.fillText('FASTag', gx - 16, gy - 88);
 
-      // Barrier Arm
-      cctvCtx.strokeStyle = '#EF4444';
-      cctvCtx.lineWidth = 5;
-      cctvCtx.beginPath();
-      cctvCtx.moveTo(gx + 8, gy - 20);
-      cctvCtx.lineTo(gx + 80, gy - 20);
-      cctvCtx.stroke();
+      // Red/White Boom Barrier Arm
+      svCtx.strokeStyle = '#EF4444';
+      svCtx.lineWidth = 5;
+      svCtx.beginPath();
+      svCtx.moveTo(gx + 8, gy - 20);
+      svCtx.lineTo(gx + 75, gy - 20);
+      svCtx.stroke();
     }
 
-    // Vision Mode Scanlines & Phosphor Filter Effects
-    if (cctvVisionMode === 'night'){
-      cctvCtx.fillStyle = 'rgba(134, 239, 172, 0.08)';
-      cctvCtx.fillRect(0, 0, w, h);
-      // Scanlines
-      cctvCtx.fillStyle = 'rgba(0, 0, 0, 0.25)';
-      for (var sl = 0; sl < h; sl += 4) cctvCtx.fillRect(0, sl, w, 1.5);
-    } else if (cctvVisionMode === 'thermal'){
-      cctvCtx.fillStyle = 'rgba(234, 88, 12, 0.06)';
-      cctvCtx.fillRect(0, 0, w, h);
+    // 6. Google Street View Ground Navigation Chevrons (Step Forward Arrows)
+    // Draw 3D elliptical Street View arrows on the ground in navigation directions
+    var chevronTargets = [];
+    if (svActivePano === 1){
+      chevronTargets.push({ targetPano: 2, angle: 0, label: '↑ Step forward to 22kW EV Hub' });
+    } else if (svActivePano === 2){
+      chevronTargets.push({ targetPano: 3, angle: 25, label: '↑ Step to Zone B Divyangjan Deck' });
+      chevronTargets.push({ targetPano: 1, angle: 180, label: '↓ Step back to Gate 1 FASTag Entry' });
+    } else if (svActivePano === 3){
+      chevronTargets.push({ targetPano: 4, angle: 45, label: '↑ Step forward to Gate 2 Exit' });
+      chevronTargets.push({ targetPano: 2, angle: 180, label: '↓ Step back to Central Aisle' });
+    } else if (svActivePano === 4){
+      chevronTargets.push({ targetPano: 2, angle: 190, label: '↓ Return to Central Aisle' });
     }
 
-    requestAnimationFrame(renderCctvFrame);
+    chevronTargets.forEach(function(ch){
+      var chRel = (ch.angle - svYaw + 540) % 360 - 180;
+      if (Math.abs(chRel) < (svFov / 2 + 5)){
+        var cx = (chRel / (svFov / 2) + 1) * 0.5 * w;
+        var cy = horizonY + 120;
+
+        // Ground navigation disc
+        svCtx.save();
+        svCtx.beginPath();
+        svCtx.ellipse(cx, cy, 28, 12, 0, 0, Math.PI*2);
+        svCtx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+        svCtx.fill();
+        svCtx.strokeStyle = '#FFFFFF';
+        svCtx.lineWidth = 2;
+        svCtx.stroke();
+
+        // Direction chevron (^)
+        svCtx.beginPath();
+        svCtx.moveTo(cx - 10, cy + 3);
+        svCtx.lineTo(cx, cy - 5);
+        svCtx.lineTo(cx + 10, cy + 3);
+        svCtx.strokeStyle = '#1A73E8';
+        svCtx.lineWidth = 3.5;
+        svCtx.stroke();
+
+        // Google Street View Tooltip Pill
+        svCtx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+        svCtx.roundRect(cx - 75, cy + 18, 150, 20, 4);
+        svCtx.fill();
+        svCtx.fillStyle = '#FFFFFF';
+        svCtx.font = 'bold 9.5px sans-serif';
+        svCtx.fillText(ch.label, cx - 68, cy + 32);
+
+        svCtx.restore();
+
+        currentSvChevrons.push({ targetPano: ch.targetPano, x: cx, y: cy });
+      }
+    });
+
+    // 7. Vision Mode Filter effects
+    if (svVisionMode === 'night'){
+      svCtx.fillStyle = 'rgba(134, 239, 172, 0.08)';
+      svCtx.fillRect(0, 0, w, h);
+      svCtx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+      for (var sl = 0; sl < h; sl += 4) svCtx.fillRect(0, sl, w, 1.5);
+    } else if (svVisionMode === 'thermal'){
+      svCtx.fillStyle = 'rgba(234, 88, 12, 0.06)';
+      svCtx.fillRect(0, 0, w, h);
+    }
+
+    // 8. Render Split Google Minimap in Bottom-Left
+    renderStreetViewMinimap();
+
+    requestAnimationFrame(renderStreetViewFrame);
+  }
+
+  // Render Minimap with Pegman & Rotating Flashlight Field-of-View Cone
+  function renderStreetViewMinimap(){
+    if (!svMiniCtx || !svMiniCanvas) return;
+    var mw = svMiniCanvas.width, mh = svMiniCanvas.height;
+    svMiniCtx.clearRect(0, 0, mw, mh);
+
+    // Dark Map Background
+    svMiniCtx.fillStyle = '#0B1220';
+    svMiniCtx.fillRect(0, 0, mw, mh);
+
+    // Facility Outline
+    svMiniCtx.strokeStyle = '#2563EB';
+    svMiniCtx.lineWidth = 1.5;
+    svMiniCtx.strokeRect(20, 20, mw - 40, mh - 40);
+
+    // Pano Node Positions on Minimap
+    var nodeCoords = {
+      1: { x: 35, y: mh / 2 },
+      2: { x: mw * 0.45, y: mh / 2 },
+      3: { x: mw * 0.7, y: mh / 2 - 20 },
+      4: { x: mw - 35, y: mh / 2 }
+    };
+
+    // Draw connecting path
+    svMiniCtx.strokeStyle = '#334155';
+    svMiniCtx.lineWidth = 4;
+    svMiniCtx.beginPath();
+    svMiniCtx.moveTo(nodeCoords[1].x, nodeCoords[1].y);
+    svMiniCtx.lineTo(nodeCoords[2].x, nodeCoords[2].y);
+    svMiniCtx.lineTo(nodeCoords[3].x, nodeCoords[3].y);
+    svMiniCtx.lineTo(nodeCoords[4].x, nodeCoords[4].y);
+    svMiniCtx.stroke();
+
+    // Active Pegman Coordinate
+    var activeNode = nodeCoords[svActivePano] || nodeCoords[1];
+
+    // Draw Rotating Flashlight Cone (Viewing Angle Beam)
+    var rad = (svYaw - 90) * (Math.PI / 180);
+    var halfFovRad = (svFov / 2) * (Math.PI / 180);
+    var beamDist = 55;
+
+    svMiniCtx.save();
+    svMiniCtx.beginPath();
+    svMiniCtx.moveTo(activeNode.x, activeNode.y);
+    svMiniCtx.arc(activeNode.x, activeNode.y, beamDist, rad - halfFovRad, rad + halfFovRad);
+    svMiniCtx.closePath();
+
+    var beamGrad = svMiniCtx.createRadialGradient(activeNode.x, activeNode.y, 2, activeNode.x, activeNode.y, beamDist);
+    beamGrad.addColorStop(0, 'rgba(249, 171, 0, 0.55)');
+    beamGrad.addColorStop(1, 'rgba(249, 171, 0, 0.0)');
+    svMiniCtx.fillStyle = beamGrad;
+    svMiniCtx.fill();
+    svMiniCtx.restore();
+
+    // Draw Other Inactive Pano Nodes
+    for (var k in nodeCoords){
+      var n = nodeCoords[k];
+      svMiniCtx.beginPath();
+      svMiniCtx.arc(n.x, n.y, 4, 0, Math.PI*2);
+      svMiniCtx.fillStyle = (parseInt(k) === svActivePano) ? '#F9AB00' : '#64748B';
+      svMiniCtx.fill();
+    }
+
+    // Draw Google Street View Yellow Pegman Figure
+    svMiniCtx.fillStyle = '#F9AB00';
+    svMiniCtx.beginPath();
+    svMiniCtx.arc(activeNode.x, activeNode.y - 6, 3.5, 0, Math.PI*2); // Head
+    svMiniCtx.fill();
+    svMiniCtx.fillRect(activeNode.x - 2.5, activeNode.y - 2, 5, 8); // Body
   }
 
   // ---------------- 1-CLICK SMART AUTO-ASSIGN WIZARD ----------------
