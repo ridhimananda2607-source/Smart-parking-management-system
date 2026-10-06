@@ -1,52 +1,44 @@
-# SmartPark — IoT Smart Parking Management System
+# SmartPark India (स्मार्टपार्क) — Smart City IoT Parking & FASTag Management
 
-A modern, responsive, real-time dashboard and architectural simulation for an IoT-based smart parking system. Simulates a complete parking facility network — real-time ultrasonic and infrared edge sensors, animated IoT telemetry pipelines, live 2D floor plans, EV charging management, and digital QR reservation tickets.
+A modern, responsive, real-time dashboard and architectural simulation for an IoT-based smart parking system localized for Indian urban hubs (IGI Airport Terminal 3, DLF CyberHub Gurugram, Kempegowda T2, Phoenix Marketcity). Integrates real-time ultrasonic & infrared edge sensors, NETC FASTag automated boom barriers, UPI payments (Google Pay, PhonePe, Paytm), Indian HSRP and green EV plates, turn-by-turn wayfinding, and interactive audio synthesis.
 
 🔗 **Live Web Demo:** [https://ridhimananda2607-source.github.io/Smart-parking-management-system/](https://ridhimananda2607-source.github.io/Smart-parking-management-system/)  
 *(Or open `parking.html` / `index.html` directly in any web browser)*
 
 ---
 
-## 🌟 Key Features
+## 🇮🇳 India-Based Features & Localized Ecosystem
 
-### 1. 🗺️ Interactive 2D Parking Map
-- **Architectural Floor Plan:** Multi-level garage layout (Level 1 Ground Deck & Level 2 Upper Deck) complete with entrance/exit boom barriers, one-way driving lanes, pedestrian zebra crosswalks, and speed limits.
-- **Dynamic Bay Indicators:** Overhead LED status indicators (Available 🟢, Occupied 🔴, Reserved 🟠, Offline ⚪).
-- **Interactive Tooltips & Filtering:** Hover over any bay to inspect dwell times, vehicle plates, and hardware specs. Filter the map by available bays, EV chargers, or accessibility slots with one click.
+### 1. 🏷️ NPCI NETC FASTag Automated Boom Barrier
+- **RFID 865–867 MHz Simulation:** Gate 1 (Entry) automatically scans vehicle FASTag tags and lifts the boom barrier.
+- **Auto-Debit at Exit:** Gate 2 automatically calculates dwell time and triggers instant toll/parking debit from the linked FASTag wallet (ICICI, Paytm, IDFC).
 
-### 2. 🔌 IoT Architecture & System Health
-- **Animated Data Pipeline:** Real-time visual signal flow tracing data from Edge Sensors (HC-SR04 Ultrasonic & Sharp IR) ➔ Arduino/ESP32 Microcontroller ➔ IoT Gateway (LoRa/WiFi) ➔ Cloud Broker (AWS IoT Core / Mosquitto MQTT) ➔ SmartPark Reactive Web UI.
-- **Live MQTT Telemetry Stream:** Live JSON payload inspector monitoring topics like `smartpark/telemetry/edge` in real time.
-- **Hardware Health Metrics:** Telemetry gauges for average network latency (41ms), packet throughput, 99.8% uptime reliability, and node battery levels.
+### 2. 📱 UPI Payment Flow (Google Pay, PhonePe, Paytm, BHIM)
+- **Dynamic UPI QR Passes:** Generates compliant UPI payment QR codes (`upi://pay?pa=smartpark@icici&...`).
+- **1-Tap UPI App Buttons:** Direct simulation for Google Pay, PhonePe, Paytm, and FASTag auto-debit.
+- **Grace Period Passes:** 15-minute live expiration countdown holding your assigned bay with an active header pill.
 
-### 3. 🎮 Demo & Sensor Simulation Controls
-- **One-Click Real-World Scenarios:**
-  - 🏎️ **Rush Hour Inflow:** Simulates rapid vehicle influx (+6 cars parked).
-  - 🚗💨 **Evening Departure:** Simulates vehicles exiting and logs session turnover.
-  - ⚡ **EV Charging Surge:** Connects vehicles to 22kW fast chargers.
-  - ⚠️ **Sensor Fault Injection:** Simulates node mesh disconnection or signal glitch.
-  - 🔄 **Facility Reset:** Restores the garage to a balanced baseline state.
-- **Granular Controls:** Speed controls (Relaxed, Normal, Fast, Hyper), manual bay status overrides, and simulation pause/resume.
+### 3. 🚗 Authentic Indian HSRP & Green EV License Plates
+- **High-Security Registration Plates (HSRP):** Realistic Indian private plates with the IND blue band: `DL 01 AB 1234`, `MH 02 CB 9876`, `KA 05 MN 4521`, `HR 26 DQ 7890`, etc.
+- **MoRTH Mandated Green EV Plates:** Electric vehicles feature signature green registration plates (`DL 3C EV 2024`, `KA 03 EV 9110`, `MH 14 EV 4004`).
+- **Custom Plate Input:** Drivers can enter their own registration number when reserving!
 
-### 4. 📊 24×7 Occupancy Heatmap & Smart Insights
-- **Interactive Heatmap:** 7 Days (Mon–Sun) × 24 Hours grid displaying historical density and demand patterns.
-- **Dynamic Pricing Recommendations:** Recommends optimal tariffs based on demand velocity.
-- **Automated Facility Insights:** Categorized predictive forecasts, revenue optimizations, and preventative maintenance alerts.
-- **Report Export:** One-click CSV export of analytics KPIs.
+### 4. 🧾 Official GST Tax Invoices
+- Itemized parking receipts featuring **GSTIN: 07AABCS1429B1Z8**, base tariffs (₹40/hr), EV charging power (kWh @ ₹14/kWh), **CGST (9%)**, and **SGST (9%)** with print/save capability.
 
-### 5. 🎟️ QR-Based Digital Parking Passes
-- **Digital Parking Ticket:** Generates a verified booking reference with bay location, level, check-in PIN, and scannable QR code.
-- **Live 15-Minute Expiration Countdown:** Persistent floating header pill and timer bar holding the bay for the driver.
-- **Simulate Gate Check-in:** Simulates driving up to the barrier scanner to raise the boom gate and mark the bay as occupied.
+### 5. ♿ Divyangjan Priority Parking (दिव्यांगजन)
+- Dedicated accessible bays designated for differently-abled citizens with zero-step ramp access and priority lift proximity.
 
-### 6. 🚗 Vehicle & Parking Session History
-- **Comprehensive Session Logs:** Tracks vehicle license plates, bay numbers, arrival/departure timestamps, duration, and calculated fees.
-- **Itemized Tax Invoice & Receipt Modal:** Click any past session to view an official digital parking receipt with itemized base rates, EV energy charges, and taxes.
-- **CSV Data Export:** 1-click download of all completed sessions for accounting.
+---
 
-### 7. ⚡ EV Charging & Accessibility (ADA) Infrastructure
-- **EV Fast Charging Hub:** Live battery state of charge (%), charging speed (22kW DC), kWh dispensed, and charger availability filters.
-- **Accessibility Infrastructure:** Extra-wide 3.6m parking bays with 1.2m access aisles and elevator proximity markers.
+## 🌟 Interactive & User-Friendly Capabilities
+
+- 🔊 **Web Audio Synthesizer:** Native in-browser sound effects (pleasant chime on reservation, FASTag RFID beep, and barrier lift audio) with toggle button in navbar.
+- 🧭 **Turn-by-Turn Wayfinding Guidance:** Selecting or reserving any bay highlights the exact driving route from Gate 1 to your bay on the 2D map.
+- ⚡ **1-Click Smart Auto-Assign:** Instant wizard that calculates the nearest vacant bay to the elevator/entrance and assigns it with one tap.
+- 🔔 **Live Toast Notifications:** Floating alerts on vehicle entries, FASTag debits, EV charging, and sensor pings.
+- 📊 **24×7 Weekly Traffic Heatmap:** Hour-by-hour NCR traffic density matrix with dynamic pricing suggestions (₹40/hr off-peak vs ₹60/hr peak).
+- 🎮 **Real-World Traffic Scenarios:** Presets for *Delhi Peak Rush*, *Evening FASTag Clearance*, *Tata Nexon EV Charging Surge*, and *Monsoon Sensor Glitch*.
 
 ---
 
@@ -54,21 +46,9 @@ A modern, responsive, real-time dashboard and architectural simulation for an Io
 
 - **Vanilla HTML5, CSS3, & Modern JavaScript (ES6+):** Zero build steps, zero npm dependencies to compile.
 - **Chart.js:** Responsive occupancy velocity charts, doughnut distributions, and peak-hour histograms.
+- **Web Audio API:** Lightweight, synthesized zero-asset audio haptics.
 - **Integrated QR Engine:** Multi-layer QR generator with built-in SVG matrix fallback for 100% offline reliability.
 - **Self-Contained:** Runs instantly out of the box in any modern browser.
-
----
-
-## 🚀 Getting Started
-
-### Option A: Direct Browser Launch
-Simply double-click `index.html` or `parking.html` to open it in your browser.
-
-### Option B: Local Server
-```bash
-python3 -m http.server 8000
-```
-Then navigate to: `http://localhost:8000`
 
 ---
 
@@ -77,6 +57,6 @@ Then navigate to: `http://localhost:8000`
 ```text
 .
 ├── index.html     # Primary web application (GitHub Pages entry point)
-├── parking.html   # Standalone application file
-└── README.md      # Documentation & architecture overview
+├── parking.html   # Standalone localized application file
+└── README.md      # Indian localization, architecture, and feature guide
 ```

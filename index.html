@@ -3,23 +3,23 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>SmartPark — IoT Smart Parking Management System</title>
+<title>SmartPark India — Smart City IoT Parking & FASTag Management</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root{
-    --navy-950:#070B14;
-    --navy-900:#0B1120;
+    --navy-950:#060A12;
+    --navy-900:#0A101D;
     --navy-850:#0F172A;
-    --navy-800:#111A2E;
+    --navy-800:#131C31;
     --navy-700:#1B2740;
     --navy-600:#2A3B5C;
-    --line:#24314C;
+    --line:#23324F;
     --ink:#0F172A;
-    --paper:#F4F6FA;
+    --paper:#F4F6FB;
     --paper-card:#FFFFFF;
     --muted:#64748B;
     --available:#0EA472;
@@ -30,10 +30,16 @@
     --occupied-soft:#FBE2E6;
     --offline:#6B7686;
     --offline-soft:#E7E9ED;
-    --ev:#0284C7;
-    --ev-soft:#E0F2FE;
+    --ev:#059669;
+    --ev-soft:#D1FAE5;
+    --ev-plate:#047857;
     --access:#7C3AED;
     --access-soft:#EDE9FE;
+    --fastag:#EA580C;
+    --fastag-soft:#FFEDD5;
+    --upi:#4F46E5;
+    --upi-soft:#EEF2FF;
+    --saffron:#FF9933;
     --accent-glow:rgba(14,164,114,0.35);
   }
   *{box-sizing:border-box;}
@@ -59,21 +65,30 @@
   .nav-inner{display:flex;align-items:center;justify-content:space-between;height:66px;}
   .brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:18px;letter-spacing:-0.01em;}
   .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--available);box-shadow:0 0 0 4px var(--accent-glow);}
+  .brand-sub{font-size:10px;font-weight:600;color:#94A3B8;margin-left:4px;background:#1E293B;padding:2px 6px;border-radius:4px;border:1px solid #334155;}
+  
   .navlinks{display:flex;align-items:center;gap:3px;}
   .navlinks button{
     background:transparent;border:none;color:#AAB4C8;font-weight:600;font-size:13.5px;
-    padding:8px 12px;border-radius:8px;transition:color .15s, background .15s;
+    padding:8px 11px;border-radius:8px;transition:color .15s, background .15s;
   }
   .navlinks button:hover{color:#fff;background:var(--navy-800);}
   .navlinks button.active{color:#fff;background:var(--navy-700);}
-  .nav-right{display:flex;align-items:center;gap:10px;}
-  
+  .nav-right{display:flex;align-items:center;gap:8px;}
+
+  .sound-btn{
+    background:var(--navy-800); border:1px solid var(--navy-700); border-radius:10px;
+    padding:8px 10px; color:#AAB4C8; font-size:12px; font-weight:700; display:flex; align-items:center; gap:5px;
+  }
+  .sound-btn:hover{color:#fff;}
+  .sound-btn.active{color:#86EFAC; border-color:#059669;}
+
   .bell-btn{position:relative;background:var(--navy-800);border:1px solid var(--navy-700);border-radius:10px;padding:8px;color:#fff;display:flex;}
   .bell-dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--occupied);display:none;}
-  
+
   .pass-pill-nav{
     display:none; align-items:center; gap:6px; background:#1C2942; border:1px solid #2B3D63;
-    padding:6px 12px; border-radius:100px; color:#38BDF8; font-size:12.5px; font-weight:700;
+    padding:6px 12px; border-radius:100px; color:#38BDF8; font-size:12px; font-weight:700;
     cursor:pointer; transition:transform .15s, background .15s;
   }
   .pass-pill-nav:hover{background:#233557; transform:translateY(-1px);}
@@ -81,11 +96,11 @@
 
   .cta-dash{
     background:var(--available);color:#04231A;font-weight:700;font-size:13.5px;
-    padding:8px 16px;border-radius:9px;border:none;
+    padding:8px 15px;border-radius:9px;border:none;
     box-shadow:0 6px 16px -4px rgba(14,164,114,.45);
   }
   .hamburger{display:none;background:transparent;border:none;color:#fff;padding:8px;}
-  @media (max-width:980px){
+  @media (max-width:1020px){
     .navlinks{display:none;}
     .hamburger{display:flex;}
   }
@@ -94,73 +109,107 @@
   .mobile-menu button{text-align:left;background:transparent;border:none;color:#AAB4C8;font-weight:600;padding:10px 4px;font-size:15px;border-bottom:1px solid var(--navy-800);}
   .mobile-menu button.active{color:var(--available);}
 
-  /* Global Demo Status Banner */
+  /* Global FASTag & Demo Ticker Bar */
   .demo-banner{
-    background:#0D172A; border-bottom:1px solid #1E293B; color:#94A3B8; font-size:12px;
+    background:#070C16; border-bottom:1px solid #1A2436; color:#94A3B8; font-size:11.5px;
     padding:6px 0; display:flex; justify-content:space-between; align-items:center;
   }
-  .demo-banner .wrap{display:flex; justify-content:space-between; align-items:center; width:100%;}
+  .demo-banner .wrap{display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:8px;}
   .demo-banner-left{display:flex; align-items:center; gap:8px;}
-  .demo-banner-right{display:flex; align-items:center; gap:12px;}
+  .demo-banner-right{display:flex; align-items:center; gap:10px;}
   .quick-sim-btn{
     background:#1E293B; border:1px solid #334155; color:#F1F5F9; font-size:11px;
-    font-weight:700; padding:3px 8px; border-radius:6px; cursor:pointer;
+    font-weight:700; padding:4px 9px; border-radius:6px; cursor:pointer; transition:all .15s;
   }
   .quick-sim-btn:hover{background:#334155;}
+  .fastag-badge-ticker{
+    display:inline-flex; align-items:center; gap:4px; background:#EA580C; color:#fff;
+    font-weight:800; font-size:9.5px; padding:2px 6px; border-radius:4px; letter-spacing:0.04em;
+  }
 
   section.page{display:none;}
   section.page.active{display:block;}
 
+  /* ---------- INDIAN HSRP & EV LICENSE PLATES ---------- */
+  .plate-hsrp{
+    display:inline-flex; align-items:center; background:#FFFFFF; color:#0F172A;
+    border:1.5px solid #1E293B; border-radius:4px; padding:1px 6px 1px 2px;
+    font-family:'JetBrains Mono',monospace; font-weight:800; font-size:11px;
+    letter-spacing:0.03em; box-shadow:0 1px 3px rgba(0,0,0,0.18);
+  }
+  .plate-hsrp .ind-band{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:#0B3B8B; color:#fff; font-size:7px; font-weight:900;
+    padding:1px 3px; border-radius:2px; margin-right:4px; line-height:1; letter-spacing:-0.02em;
+  }
+  /* EV Green Number Plate (Indian Standard by MoRTH) */
+  .plate-hsrp.ev{
+    background:#047857; color:#FFFFFF; border-color:#065F46;
+  }
+  .plate-hsrp.ev .ind-band{
+    background:#064E3B;
+  }
+  .plate-hsrp.commercial{
+    background:#FACC15; color:#0F172A; border-color:#CA8A04;
+  }
+
   /* ---------- HERO / LANDING ---------- */
   .hero{
     background:radial-gradient(circle at 15% 20%, #101C33 0%, var(--navy-950) 65%);
-    color:#fff; padding:70px 0 64px; position:relative; overflow:hidden;
+    color:#fff; padding:64px 0 58px; position:relative; overflow:hidden;
   }
-  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center;}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:46px;align-items:center;}
   @media (max-width:960px){.hero-grid{grid-template-columns:1fr;}}
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;color:#8FE6C4;font-weight:600;font-size:13px;background:rgba(14,164,114,.12);border:1px solid rgba(14,164,114,.3);padding:6px 12px;border-radius:100px;}
-  .hero h1{font-size:50px;line-height:1.08;letter-spacing:-0.02em;font-weight:800;margin:18px 0 14px;}
-  @media (max-width:640px){.hero h1{font-size:34px;}}
-  .hero p.sub{color:#AAB4C8;font-size:16.5px;line-height:1.6;max-width:520px;margin:0 0 26px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;color:#8FE6C4;font-weight:600;font-size:12.5px;background:rgba(14,164,114,.12);border:1px solid rgba(14,164,114,.3);padding:5px 12px;border-radius:100px;}
+  .hero h1{font-size:46px;line-height:1.1;letter-spacing:-0.02em;font-weight:800;margin:16px 0 14px;}
+  @media (max-width:640px){.hero h1{font-size:32px;}}
+  .hero p.sub{color:#AAB4C8;font-size:16px;line-height:1.6;max-width:540px;margin:0 0 24px;}
   .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
   .btn-primary{background:var(--available);color:#04231A;font-weight:700;padding:12px 22px;border-radius:10px;border:none;font-size:14.5px;box-shadow:0 8px 22px -6px rgba(14,164,114,.5);transition:transform .15s;}
   .btn-primary:hover{transform:translateY(-1px);}
   .btn-secondary{background:transparent;color:#fff;font-weight:700;padding:12px 22px;border-radius:10px;border:1px solid var(--navy-600);font-size:14.5px;transition:background .15s;}
   .btn-secondary:hover{background:var(--navy-800);}
+  .btn-fastag{background:#EA580C;color:#fff;font-weight:700;padding:12px 20px;border-radius:10px;border:none;font-size:14.5px;transition:transform .15s;}
+  .btn-fastag:hover{transform:translateY(-1px);}
+
+  .facility-pill{
+    display:inline-flex; align-items:center; gap:6px; background:#162035; border:1px solid #233458;
+    color:#93C5FD; font-size:12px; font-weight:700; padding:4px 10px; border-radius:8px; margin-bottom:12px;
+  }
 
   .lot-card{background:var(--navy-800);border:1px solid var(--navy-700);border-radius:18px;padding:22px;backdrop-filter:blur(6px);}
   .lot-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-  .lot-head span{color:#8593AC;font-size:12.5px;font-weight:600;}
+  .lot-head span{color:#8593AC;font-size:12px;font-weight:600;}
   .lot-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
   .lot-cell{aspect-ratio:1/1;border-radius:7px;transition:background .6s ease;position:relative;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:rgba(255,255,255,0.85);cursor:pointer;}
   .lot-cell:hover{transform:scale(1.05);}
 
-  .stats-bar{margin-top:-36px;position:relative;z-index:5;}
+  .stats-bar{margin-top:-34px;position:relative;z-index:5;}
   .stats-card{background:var(--paper-card);border-radius:16px;box-shadow:0 20px 40px -20px rgba(15,23,42,.2);padding:20px 8px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
   @media (max-width:700px){.stats-card{grid-template-columns:repeat(2,1fr);}}
   .stat{text-align:center;padding:8px 6px;}
-  .stat .num{font-size:30px;font-weight:800;letter-spacing:-0.02em;}
+  .stat .num{font-size:29px;font-weight:800;letter-spacing:-0.02em;}
   .stat .lbl{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;}
 
-  .howitworks{padding:68px 0 40px;}
-  .how-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:26px;}
+  .howitworks{padding:64px 0 40px;}
+  .how-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:24px;}
   @media (max-width:800px){.how-row{grid-template-columns:1fr;}}
   .how-step{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:16px;padding:22px;}
-  .how-step .icn{width:42px;height:42px;border-radius:10px;background:var(--available-soft);color:var(--available);display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:18px;}
+  .how-step .icn{width:42px;height:42px;border-radius:10px;background:var(--available-soft);color:var(--available);display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:19px;}
   .how-step h3{font-size:16px;margin:0 0 6px;}
-  .how-step p{font-size:14px;color:var(--muted);line-height:1.55;margin:0;}
+  .how-step p{font-size:13.5px;color:var(--muted);line-height:1.55;margin:0;}
   .section-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;}
   .section-head h2{font-size:26px;letter-spacing:-0.01em;margin:0;}
   .section-head p{color:var(--muted);font-size:14px;margin:4px 0 0;}
 
   /* ---------- SHARED PAGE LAYOUT ---------- */
-  .page-body{padding:32px 0 64px;}
+  .page-body{padding:30px 0 60px;}
   .summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0;}
   @media (max-width:800px){.summary-row{grid-template-columns:repeat(2,1fr);}}
   .summary-card{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:14px;padding:16px;}
   .summary-card .top{display:flex;justify-content:space-between;align-items:center;}
   .summary-card .top span.tag{font-size:11.5px;font-weight:700;color:var(--muted);}
-  .summary-card .val{font-size:26px;font-weight:800;margin-top:6px;}
+  .summary-card .val{font-size:25px;font-weight:800;margin-top:6px;}
   .swatch{width:9px;height:9px;border-radius:50%;display:inline-block;}
 
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0;}
@@ -172,7 +221,7 @@
   .pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--available);animation:pulse 1.8s infinite;}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(14,164,114,.5);}70%{box-shadow:0 0 0 6px rgba(14,164,114,0);}100%{box-shadow:0 0 0 0 rgba(14,164,114,0);}}
 
-  .slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+  .slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px;}
   .slot-card{
     background:var(--paper-card);border:1px solid #E7EAF1;border-radius:14px;padding:14px;
     transition:transform .15s, box-shadow .15s; cursor:pointer; position:relative; overflow:hidden;
@@ -186,15 +235,15 @@
   .slot-card .meta b{color:var(--ink);font-weight:600;}
 
   /* ---------- MODALS ---------- */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(7,11,20,.65);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(3px);}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(6,10,18,.7);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(3px);}
   .modal-backdrop.open{display:flex;}
-  .modal{background:var(--paper-card);border-radius:18px;max-width:440px;width:100%;padding:24px;box-shadow:0 30px 60px -20px rgba(0,0,0,.45);animation:modalPop .2s ease;}
+  .modal{background:var(--paper-card);border-radius:18px;max-width:460px;width:100%;padding:24px;box-shadow:0 30px 60px -20px rgba(0,0,0,.45);animation:modalPop .2s ease;max-height:92vh;overflow-y:auto;}
   @keyframes modalPop{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
   .modal .mhead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
-  .modal .mhead h3{margin:0;font-size:20px;}
+  .modal .mhead h3{margin:0;font-size:19px;}
   .modal .close{background:#EEF1F6;border:none;border-radius:8px;width:30px;height:30px;font-size:15px;color:var(--muted);cursor:pointer;}
   .modal .close:hover{background:#E2E8F0;color:var(--ink);}
-  .modal .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #EEF1F6;font-size:13.5px;}
+  .modal .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #EEF1F6;font-size:13.5px;}
   .modal .row span:first-child{color:var(--muted);}
   .modal .row span:last-child{font-weight:600;}
   .modal .reserve-btn{width:100%;margin-top:16px;padding:12px;border-radius:10px;border:none;background:var(--navy-900);color:#fff;font-weight:700;font-size:14px;cursor:pointer;}
@@ -202,9 +251,17 @@
   .modal .confirm{background:var(--available-soft);color:#075C3D;padding:10px;border-radius:9px;font-size:13px;font-weight:600;margin-top:12px;text-align:center;display:none;}
   .modal .confirm.show{display:block;}
 
-  /* Ticket / Pass Modal */
+  /* UPI App Buttons */
+  .upi-apps-row{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:12px 0;}
+  .upi-app-btn{
+    background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:8px 4px;
+    font-size:11px; font-weight:700; text-align:center; cursor:pointer; transition:all .15s;
+  }
+  .upi-app-btn:hover{background:#EEF2FF; border-color:#6366F1; color:#4F46E5;}
+
+  /* Digital Ticket / Pass Modal */
   .ticket-card{
-    background:#0F172A; color:#fff; border-radius:16px; padding:20px; border:1px solid #334155;
+    background:#0B1220; color:#fff; border-radius:16px; padding:20px; border:1px solid #1E293B;
     position:relative; overflow:hidden;
   }
   .ticket-card::before{
@@ -216,8 +273,8 @@
     background:var(--paper-card); border-radius:50%;
   }
   .ticket-timer{
-    background:#1E293B; border-radius:10px; padding:10px; text-align:center; margin:12px 0;
-    display:flex; justify-content:center; align-items:center; gap:8px;
+    background:#162035; border-radius:10px; padding:10px; text-align:center; margin:12px 0;
+    display:flex; justify-content:center; align-items:center; gap:8px; border:1px solid #233458;
   }
   .ticket-timer.urgent{background:#7F1D1D; color:#FECACA;}
 
@@ -236,7 +293,7 @@
   .zone-legend{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;}
   .zone-legend .li{display:flex;align-items:center;gap:6px;font-size:12px;color:#AAB4C8;}
 
-  /* ---------- REALISTIC INTERACTIVE MAP ---------- */
+  /* ---------- REALISTIC INTERACTIVE 2D MAP WITH FASTAG ---------- */
   .map-wrapper{background:var(--navy-950);border:1px solid var(--navy-700);border-radius:20px;padding:24px;position:relative;overflow:hidden;}
   .map-deck-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;}
   .map-deck-title{color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;gap:10px;}
@@ -249,51 +306,58 @@
 
   /* Parking Lot Floor Canvas Layout */
   .garage-canvas{
-    background:#0E1626; border:2px dashed #1E293B; border-radius:16px; padding:20px;
-    display:flex; flex-direction:column; gap:20px; position:relative;
+    background:#0B1220; border:2px dashed #1E293B; border-radius:16px; padding:20px;
+    display:flex; flex-direction:column; gap:18px; position:relative;
   }
   .gate-bar-row{
     display:flex; justify-content:space-between; align-items:center; padding:10px 16px;
-    background:#162138; border-radius:10px; border:1px solid #233458;
+    background:#131D31; border-radius:10px; border:1px solid #233458;
   }
   .gate-indicator{display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:#38BDF8;}
   .gate-indicator .barrier-arm{width:36px; height:4px; background:#EF4444; border-radius:2px; transform-origin:left center; animation:gateArm 4s infinite alternate ease-in-out;}
   @keyframes gateArm{0%{transform:rotate(0deg);}40%{transform:rotate(0deg);}60%{transform:rotate(-60deg);}100%{transform:rotate(-60deg);}}
 
   .driving-lane{
-    background:#151F33; border-top:2px dashed #334155; border-bottom:2px dashed #334155;
+    background:#10192A; border-top:2px dashed #334155; border-bottom:2px dashed #334155;
     padding:12px; text-align:center; color:#64748B; font-size:11px; font-weight:700;
-    letter-spacing:.1em; display:flex; justify-content:space-around; align-items:center;
+    letter-spacing:.08em; display:flex; justify-content:space-around; align-items:center;
+    position:relative;
   }
   .crosswalk{display:flex; gap:4px;}
   .crosswalk-stripe{width:8px; height:18px; background:#475569; border-radius:2px;}
 
-  .bay-row{display:grid; grid-template-columns:repeat(auto-fill, minmax(84px, 1fr)); gap:10px;}
+  .bay-row{display:grid; grid-template-columns:repeat(auto-fill, minmax(88px, 1fr)); gap:10px;}
   .bay-slot{
-    background:#1A263D; border:1.5px solid #2B3B5C; border-radius:10px; padding:8px 6px;
-    position:relative; aspect-ratio:1/1.25; display:flex; flex-direction:column; justify-content:space-between;
+    background:#162238; border:1.5px solid #243555; border-radius:10px; padding:8px 6px;
+    position:relative; aspect-ratio:1/1.26; display:flex; flex-direction:column; justify-content:space-between;
     cursor:pointer; transition:transform .15s, box-shadow .15s, border-color .15s;
   }
   .bay-slot:hover{transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,0.5); border-color:#38BDF8;}
   .bay-slot.faded{opacity:0.25;}
+  .bay-slot.route-highlight{border-color:#F59E0B; box-shadow:0 0 14px rgba(245,158,11,0.6); animation:bayGlow 1.5s infinite alternate;}
+  @keyframes bayGlow{from{box-shadow:0 0 4px #F59E0B;}to{box-shadow:0 0 16px #F59E0B;}}
+
   .bay-top-ind{display:flex; justify-content:space-between; align-items:center;}
-  .bay-id{font-weight:800; font-size:11.5px; color:#F1F5F9;}
+  .bay-id{font-weight:800; font-size:11px; color:#F1F5F9;}
   .bay-led{width:7px; height:7px; border-radius:50%; box-shadow:0 0 8px currentColor;}
   .bay-vehicle{
     flex:1; display:flex; align-items:center; justify-content:center;
     font-size:18px; text-shadow:0 2px 4px rgba(0,0,0,0.4);
   }
-  .bay-plate-tag{
-    font-size:9.5px; font-weight:700; color:#E2E8F0; background:#0B1220; padding:2px 4px;
-    border-radius:4px; text-align:center; letter-spacing:0.02em; border:1px solid #1E293B;
-  }
   .bay-type-ico{font-size:11px;}
+
+  /* Wayfinding Navigation Route Panel */
+  .wayfinding-banner{
+    background:#162035; border:1px solid #233458; border-radius:12px; padding:12px 16px;
+    margin-top:14px; display:none; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .wayfinding-banner.show{display:flex;}
 
   /* Floating Map Tooltip */
   .map-tooltip{
-    position:fixed; z-index:110; background:#0F172A; color:#fff; border:1px solid #334155;
+    position:fixed; z-index:110; background:#0A111E; color:#fff; border:1px solid #334155;
     border-radius:10px; padding:10px 14px; font-size:12px; pointer-events:none; display:none;
-    box-shadow:0 12px 28px rgba(0,0,0,.6); max-width:220px;
+    box-shadow:0 12px 28px rgba(0,0,0,.65); max-width:240px;
   }
 
   /* ---------- IOT ARCHITECTURE ANIMATION ---------- */
@@ -305,12 +369,12 @@
   .arch-label{font-size:11px;color:#C4CCDC;font-weight:600;line-height:1.3;}
   .arch-sub{font-size:9px;color:#64748B;margin-top:3px;}
   
-  .arch-pipe{flex:0 0 28px;height:4px;background:#24324D;border-radius:2px;position:relative;overflow:hidden;}
+  .arch-pipe{flex:0 0 26px;height:4px;background:#24324D;border-radius:2px;position:relative;overflow:hidden;}
   .arch-pulse{position:absolute;top:0;left:-50%;width:50%;height:100%;background:var(--available);border-radius:2px;animation:pipePulse 1.8s infinite linear;}
   @keyframes pipePulse{0%{left:-50%;}100%{left:100%;}}
 
   .mqtt-preview-box{
-    background:#070B14; border:1px solid #1E293B; border-radius:10px; padding:12px; margin-top:16px;
+    background:#060A12; border:1px solid #1E293B; border-radius:10px; padding:12px; margin-top:16px;
     font-size:11.5px; color:#A7F3D0; font-family:'JetBrains Mono',monospace;
   }
   .mqtt-preview-title{display:flex; justify-content:space-between; color:#94A3B8; font-size:11px; font-weight:700; margin-bottom:6px;}
@@ -350,6 +414,7 @@
     padding:7px 12px; border-radius:8px; cursor:pointer; transition:all .15s;
   }
   .preset-btn:hover{background:var(--navy-900); color:#fff; border-color:var(--navy-900);}
+  .preset-btn.active{background:var(--available); color:#04231A; border-color:var(--available);}
   .sim-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
   .sim-btn{background:var(--navy-900);color:#fff;border:none;border-radius:9px;padding:9px 14px;font-weight:700;font-size:13px;}
   .sim-btn.accent{background:var(--available);color:#04231A;}
@@ -357,7 +422,7 @@
   .sim-btn.danger{background:var(--occupied-soft);color:var(--occupied);}
   .sim-btn.paused{background:#C9CFDB;color:#475369;}
 
-  /* ---------- ANALYTICS ---------- */
+  /* ---------- ANALYTICS & HEATMAP ---------- */
   .analytics-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:18px;}
   @media (max-width:900px){.analytics-grid{grid-template-columns:1fr;}}
   .chart-card{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:14px;padding:18px;}
@@ -369,7 +434,6 @@
   .kpi .val{font-size:22px;font-weight:800;}
   .kpi .lbl{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;}
 
-  /* ---------- HEATMAP ---------- */
   .heatmap-wrap{overflow-x:auto;}
   .heatmap-hours{display:grid;grid-template-columns:56px repeat(24,1fr);gap:3px;font-size:9.5px;color:var(--muted);margin-bottom:4px;min-width:660px;}
   .heatmap-hours div{text-align:center;}
@@ -380,7 +444,6 @@
   .heatmap-scale{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11.5px;color:var(--muted);}
   .scale-bar{flex:1;max-width:180px;height:8px;border-radius:4px;background:linear-gradient(90deg,#E4F7EE,#0EA472);}
 
-  /* ---------- INSIGHTS ---------- */
   .insights-card{background:var(--paper-card);border:1px solid #E7EAF1;border-radius:14px;padding:20px;margin-top:16px;}
   .insight-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #F1F3F7;font-size:13.5px;line-height:1.55;align-items:flex-start;}
   .insight-item:last-child{border-bottom:none;}
@@ -396,11 +459,11 @@
   td{padding:10px 10px;border-bottom:1px solid #F1F3F7;}
   tr.clickable-row{cursor:pointer;transition:background .15s;}
   tr.clickable-row:hover{background:#F8FAFC;}
-  .plate-pill{display:inline-block;padding:2px 7px;background:#0F172A;color:#fff;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;}
 
-  /* Receipt Modal */
+  /* Tax Invoice Receipt Modal */
   .receipt-box{background:#fff;border:1px dashed #CBD5E1;border-radius:12px;padding:18px;margin-top:10px;}
-  .receipt-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;}
+  .receipt-header-logo{display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid #E2E8F0; padding-bottom:10px; margin-bottom:10px;}
+  .receipt-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;}
   .receipt-total{border-top:1.5px dashed #0F172A;margin-top:8px;padding-top:8px;font-size:15px;font-weight:800;display:flex;justify-content:space-between;}
 
   /* ---------- ADMIN ---------- */
@@ -423,14 +486,23 @@
   .alert-item .atime{font-size:11.5px;color:var(--muted);margin-top:2px;}
   .sev{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:100px;margin-left:auto;flex-shrink:0;}
 
-  /* ---------- EV BADGES & CHARGER BARS ---------- */
+  /* ---------- EV & CHARGER BARS ---------- */
   .ev-charge-bar{height:5px;border-radius:3px;background:#E7E9ED;margin-top:6px;overflow:hidden;}
-  .ev-charge-bar .fill{height:100%;background:#0284C7;transition:width .6s ease;}
+  .ev-charge-bar .fill{height:100%;background:#059669;transition:width .6s ease;}
 
   /* QR Canvas Holder */
   .qr-wrap{text-align:center;margin-top:14px;padding:16px;background:#F8FAFC;border-radius:12px;border:1px solid #E2E8F0;}
   .qr-wrap #qrCanvasHolder{display:inline-block;padding:8px;background:#fff;border-radius:8px;border:1px solid #CBD5E1;}
   .qr-wrap .qr-caption{font-size:12px;color:var(--muted);margin-top:8px;}
+
+  /* Toast Notification */
+  .toast-container{position:fixed; bottom:20px; right:20px; z-index:150; display:flex; flex-direction:column; gap:8px;}
+  .toast-msg{
+    background:#0B1220; color:#fff; border:1px solid #1E293B; border-radius:10px; padding:12px 16px;
+    font-size:12.5px; display:flex; align-items:center; gap:10px; box-shadow:0 12px 24px rgba(0,0,0,0.4);
+    animation:toastSlide .3s ease;
+  }
+  @keyframes toastSlide{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
   /* Footer */
   footer{background:var(--navy-900);color:#AAB4C8;padding:44px 0 28px;margin-top:30px;}
@@ -445,12 +517,13 @@
 </head>
 <body>
 
-<!-- Global Simulation & Demo Ticker Bar -->
+<!-- Global Simulation & FASTag Status Banner -->
 <div class="demo-banner">
   <div class="wrap">
     <div class="demo-banner-left">
+      <span class="fastag-badge-ticker">FASTag</span>
       <span class="pulse-dot"></span>
-      <span id="demoStatusText"><b>Live IoT Stream:</b> Active (4s interval)</span>
+      <span id="demoStatusText"><b>NETC FASTag Gateway:</b> 865–867 MHz Active · Stream 4s</span>
     </div>
     <div class="demo-banner-right">
       <button class="quick-sim-btn" id="quickAddCarBtn">+ Sim Car Arrival</button>
@@ -462,12 +535,14 @@
 
 <header class="nav">
   <div class="wrap nav-inner">
-    <div class="brand"><span class="dot"></span>SmartPark</div>
+    <div class="brand">
+      <span class="dot"></span>SmartPark India <span class="brand-sub">स्मार्टपार्क</span>
+    </div>
     <nav class="navlinks">
       <button data-page="landing" class="active">Home</button>
       <button data-page="find">Find Parking</button>
       <button data-page="dashboard">Live Dashboard</button>
-      <button data-page="map">🗺️ Map</button>
+      <button data-page="map">🗺️ 2D Map</button>
       <button data-page="sensors">🔌 Sensors</button>
       <button data-page="analytics">📊 Analytics</button>
       <button data-page="history">🚗 History</button>
@@ -475,6 +550,9 @@
       <button data-page="admin">Admin</button>
     </nav>
     <div class="nav-right">
+      <button class="sound-btn active" id="soundToggleBtn" title="Toggle audio feedback">
+        <span id="soundIcon">🔊</span> <span id="soundLabel">Sound ON</span>
+      </button>
       <div class="pass-pill-nav" id="activePassPill">
         <span class="live-dot"></span>
         <span id="activePassPillText">Active Pass (P04)</span>
@@ -493,7 +571,7 @@
     <button data-page="landing" class="active">Home</button>
     <button data-page="find">Find Parking</button>
     <button data-page="dashboard">Live Dashboard</button>
-    <button data-page="map">Interactive Map</button>
+    <button data-page="map">Interactive 2D Map</button>
     <button data-page="sensors">Sensors & IoT</button>
     <button data-page="analytics">Analytics & Heatmap</button>
     <button data-page="history">Vehicle History</button>
@@ -509,17 +587,24 @@
   <div class="hero">
     <div class="wrap hero-grid">
       <div>
-        <div class="eyebrow"><span class="swatch" style="background:var(--available);"></span> Next-Gen Real-Time Smart Parking</div>
-        <h1>Effortless parking with real-time IoT intelligence</h1>
-        <p class="sub">Ultrasonic & infrared edge sensors broadcast bay occupancy to the cloud every second. Drivers find open bays instantly, while operators monitor automated turnover, EV stations, and analytics.</p>
+        <div class="facility-pill">
+          <span>📍 IGI Airport T3 & DLF CyberHub Smart Metro Facility, New Delhi</span>
+        </div>
+        <div class="eyebrow"><span class="swatch" style="background:var(--available);"></span> India's First FASTag-Integrated IoT Parking System</div>
+        <h1>Hassle-free parking with live IoT & automated FASTag entry</h1>
+        <p class="sub">Overhead ultrasonic & infrared edge sensors detect real-time bay occupancy. Pay seamlessly via FASTag auto-debit or UPI (Google Pay, PhonePe, Paytm). Enjoy dedicated EV fast charging and Divyangjan accessible bays.</p>
         <div class="hero-ctas">
-          <button class="btn-primary" data-page="map">🗺️ Open Interactive Map</button>
-          <button class="btn-secondary" data-page="find">Find Open Slot</button>
+          <button class="btn-primary" data-page="map">🗺️ Open Live Floor Plan</button>
+          <button class="btn-fastag" id="heroSmartAssignBtn">⚡ 1-Click Best Slot (Smart Auto-Assign)</button>
+          <button class="btn-secondary" data-page="find">Find Open Bay</button>
         </div>
       </div>
       <div>
         <div class="lot-card">
-          <div class="lot-head"><span>LIVE FACILITY STATUS — LEVEL 1</span><span id="lotTime" class="mono"></span></div>
+          <div class="lot-head">
+            <span>LIVE GARAGE — LEVEL 1 (GROUND DECK)</span>
+            <span id="lotTime" class="mono"></span>
+          </div>
           <div class="lot-grid" id="heroLotGrid"></div>
         </div>
       </div>
@@ -528,32 +613,32 @@
 
   <div class="wrap stats-bar">
     <div class="stats-card">
-      <div class="stat"><div class="num" id="statTotal">24</div><div class="lbl">Total Capacity</div></div>
-      <div class="stat"><div class="num" id="statAvail" style="color:var(--available)">0</div><div class="lbl">Available Bays</div></div>
-      <div class="stat"><div class="num" id="statOcc" style="color:var(--occupied)">0</div><div class="lbl">Occupied Bays</div></div>
-      <div class="stat"><div class="num" id="statSensors" style="color:#0284C7">24</div><div class="lbl">Active IoT Sensors</div></div>
+      <div class="stat"><div class="num" id="statTotal">24</div><div class="lbl">Total Capacity (कुल स्थान)</div></div>
+      <div class="stat"><div class="num" id="statAvail" style="color:var(--available)">0</div><div class="lbl">Available (उपलब्ध स्थान)</div></div>
+      <div class="stat"><div class="num" id="statOcc" style="color:var(--occupied)">0</div><div class="lbl">Occupied (व्यस्त स्थान)</div></div>
+      <div class="stat"><div class="num" id="statSensors" style="color:#0284C7">24</div><div class="lbl">Active IoT Sensors (सक्रिय सेंसर)</div></div>
     </div>
   </div>
 
   <div class="wrap howitworks">
     <div class="section-head">
-      <div><h2>How SmartPark Works</h2><p>From ultrasonic ping to driver navigation in under 100 milliseconds</p></div>
+      <div><h2>How SmartPark India Works (कार्यप्रणाली)</h2><p>From ultrasonic detection to FASTag auto-boom barrier lift in under 80 milliseconds</p></div>
     </div>
     <div class="how-row">
       <div class="how-step">
         <div class="icn">📡</div>
-        <h3>1. Edge IoT Detection</h3>
-        <p>Overhead HC-SR04 ultrasonic and Sharp infrared sensors detect vehicle clearance with 99.8% precision.</p>
+        <h3>1. Overhead IoT Sensors</h3>
+        <p>HC-SR04 ultrasonic & Sharp infrared sensors read vehicle clearance with 99.8% precision, calibrated for Indian sedans, SUVs, and compact cars.</p>
       </div>
       <div class="how-step">
-        <div class="icn">⚡</div>
-        <h3>2. Gateway & Cloud Sync</h3>
-        <p>Arduino/ESP32 edge nodes push JSON state changes over lightweight MQTT to our cloud telemetry engine.</p>
+        <div class="icn">🏷️</div>
+        <h3>2. FASTag & ANPR Boom Barriers</h3>
+        <p>High-speed RFID FASTag readers and ANPR cameras detect your HSRP vehicle registration at Gate 1, automatically raising the boom barrier.</p>
       </div>
       <div class="how-step">
-        <div class="icn">🎟️</div>
-        <h3>3. Real-Time Guidance & QR</h3>
-        <p>Drivers reserve slots with dynamic QR passes, while managers view live heatmaps, EV loads, and automated revenue.</p>
+        <div class="icn">📱</div>
+        <h3>3. Dynamic UPI Passes & EV Hub</h3>
+        <p>Reserve slots with live 15-min hold passes. Pay instantly via Google Pay, PhonePe, or Paytm UPI, or recharge your EV via 22kW fast chargers.</p>
       </div>
     </div>
   </div>
@@ -563,42 +648,43 @@
 <section class="page" id="page-dashboard">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>Live Parking Dashboard</h2><p>Real-time telemetry across all zones & sensor nodes</p></div>
+      <div><h2>Live Parking Dashboard (लाइव डैशबोर्ड)</h2><p>Real-time slot occupancy across Ground & Deck levels with Indian Rupee (₹) tariffs</p></div>
       <div class="refresh-pill"><span class="pulse-dot"></span><span>Updated <span id="lastUpdated" class="mono">just now</span></span></div>
     </div>
 
     <div class="summary-row">
-      <div class="summary-card"><div class="top"><span class="tag">TOTAL SLOTS</span></div><div class="val" id="dashTotal">0</div></div>
-      <div class="summary-card"><div class="top"><span class="tag">AVAILABLE</span><span class="swatch" style="background:var(--available)"></span></div><div class="val" style="color:var(--available)" id="dashAvail">0</div></div>
-      <div class="summary-card"><div class="top"><span class="tag">OCCUPIED</span><span class="swatch" style="background:var(--occupied)"></span></div><div class="val" style="color:var(--occupied)" id="dashOcc">0</div></div>
-      <div class="summary-card"><div class="top"><span class="tag">RESERVED</span><span class="swatch" style="background:var(--reserved)"></span></div><div class="val" style="color:var(--reserved)" id="dashRes">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">TOTAL BAYS</span></div><div class="val" id="dashTotal">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">AVAILABLE (उपलब्ध)</span><span class="swatch" style="background:var(--available)"></span></div><div class="val" style="color:var(--available)" id="dashAvail">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">OCCUPIED (व्यस्त)</span><span class="swatch" style="background:var(--occupied)"></span></div><div class="val" style="color:var(--occupied)" id="dashOcc">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">RESERVED (आरक्षित)</span><span class="swatch" style="background:var(--reserved)"></span></div><div class="val" style="color:var(--reserved)" id="dashRes">0</div></div>
     </div>
 
     <div class="toolbar">
       <select id="filterStatus">
-        <option value="all">All statuses</option>
-        <option value="available">Available only</option>
-        <option value="occupied">Occupied only</option>
-        <option value="reserved">Reserved only</option>
+        <option value="all">All statuses (सभी स्थितियां)</option>
+        <option value="available">Available only (केवल उपलब्ध)</option>
+        <option value="occupied">Occupied only (केवल व्यस्त)</option>
+        <option value="reserved">Reserved only (आरक्षित)</option>
         <option value="offline">Offline sensor</option>
       </select>
       <select id="filterZone">
-        <option value="all">All zones</option>
-        <option value="A">Zone A (Ground)</option>
-        <option value="B">Zone B (Ground)</option>
-        <option value="C">Zone C (Deck)</option>
+        <option value="all">All Zones (सभी ज़ोन)</option>
+        <option value="A">Zone A (Ground Deck)</option>
+        <option value="B">Zone B (Ground Deck)</option>
+        <option value="C">Zone C (Upper Deck)</option>
       </select>
       <select id="filterType">
-        <option value="all">All slot types</option>
-        <option value="standard">Standard bays</option>
-        <option value="ev">⚡ EV Charging bays</option>
-        <option value="accessibility">♿ Accessible bays</option>
+        <option value="all">All Bay Types</option>
+        <option value="standard">Standard bays (₹40/hr)</option>
+        <option value="ev">⚡ EV Fast Charging (₹60/hr)</option>
+        <option value="accessibility">♿ Divyangjan Accessible (दिव्यांगजन)</option>
       </select>
       <select id="sortBy">
         <option value="id">Sort by Slot ID</option>
         <option value="status">Sort by Status</option>
         <option value="duration">Sort by Dwell Time</option>
       </select>
+      <button class="quick-sim-btn" id="dashSmartAssignBtn" style="padding:8px 14px;background:#EA580C;color:#fff;border-color:#EA580C;">⚡ Auto-Assign Nearest Bay</button>
     </div>
 
     <div class="slot-grid" id="slotGrid"></div>
@@ -609,31 +695,32 @@
 <section class="page" id="page-find">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>Find Open Parking</h2><p>Locate the nearest vacant bay by zone or special amenities</p></div>
+      <div><h2>Find Open Parking (स्थान खोजें)</h2><p>Locate vacant bays by zone, EV charger amenity, or accessibility clearance</p></div>
     </div>
 
     <div class="toolbar" style="margin-top:14px;">
-      <button class="preset-btn" id="findFilterAll">All Open Bays</button>
-      <button class="preset-btn" id="findFilterEv">⚡ EV Chargers Only</button>
-      <button class="preset-btn" id="findFilterAcc">♿ Accessible Only</button>
+      <button class="preset-btn active" id="findFilterAll">All Open Bays (सभी उपलब्ध)</button>
+      <button class="preset-btn" id="findFilterEv">⚡ EV Fast Chargers Only (₹60/hr)</button>
+      <button class="preset-btn" id="findFilterAcc">♿ Divyangjan Accessible Only (दिव्यांगजन)</button>
+      <button class="preset-btn" id="findSmartAssignBtn" style="background:#047857;color:#fff;border-color:#047857;">⚡ Smart 1-Click Nearest Slot</button>
     </div>
 
     <div class="find-layout" style="margin-top:10px;">
       <div>
         <div class="search-box">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="text" id="findSearch" placeholder="Search zone (e.g. “Zone A”), slot ID (P04), or amenity">
+          <input type="text" id="findSearch" placeholder="Search vehicle plate (DL 01...), Zone (Zone A), or Slot (P04)">
         </div>
         <div style="margin-top:14px;" id="findResults"></div>
       </div>
       <div>
         <div class="layout-view">
-          <h4>GARAGE OCCUPANCY OVERVIEW</h4>
+          <h4>METRO FACILITY OVERVIEW — LEVEL 1</h4>
           <div class="lot-grid" id="findLotGrid" style="grid-template-columns:repeat(6,1fr);"></div>
           <div class="zone-legend">
-            <div class="li"><span class="swatch" style="background:var(--available)"></span> Available</div>
-            <div class="li"><span class="swatch" style="background:var(--occupied)"></span> Occupied</div>
-            <div class="li"><span class="swatch" style="background:var(--reserved)"></span> Reserved</div>
+            <div class="li"><span class="swatch" style="background:var(--available)"></span> Available (उपलब्ध)</div>
+            <div class="li"><span class="swatch" style="background:var(--occupied)"></span> Occupied (व्यस्त)</div>
+            <div class="li"><span class="swatch" style="background:var(--reserved)"></span> Reserved (आरक्षित)</div>
           </div>
         </div>
       </div>
@@ -641,11 +728,11 @@
   </div>
 </section>
 
-<!-- ===================== 1. 🗺️ INTERACTIVE PARKING MAP ===================== -->
+<!-- ===================== 1. 🗺️ REALISTIC 2D ARCHITECTURAL MAP WITH FASTAG ===================== -->
 <section class="page" id="page-map">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>🗺️ Architectural Parking Garage Map</h2><p>Live interactive 2D floor plan — click any bay to inspect, reserve, or view real-time sensor status</p></div>
+      <div><h2>🗺️ 2D Interactive Garage Floor Plan</h2><p>Live architectural layout with FASTag barrier gates, driving aisles, and turn-by-turn wayfinding</p></div>
       <div class="toolbar" style="margin:0;">
         <div class="level-tabs" id="levelTabs">
           <button class="level-tab active" data-level="1">Level 1 (Ground Deck)</button>
@@ -659,9 +746,22 @@
         <button class="map-pill active" data-filter="all">All Bays</button>
         <button class="map-pill" data-filter="available">🟢 Available Only</button>
         <button class="map-pill" data-filter="ev">⚡ EV Fast Chargers</button>
-        <button class="map-pill" data-filter="accessibility">♿ Accessible Bays</button>
+        <button class="map-pill" data-filter="accessibility">♿ Divyangjan Accessible</button>
         <button class="map-pill" data-filter="occupied">🔴 Occupied</button>
       </div>
+      <button class="quick-sim-btn" id="mapSmartAssignBtn" style="margin-left:auto;padding:6px 12px;background:#EA580C;color:#fff;border-color:#EA580C;">⚡ Smart Auto-Assign Nearest Slot</button>
+    </div>
+
+    <!-- Live Wayfinding Guidance Route Banner -->
+    <div class="wayfinding-banner" id="wayfindingBanner">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:20px;">🧭</span>
+        <div>
+          <div style="font-weight:800; font-size:13px; color:#38BDF8;" id="wayfindingTitle">Route to Bay P04</div>
+          <div style="font-size:11.5px; color:#CBD5E1;" id="wayfindingSteps">Enter via Gate 1 ➔ Proceed along Lane A ➔ Park in Bay P04 on Right</div>
+        </div>
+      </div>
+      <button class="quick-sim-btn" id="closeWayfindingBtn">✕ Clear Route</button>
     </div>
 
     <div class="map-wrapper" style="margin-top:12px;">
@@ -670,24 +770,25 @@
           <span>🏢 Facility Floor Plan — Level 1</span>
           <span style="font-size:12px;font-weight:600;color:#94A3B8;">(Zones A & B · 12 Bays)</span>
         </div>
-        <div style="display:flex;gap:12px;font-size:12px;color:#AAB4C8;">
+        <div style="display:flex;gap:12px;font-size:12px;color:#AAB4C8;flex-wrap:wrap;">
           <span>🟢 Available</span>
           <span>🔴 Occupied</span>
           <span>🟠 Reserved</span>
-          <span>⚡ EV Station</span>
-          <span>♿ Accessible</span>
+          <span>⚡ EV Charger</span>
+          <span>♿ Divyangjan</span>
         </div>
       </div>
 
       <div class="garage-canvas" id="garageCanvas">
-        <!-- Entry Barrier Gate -->
+        <!-- Entry Barrier Gate (FASTag & ANPR) -->
         <div class="gate-bar-row">
           <div class="gate-indicator">
             <span class="swatch" style="background:var(--available);"></span>
-            <span>NORTH ENTRY BARRIER (GATE 1)</span>
+            <span>प्रवेश / GATE 1 — FASTag & ANPR AUTO-BARRIER</span>
           </div>
           <div style="display:flex;align-items:center;gap:12px;">
-            <span style="font-size:11px;color:#94A3B8;">RFID / ANPR SCANNER ACTIVE</span>
+            <span class="fastag-badge-ticker">FASTag RFID</span>
+            <span style="font-size:11px;color:#94A3B8;">AUTO-BOOM ARM READY</span>
             <div class="barrier-arm"></div>
           </div>
         </div>
@@ -700,7 +801,7 @@
           <div class="crosswalk">
             <div class="crosswalk-stripe"></div><div class="crosswalk-stripe"></div><div class="crosswalk-stripe"></div>
           </div>
-          <span>➔ ONE WAY DRIVING AISLE · SPEED LIMIT 5 MPH ➔</span>
+          <span>➔ ONE-WAY DRIVING AISLE · SPEED LIMIT 10 KM/H (गति सीमा 10) ➔</span>
           <div class="crosswalk">
             <div class="crosswalk-stripe"></div><div class="crosswalk-stripe"></div><div class="crosswalk-stripe"></div>
           </div>
@@ -709,13 +810,16 @@
         <!-- Lower Row Bays -->
         <div class="bay-row" id="mapRowBottom"></div>
 
-        <!-- Exit Barrier Gate -->
+        <!-- Exit Barrier Gate (FASTag Auto-Debit) -->
         <div class="gate-bar-row">
           <div class="gate-indicator" style="color:#F59E0B;">
             <span class="swatch" style="background:var(--occupied);"></span>
-            <span>SOUTH EXIT BARRIER (GATE 2)</span>
+            <span>निकास / GATE 2 — FASTag INSTANT TOLL/PARKING DEBIT</span>
           </div>
-          <div style="font-size:11px;color:#94A3B8;">AUTOMATIC TICKET VALIDATOR</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="fastag-badge-ticker">NETC EXIT</span>
+            <span style="font-size:11px;color:#94A3B8;">AUTOMATIC DEBIT VERIFIED</span>
+          </div>
         </div>
       </div>
     </div>
@@ -729,14 +833,14 @@
 <section class="page" id="page-sensors">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>🔌 IoT Architecture & Network Health</h2><p>Real-time edge sensor telemetry, hardware specs & MQTT packet flow</p></div>
+      <div><h2>🔌 IoT Architecture & Edge Health</h2><p>Real-time edge sensor telemetry, hardware specs & MQTT packet stream</p></div>
     </div>
 
     <!-- Live Animated IoT Architecture Flow -->
     <div class="arch-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
         <h4 style="color:#fff;font-size:13px;font-weight:700;margin:0;">IOT SYSTEM ARCHITECTURE & PACKET FLOW</h4>
-        <span style="font-size:11px;color:#8FE6C4;font-family:'JetBrains Mono',monospace;">STATUS: WEBSOCKET STREAM SYNCHRONIZED</span>
+        <span style="font-size:11px;color:#8FE6C4;font-family:'JetBrains Mono',monospace;">STREAM: WEBSOCKET TELEMETRY OK</span>
       </div>
       <div class="arch-row">
         <div class="arch-node">
@@ -754,7 +858,7 @@
         <div class="arch-node">
           <div class="arch-icn">📶</div>
           <div class="arch-label">MQTT Gateway</div>
-          <div class="arch-sub">LoRa / WiFi 802.11ah</div>
+          <div class="arch-sub">LoRa / WiFi Mesh</div>
         </div>
         <div class="arch-pipe"><div class="arch-pulse" style="animation-delay:.8s;"></div></div>
         <div class="arch-node">
@@ -765,7 +869,7 @@
         <div class="arch-pipe"><div class="arch-pulse" style="animation-delay:1.2s;"></div></div>
         <div class="arch-node highlight">
           <div class="arch-icn">📊</div>
-          <div class="arch-label">SmartPark Web UI</div>
+          <div class="arch-label">SmartPark India UI</div>
           <div class="arch-sub">Live Reactive DOM</div>
         </div>
       </div>
@@ -773,17 +877,17 @@
       <!-- Live Simulated MQTT Payload Inspector -->
       <div class="mqtt-preview-box">
         <div class="mqtt-preview-title">
-          <span>LIVE MQTT TELEMETRY PAYLOAD (TOPIC: <span style="color:#60A5FA;">smartpark/telemetry/edge</span>)</span>
+          <span>LIVE MQTT TELEMETRY PAYLOAD (TOPIC: <span style="color:#60A5FA;">smartpark/india/delhi/telemetry</span>)</span>
           <span id="mqttTime" style="color:#94A3B8;">00:00:00</span>
         </div>
-        <div id="mqttJson">{ "sensor_id": "S04", "slot_id": "P04", "distance_cm": 24.8, "state": "OCCUPIED", "battery": 96, "rssi": -62 }</div>
+        <div id="mqttJson">{ "sensor_id": "S04", "slot_id": "P04", "distance_cm": 24.8, "state": "OCCUPIED", "plate": "DL 01 AB 1234", "battery": 96, "fastag_synced": true }</div>
       </div>
 
       <div class="health-row">
-        <div class="health-stat"><div class="hval" id="healthLatency">38ms</div><div class="hlbl">Avg. Network Latency</div></div>
-        <div class="health-stat"><div class="hval" id="healthPackets">142 pkt/m</div><div class="hlbl">Throughput Rate</div></div>
+        <div class="health-stat"><div class="hval" id="healthLatency">34ms</div><div class="hlbl">Avg. Edge Latency</div></div>
+        <div class="health-stat"><div class="hval" id="healthPackets">168 pkt/m</div><div class="hlbl">Throughput Rate</div></div>
         <div class="health-stat"><div class="hval" id="healthUptime">99.8%</div><div class="hlbl">Network Reliability</div></div>
-        <div class="health-stat"><div class="hval" id="healthBattery">94%</div><div class="hlbl">Average Node Battery</div></div>
+        <div class="health-stat"><div class="hval" id="healthBattery">95%</div><div class="hlbl">Average Node Battery</div></div>
       </div>
     </div>
 
@@ -814,7 +918,7 @@
       <div>
         <div class="feed">
           <div class="feed-head">
-            <h4>LIVE MQTT EVENT FEED</h4>
+            <h4>LIVE MQTT & FASTAG FEED</h4>
             <button class="quick-sim-btn" id="clearFeedBtn">Clear Feed</button>
           </div>
           <div id="feedList"></div>
@@ -824,16 +928,16 @@
 
     <!-- ===================== 3. 🎮 DEMO & SIMULATION CONTROLS ===================== -->
     <div class="sim-panel">
-      <h4>🎮 DEMO & SENSOR SIMULATION CONTROL CENTER</h4>
-      <p class="sim-sub">Trigger real-time edge hardware scenarios to test the dashboard, map, and parking notifications.</p>
+      <h4>🎮 DEMO & HARDWARE SIMULATION CONTROL CENTER</h4>
+      <p class="sim-sub">Trigger real-world Indian traffic scenarios to test live FASTag barriers, UPI pass generation, and sensor alerts.</p>
       
-      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;">REAL-WORLD ONE-CLICK SCENARIO PRESETS:</div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;">REAL-WORLD TRAFFIC PRESETS (ट्रैफिक परिदृश्य):</div>
       <div class="sim-presets">
-        <button class="preset-btn" id="scenarioRushBtn">🏎️ Rush Hour Inflow (+6 Cars)</button>
-        <button class="preset-btn" id="scenarioDepartureBtn">🚗💨 Evening Departure (-5 Cars)</button>
-        <button class="preset-btn" id="scenarioEvBtn">⚡ EV Charging Surge</button>
-        <button class="preset-btn" id="scenarioGlitchBtn">⚠️ Simulate Sensor Fault</button>
-        <button class="preset-btn" id="scenarioResetBtn">🔄 Reset Garage to 50%</button>
+        <button class="preset-btn" id="scenarioRushBtn">🏎️ Delhi Peak Rush (+6 Indian Cars)</button>
+        <button class="preset-btn" id="scenarioDepartureBtn">🚗💨 Evening Clearance (-5 Cars via FASTag)</button>
+        <button class="preset-btn" id="scenarioEvBtn">⚡ Tata Nexon / MG ZS EV Fast Charge Surge</button>
+        <button class="preset-btn" id="scenarioGlitchBtn">⚠️ Simulate Monsoon Sensor Fault</button>
+        <button class="preset-btn" id="scenarioResetBtn">🔄 Reset Facility to 50% Baseline</button>
       </div>
 
       <div class="sim-controls">
@@ -852,7 +956,7 @@
         </select>
         <button class="sim-btn accent" id="simForceBtn">Force State</button>
         <button class="sim-btn warn" id="simOutageBtn">⚡ Outage Spike</button>
-        <button class="sim-btn" id="simEventBtn">🎲 Random Tick</button>
+        <button class="sim-btn" id="simEventBtn">🎲 Random Event</button>
       </div>
     </div>
   </div>
@@ -862,27 +966,27 @@
 <section class="page" id="page-analytics">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>📊 Analytics & Occupancy Heatmap</h2><p>Predictive occupancy models, historical turnover, and automated facility insights</p></div>
+      <div><h2>📊 Analytics & Occupancy Heatmap</h2><p>Predictive traffic models, peak hour analysis, and automated facility yield in Indian Rupees (₹)</p></div>
       <button class="quick-sim-btn" id="exportReportBtn" style="padding:8px 14px;font-size:13px;">📥 Export Analytics Report (CSV)</button>
     </div>
 
     <div class="analytics-grid">
       <div class="chart-card">
         <h4>Occupancy Velocity (Last 30 Ticks)</h4>
-        <p class="sub">Dynamic real-time stream of occupied slot counts</p>
+        <p class="sub">Dynamic real-time stream of occupied parking bay counts</p>
         <canvas id="occChart" height="130"></canvas>
       </div>
       <div class="chart-card">
         <h4>Live Split: Available vs Occupied</h4>
-        <p class="sub">Current garage capacity utilization</p>
+        <p class="sub">Current facility capacity utilization</p>
         <canvas id="donutChart" height="130"></canvas>
       </div>
     </div>
 
     <div class="analytics-grid" style="margin-top:16px;">
       <div class="chart-card">
-        <h4>Peak Hours Histogram</h4>
-        <p class="sub">Average vehicle count by hour of day</p>
+        <h4>Peak Hours Histogram (Traffic Density)</h4>
+        <p class="sub">Typical vehicle influx across 24 hours in NCR / Bengaluru</p>
         <canvas id="peakChart" height="120"></canvas>
       </div>
       <div class="chart-card">
@@ -893,8 +997,8 @@
     </div>
 
     <div class="kpi-row">
-      <div class="kpi"><div class="val" id="kpiAvgDur">38 min</div><div class="lbl">Avg. Parking Dwell Time</div></div>
-      <div class="kpi"><div class="val" id="kpiPeak">5:00 – 6:30 PM</div><div class="lbl">Peak Congestion Window</div></div>
+      <div class="kpi"><div class="val" id="kpiAvgDur">42 min</div><div class="lbl">Avg. Parking Dwell Time</div></div>
+      <div class="kpi"><div class="val" id="kpiPeak">6:00 – 7:30 PM</div><div class="lbl">NCR Rush Hour Window</div></div>
       <div class="kpi"><div class="val" id="kpiUptime">99.8%</div><div class="lbl">7-Day Edge Availability</div></div>
     </div>
 
@@ -902,8 +1006,8 @@
     <div class="chart-card" style="margin-top:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <h4>24×7 Facility Occupancy Heatmap</h4>
-          <p class="sub">Hover over any time block to view historical occupancy density & dynamic pricing recommendations</p>
+          <h4>24×7 Facility Occupancy Heatmap (साप्ताहिक ट्रैफिक हीटमैप)</h4>
+          <p class="sub">Hover over any time slot to view historical occupancy density & dynamic INR pricing suggestions</p>
         </div>
         <select id="heatmapZoneFilter">
           <option value="all">All Zones</option>
@@ -925,7 +1029,7 @@
 
     <!-- AI Smart Insights -->
     <div class="insights-card">
-      <h4 style="margin:0 0 4px;font-size:15px;">💡 Smart Automated Facility Insights</h4>
+      <h4 style="margin:0 0 4px;font-size:15px;">💡 Smart Automated Facility Insights (स्वचालित सुझाव)</h4>
       <p class="sub" style="margin:0 0 14px;">Rule-based telemetry insights generated from current slot occupancy & EV power consumption</p>
       <div id="insightsList"></div>
     </div>
@@ -936,31 +1040,31 @@
 <section class="page" id="page-history">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>🚗 Vehicle & Parking Session History</h2><p>Completed parking transactions logged automatically by edge exit sensors</p></div>
+      <div><h2>🚗 Vehicle Session History (वाहन पार्किंग इतिहास)</h2><p>Completed parking transactions logged automatically by FASTag & ANPR exit barriers</p></div>
       <button class="quick-sim-btn" id="exportHistoryBtn" style="padding:8px 14px;font-size:13px;">📥 Export Session History (CSV)</button>
     </div>
 
     <div class="summary-row">
       <div class="summary-card"><div class="top"><span class="tag">SESSIONS TODAY</span></div><div class="val" id="histTotal">0</div></div>
       <div class="summary-card"><div class="top"><span class="tag">AVG DURATION</span></div><div class="val" id="histAvg">—</div></div>
-      <div class="summary-card"><div class="top"><span class="tag">EV CHARGING SESSIONS</span></div><div class="val" id="histEv">0</div></div>
-      <div class="summary-card"><div class="top"><span class="tag">TOTAL REVENUE TODAY</span></div><div class="val" id="histRevenue">$0.00</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">EV FAST SESSIONS</span></div><div class="val" id="histEv">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">TOTAL REVENUE TODAY (कुल राजस्व)</span></div><div class="val" id="histRevenue" style="color:#059669;">₹0.00</div></div>
     </div>
 
     <div class="toolbar">
-      <input type="text" id="histSearch" placeholder="Search vehicle plate or slot (e.g. DL8CJ91, P04)…">
+      <input type="text" id="histSearch" placeholder="Search vehicle plate (e.g. DL 01 AB 1234, P04)…">
       <select id="histTypeFilter">
         <option value="all">All Bay Types</option>
-        <option value="standard">Standard bays</option>
-        <option value="ev">⚡ EV Fast Charging</option>
-        <option value="accessibility">♿ Accessible bays</option>
+        <option value="standard">Standard bays (₹40/hr)</option>
+        <option value="ev">⚡ EV Fast Charging (₹60/hr)</option>
+        <option value="accessibility">♿ Divyangjan Accessible</option>
       </select>
     </div>
 
     <div style="background:var(--paper-card);border:1px solid #E7EAF1;border-radius:14px;overflow-x:auto;">
       <table>
         <thead>
-          <tr><th>Plate</th><th>Slot</th><th>Type</th><th>Arrived</th><th>Departed</th><th>Duration</th><th>Fee</th><th>Action</th></tr>
+          <tr><th>Vehicle Plate (HSRP)</th><th>Slot</th><th>Type</th><th>Arrived</th><th>Departed</th><th>Duration</th><th>Fee (शुल्क)</th><th>Receipt</th></tr>
         </thead>
         <tbody id="historyTable"></tbody>
       </table>
@@ -973,7 +1077,7 @@
 <section class="page" id="page-alerts">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>Alerts & Notifications</h2><p>Edge hardware faults, high occupancy warnings, and critical events</p></div>
+      <div><h2>Alerts & Notifications (अलर्ट और सूचनाएं)</h2><p>Edge hardware faults, high occupancy warnings, and FASTag validation status</p></div>
     </div>
     <div class="toolbar">
       <select id="alertFilter">
@@ -992,7 +1096,7 @@
 <section class="page" id="page-admin">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>Admin & Facility Management</h2><p>Provision bays, recalibrate sensors, and review active reservations</p></div>
+      <div><h2>Admin & Facility Management</h2><p>Provision bays, configure FASTag thresholds, and review active UPI passes</p></div>
     </div>
 
     <div class="admin-shell" style="margin-top:18px;">
@@ -1000,14 +1104,14 @@
         <button class="admin-tab active" data-tab="slots">Parking Slots</button>
         <button class="admin-tab" data-tab="sensors">Sensors</button>
         <button class="admin-tab" data-tab="reservations">Reservations</button>
-        <button class="admin-tab" data-tab="settings">System Config</button>
+        <button class="admin-tab" data-tab="settings">FASTag & Config</button>
       </div>
       <div class="admin-main">
         <div id="admin-slots" class="admin-pane">
           <div class="add-form">
             <input type="text" id="newSlotId" placeholder="Slot ID e.g. P25">
             <select id="newSlotZone"><option>A</option><option>B</option><option>C</option></select>
-            <select id="newSlotType"><option value="standard">Standard</option><option value="ev">EV Charging</option><option value="accessibility">Accessible</option></select>
+            <select id="newSlotType"><option value="standard">Standard (₹40/hr)</option><option value="ev">EV Fast Charging (₹60/hr)</option><option value="accessibility">Divyangjan Accessible</option></select>
             <button id="addSlotBtn">Add Bay</button>
           </div>
           <table>
@@ -1023,16 +1127,18 @@
         </div>
         <div id="admin-reservations" class="admin-pane" style="display:none;">
           <table>
-            <thead><tr><th>Slot</th><th>Reserved At</th><th>Status</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Slot</th><th>Plate</th><th>Reserved At</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody id="adminResTable"></tbody>
           </table>
           <div class="empty-state" id="resEmpty" style="display:none;">No active reservations.</div>
         </div>
         <div id="admin-settings" class="admin-pane" style="display:none;">
-          <h4 style="margin:0 0 10px;">Facility Parameters</h4>
-          <div class="row" style="border-bottom:1px solid #EEF1F6;padding:10px 0;display:flex;justify-content:space-between;"><span>MQTT Broker URL</span><span class="mono">tls://mqtt.smartpark.io:8883</span></div>
-          <div class="row" style="border-bottom:1px solid #EEF1F6;padding:10px 0;display:flex;justify-content:space-between;"><span>Sensor Heartbeat Rate</span><b>1000 ms</b></div>
-          <div class="row" style="border-bottom:1px solid #EEF1F6;padding:10px 0;display:flex;justify-content:space-between;"><span>EV Charging Base Tariff</span><b>$0.28 / kWh</b></div>
+          <h4 style="margin:0 0 10px;">Indian Facility & FASTag Configuration</h4>
+          <div class="row" style="border-bottom:1px solid #EEF1F6;padding:10px 0;display:flex;justify-content:space-between;"><span>NETC FASTag Reader ID</span><span class="mono">FASTAG-NETC-DEL-04</span></div>
+          <div class="row" style="border-bottom:1px solid #EEF1F6;padding:10px 0;display:flex;justify-content:space-between;"><span>UPI Merchant VPA</span><span class="mono">smartpark@icici</span></div>
+          <div class="row" style="border-bottom:1px solid #EEF1F6;padding:10px 0;display:flex;justify-content:space-between;"><span>GSTIN Registration</span><span class="mono">07AABCS1429B1Z8</span></div>
+          <div class="row" style="border-bottom:1px solid #EEF1F6;padding:10px 0;display:flex;justify-content:space-between;"><span>Standard Tariff Rate</span><b>₹40.00 / Hour</b></div>
+          <div class="row" style="border-bottom:1px solid #EEF1F6;padding:10px 0;display:flex;justify-content:space-between;"><span>EV Fast Charging Base Tariff</span><b>₹60.00 / Hour + ₹14/kWh</b></div>
           <div class="row" style="padding:10px 0;display:flex;justify-content:space-between;"><span>Grace Reservation Window</span><b>15 Minutes</b></div>
         </div>
       </div>
@@ -1045,51 +1151,69 @@
 <footer>
   <div class="wrap foot-grid">
     <div>
-      <div class="brand" style="margin-bottom:10px;"><span class="dot"></span>SmartPark</div>
-      <p style="font-size:13.5px;color:#8593AC;max-width:320px;line-height:1.6;">Edge-to-cloud IoT parking platform. Autonomous occupancy detection, EV charging integration, and dynamic flow guidance.</p>
+      <div class="brand" style="margin-bottom:10px;"><span class="dot"></span>SmartPark India</div>
+      <p style="font-size:13.5px;color:#8593AC;max-width:320px;line-height:1.6;">Next-generation IoT smart parking with NPCI NETC FASTag integration and instant UPI payment flow across Indian urban centers.</p>
     </div>
     <div class="flinks">
       <h5>Platform</h5>
-      <a href="#" data-page="map">Interactive Map</a>
+      <a href="#" data-page="map">2D Floor Plan</a>
       <a href="#" data-page="dashboard">Live Dashboard</a>
       <a href="#" data-page="sensors">IoT Network</a>
       <a href="#" data-page="analytics">Analytics & Heatmap</a>
     </div>
     <div class="flinks">
       <h5>Features</h5>
-      <a href="#" data-page="history">Session Logs</a>
+      <a href="#" data-page="history">FASTag Session Logs</a>
       <a href="#" data-page="admin">Facility Admin</a>
       <a href="#" data-page="alerts">System Alerts</a>
     </div>
   </div>
   <div class="wrap fbottom">
-    <span>© 2026 SmartPark IoT Solutions. All rights reserved.</span>
-    <span>Ultrasonic HC-SR04 · Sharp IR · Arduino Edge Network</span>
+    <span>© 2026 SmartPark India Pvt. Ltd. All rights reserved. GSTIN: 07AABCS1429B1Z8</span>
+    <span>Ultrasonic HC-SR04 · Sharp IR · FASTag RFID 865 MHz · NPCI NETC</span>
   </div>
 </footer>
 
+<!-- Toast Notifications Container -->
+<div class="toast-container" id="toastContainer"></div>
+
 <!-- ===================== MODALS ===================== -->
 
-<!-- 1. SLOT DETAILS & RESERVATION MODAL -->
+<!-- 1. SLOT DETAILS & RESERVATION MODAL (WITH UPI & INDIAN REGISTRATION) -->
 <div class="modal-backdrop" id="modalBackdrop">
   <div class="modal">
     <div class="mhead"><h3 id="modalSlotId">P01</h3><button class="close" id="modalClose">✕</button></div>
     <div id="modalStatusBadgeWrap" style="margin-bottom:10px;"></div>
+    
     <div class="row"><span>Sensor hardware</span><span id="modalDetectionType">—</span></div>
     <div class="row"><span>Sensor link state</span><span id="modalSensorStatus">—</span></div>
     <div class="row"><span>Vehicle plate</span><span id="modalPlate">—</span></div>
     <div class="row" id="modalEvRow" style="display:none;"><span>⚡ EV Fast Charger</span><span id="modalEvCharge">—</span></div>
-    <div class="row" id="modalAccRow" style="display:none;"><span>♿ Accessible Feature</span><span>Wide Access Bay (3.6m)</span></div>
+    <div class="row" id="modalAccRow" style="display:none;"><span>♿ Divyangjan Priority</span><span>Extra-Wide Bay · Near Lift</span></div>
     <div class="row"><span>Active dwell time</span><span id="modalDuration">—</span></div>
-    <div class="row"><span>Hourly rate</span><span id="modalFee">—</span></div>
+    <div class="row"><span>Hourly rate (शुल्क)</span><span id="modalFee">—</span></div>
 
-    <!-- 5. 🎟️ QR RESERVATION FLOW -->
-    <button class="reserve-btn" id="modalReserveBtn">Reserve Slot & Generate QR Pass</button>
+    <!-- Enter Custom Vehicle Registration Plate -->
+    <div id="modalBookingForm" style="margin-top:14px;">
+      <label style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;">Your Vehicle Plate (वाहन नंबर):</label>
+      <input type="text" id="userPlateInput" placeholder="e.g. DL 01 AB 1234 or HR 26..." style="width:100%;font-family:'JetBrains Mono',monospace;font-weight:700;text-transform:uppercase;">
+      
+      <!-- 5. 🎟️ QR RESERVATION FLOW -->
+      <button class="reserve-btn" id="modalReserveBtn">Reserve Bay & Generate UPI / QR Pass</button>
+    </div>
+
     <div class="confirm" id="modalConfirm">Slot reserved! Hold valid for 15 minutes.</div>
     <div class="qr-wrap" id="qrWrap" style="display:none;">
       <div id="qrCanvasHolder"></div>
-      <div class="qr-caption" id="qrCaption">Scan at entry barrier to open boom gate</div>
-      <button class="quick-sim-btn" id="viewFullPassBtn" style="margin-top:10px;padding:6px 14px;background:var(--navy-900);color:#fff;">View Digital Parking Ticket</button>
+      <div class="qr-caption" id="qrCaption">Scan via Google Pay, PhonePe, or Paytm UPI</div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-top:8px;">INSTANT PAYMENT VIA UPI APPS:</div>
+      <div class="upi-apps-row">
+        <button class="upi-app-btn" id="payGpayBtn" style="color:#0F9D58;">Google Pay</button>
+        <button class="upi-app-btn" id="payPhonepeBtn" style="color:#5F259F;">PhonePe</button>
+        <button class="upi-app-btn" id="payPaytmBtn" style="color:#00B9F5;">Paytm</button>
+        <button class="upi-app-btn" id="payFastagBtn" style="color:#EA580C;">FASTag</button>
+      </div>
+      <button class="quick-sim-btn" id="viewFullPassBtn" style="margin-top:8px;padding:8px 14px;background:var(--navy-900);color:#fff;width:100%;">View Full Digital Parking Pass Ticket</button>
     </div>
   </div>
 </div>
@@ -1098,14 +1222,14 @@
 <div class="modal-backdrop" id="ticketModalBackdrop">
   <div class="modal" style="max-width:440px;">
     <div class="mhead">
-      <h3>🎟️ Digital Parking Pass</h3>
+      <h3>🎟️ Digital Parking Pass Ticket</h3>
       <button class="close" id="ticketModalClose">✕</button>
     </div>
     
     <div class="ticket-card" id="ticketCardArea">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
-          <div style="font-size:11px;color:#94A3B8;letter-spacing:.05em;">SMARTPARK PASS #</div>
+          <div style="font-size:10.5px;color:#94A3B8;letter-spacing:.05em;">SMARTPARK PASS #</div>
           <div style="font-size:18px;font-weight:800;color:#38BDF8;" id="ticketPassId">SPK-8924</div>
         </div>
         <span class="badge" style="background:#0284C7;color:#fff;" id="ticketBayBadge">Bay P04</span>
@@ -1116,50 +1240,57 @@
         <span id="ticketTimerText" style="font-family:'JetBrains Mono',monospace;font-weight:700;">Valid for 14:59</span>
       </div>
 
-      <div style="text-align:center;margin:14px 0;">
+      <div style="text-align:center;margin:12px 0;">
         <div id="ticketQrHolder" style="display:inline-block;padding:8px;background:#fff;border-radius:10px;"></div>
-        <div style="font-size:11px;color:#94A3B8;margin-top:6px;">Check-in PIN: <b style="color:#fff;" id="ticketPin">849-201</b></div>
+        <div style="font-size:11px;color:#94A3B8;margin-top:6px;">Check-in PIN / FASTag OTP: <b style="color:#fff;" id="ticketPin">849-201</b></div>
+        <div style="margin-top:6px;"><span class="plate-hsrp" id="ticketPlateBadge"><span class="ind-band">IND</span>DL 01 AB 1234</span></div>
       </div>
 
       <div style="border-top:1px dashed #334155;padding-top:10px;margin-top:10px;font-size:12px;color:#CBD5E1;">
-        <div><b>Assigned Location:</b> <span id="ticketLocation">Zone A · Level 1 (Ground)</span></div>
-        <div style="margin-top:4px;"><b>Directions:</b> Enter via Gate 1 ➔ Follow overhead LED arrow to assigned bay.</div>
+        <div><b>Assigned Location:</b> <span id="ticketLocation">Zone A · Level 1 (Ground Deck)</span></div>
+        <div style="margin-top:4px;"><b>Directions:</b> Enter Gate 1 ➔ Barrier lifts on FASTag/QR ➔ Follow overhead LED arrow.</div>
       </div>
     </div>
 
     <div style="display:flex;gap:8px;margin-top:14px;">
-      <button class="sim-btn accent" id="simulateGateScanBtn" style="flex:1;">🚗 Simulate Gate Check-in</button>
+      <button class="sim-btn accent" id="simulateGateScanBtn" style="flex:1;">🚗 Simulate FASTag Gate 1 Entry</button>
       <button class="sim-btn warn" id="cancelReservationBtn">Cancel Pass</button>
     </div>
   </div>
 </div>
 
-<!-- 3. SESSION RECEIPT MODAL -->
+<!-- 3. GST TAX INVOICE RECEIPT MODAL -->
 <div class="modal-backdrop" id="receiptModalBackdrop">
   <div class="modal">
     <div class="mhead">
-      <h3>🧾 Official Parking Receipt</h3>
+      <h3>🧾 Official GST Tax Invoice Receipt</h3>
       <button class="close" id="receiptModalClose">✕</button>
     </div>
     <div class="receipt-box" id="receiptArea">
-      <div style="text-align:center;border-bottom:1px solid #E2E8F0;padding-bottom:10px;margin-bottom:10px;">
-        <div style="font-weight:800;font-size:16px;">SmartPark Urban Mobility</div>
-        <div style="font-size:11px;color:var(--muted);">Automated IoT Exit Barrier Terminal</div>
-        <div style="font-size:11.5px;color:var(--muted);margin-top:4px;" id="receiptId">RECEIPT #SPK-REC-4821</div>
+      <div class="receipt-header-logo">
+        <div>
+          <div style="font-weight:800;font-size:15px;">SmartPark Urban Mobility Pvt. Ltd.</div>
+          <div style="font-size:11px;color:var(--muted);">Terminal 3 / CyberHub Smart Facility</div>
+          <div style="font-size:11px;color:var(--muted);">GSTIN: <span class="mono">07AABCS1429B1Z8</span></div>
+        </div>
+        <div class="fastag-badge-ticker">FASTag PAID</div>
       </div>
-      <div class="receipt-row"><span>Vehicle Plate:</span><b id="recPlate">—</b></div>
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px;" id="receiptId">RECEIPT #SPK-IND-4821</div>
+
+      <div class="receipt-row"><span>Vehicle Number (HSRP):</span><span id="recPlate">—</span></div>
       <div class="receipt-row"><span>Slot Number:</span><b id="recSlot">—</b></div>
-      <div class="receipt-row"><span>Bay Type:</span><span id="recType">—</span></div>
+      <div class="receipt-row"><span>Bay Classification:</span><span id="recType">—</span></div>
       <div class="receipt-row"><span>Entry Time:</span><span id="recIn">—</span></div>
       <div class="receipt-row"><span>Exit Time:</span><span id="recOut">—</span></div>
       <div class="receipt-row"><span>Total Duration:</span><b id="recDur">—</b></div>
-      <div class="receipt-row" id="recEvRow" style="display:none;"><span>⚡ EV Energy (kWh):</span><span id="recEvKwh">14.2 kWh ($3.98)</span></div>
-      <div class="receipt-row"><span>Standard Parking Tariff:</span><span id="recBase">$4.50</span></div>
-      <div class="receipt-row"><span>Sales Tax (8%):</span><span id="recTax">$0.36</span></div>
-      <div class="receipt-total"><span>Total Paid:</span><span id="recTotal" style="color:var(--available);">$4.86</span></div>
-      <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:12px;">Payment Method: Apple Pay / Contactless (Verified)</div>
+      <div class="receipt-row" id="recEvRow" style="display:none;"><span>⚡ EV Power (kWh @ ₹14/kWh):</span><span id="recEvKwh">14.2 kWh (₹198.80)</span></div>
+      <div class="receipt-row"><span>Base Parking Charge:</span><span id="recBase">₹60.00</span></div>
+      <div class="receipt-row"><span>CGST (9%):</span><span id="recCgst">₹5.40</span></div>
+      <div class="receipt-row"><span>SGST (9%):</span><span id="recSgst">₹5.40</span></div>
+      <div class="receipt-total"><span>Total Amount Paid:</span><span id="recTotal" style="color:var(--available);">₹70.80</span></div>
+      <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:12px;">Payment Source: NPCI NETC FASTag Auto-Debit / UPI (Verified)</div>
     </div>
-    <button class="reserve-btn" id="printReceiptBtn" style="margin-top:14px;">Print / Save Receipt</button>
+    <button class="reserve-btn" id="printReceiptBtn" style="margin-top:14px;">Print Tax Invoice / Download</button>
   </div>
 </div>
 
@@ -1167,19 +1298,69 @@
 (function(){
   "use strict";
 
-  var COLORS = {
-    available: '#0EA472', availableSoft:'#E4F7EE',
-    occupied: '#D6455B', occupiedSoft:'#FBE2E6',
-    reserved: '#D97F14', reservedSoft:'#FBEED9',
-    offline: '#6B7686', offlineSoft:'#E7E9ED'
-  };
+  // ---------------- WEB AUDIO SYNTHESIZER (INTERACTIVE SOUND FEEDBACK) ----------------
+  var audioCtx = null;
+  var soundEnabled = true;
 
-  function statusColor(s){ return COLORS[s] || '#6B7686'; }
-  function statusSoft(s){ return COLORS[s+'Soft'] || '#E7E9ED'; }
-  function statusLabel(s){ return {available:'Available',occupied:'Occupied',reserved:'Reserved',offline:'Offline'}[s] || s; }
+  function playTone(freq, type, dur, delay, vol) {
+    if (!soundEnabled) return;
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = type || 'sine';
+      var startTime = audioCtx.currentTime + (delay || 0);
+      osc.frequency.setValueAtTime(freq, startTime);
+      gain.gain.setValueAtTime(vol || 0.08, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + dur);
+    } catch(e){}
+  }
+
+  function soundChime() {
+    playTone(523.25, 'sine', 0.22, 0, 0.08); // C5
+    playTone(659.25, 'sine', 0.32, 0.1, 0.08); // E5
+  }
+  function soundFastagBeep() {
+    playTone(880, 'triangle', 0.12, 0, 0.1); // High A5 FASTag RFID Beep
+  }
+  function soundGateOpen() {
+    playTone(440, 'sine', 0.15, 0, 0.06);
+    playTone(554.37, 'sine', 0.25, 0.12, 0.06);
+  }
+
+  var soundToggleBtn = document.getElementById('soundToggleBtn');
+  var soundIcon = document.getElementById('soundIcon');
+  var soundLabel = document.getElementById('soundLabel');
+
+  soundToggleBtn.addEventListener('click', function(){
+    soundEnabled = !soundEnabled;
+    soundToggleBtn.classList.toggle('active', soundEnabled);
+    soundIcon.textContent = soundEnabled ? '🔊' : '🔇';
+    soundLabel.textContent = soundEnabled ? 'Sound ON' : 'Muted';
+    if (soundEnabled) soundChime();
+    showToast(soundEnabled ? '🔊 Audio feedback enabled' : '🔇 Audio muted');
+  });
+
+  // ---------------- TOAST NOTIFICATIONS ----------------
+  var toastContainer = document.getElementById('toastContainer');
+  function showToast(text, type){
+    var t = document.createElement('div');
+    t.className = 'toast-msg';
+    t.innerHTML = '<span>' + (type==='warn'?'⚠️':(type==='fastag'?'🏷️':'🔔')) + '</span><span>' + text + '</span>';
+    toastContainer.appendChild(t);
+    setTimeout(function(){
+      t.style.opacity = '0';
+      t.style.transition = 'opacity .4s ease';
+      setTimeout(function(){ t.remove(); }, 400);
+    }, 3800);
+  }
 
   // ---------------- FALLBACK QR CODE GENERATOR ----------------
-  // Guarantees QR code works even if third-party CDN is blocked or unavailable.
   function renderFallbackQr(container, text, size){
     container.innerHTML = '';
     if (window.QRCode){
@@ -1194,9 +1375,7 @@
     }
     // High-fidelity SVG QR Matrix generator
     var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', size);
-    svg.setAttribute('height', size);
-    svg.setAttribute('viewBox', '0 0 25 25');
+    svg.setAttribute('width', size); svg.setAttribute('height', size); svg.setAttribute('viewBox', '0 0 25 25');
     svg.style.borderRadius = '6px';
     var hash = 0;
     for (var i = 0; i < text.length; i++) hash = ((hash << 5) - hash) + text.charCodeAt(i);
@@ -1209,9 +1388,7 @@
       r.setAttribute('fill', col); svg.appendChild(r);
     }
     function addFinder(x, y){
-      addBox(x, y, 7, 7, '#0B1120');
-      addBox(x+1, y+1, 5, 5, '#ffffff');
-      addBox(x+2, y+2, 3, 3, '#0B1120');
+      addBox(x, y, 7, 7, '#0B1120'); addBox(x+1, y+1, 5, 5, '#ffffff'); addBox(x+2, y+2, 3, 3, '#0B1120');
     }
     addFinder(1, 1); addFinder(17, 1); addFinder(1, 17);
     for (var r = 0; r < 25; r++){
@@ -1224,7 +1401,46 @@
     container.appendChild(svg);
   }
 
-  // ---------------- MOCK IOT DATA LAYER ----------------
+  var COLORS = {
+    available: '#0EA472', availableSoft:'#E4F7EE',
+    occupied: '#D6455B', occupiedSoft:'#FBE2E6',
+    reserved: '#D97F14', reservedSoft:'#FBEED9',
+    offline: '#6B7686', offlineSoft:'#E7E9ED'
+  };
+
+  function statusColor(s){ return COLORS[s] || '#6B7686'; }
+  function statusSoft(s){ return COLORS[s+'Soft'] || '#E7E9ED'; }
+  function statusLabel(s){
+    return {
+      available:'Available (उपलब्ध)',
+      occupied:'Occupied (व्यस्त)',
+      reserved:'Reserved (आरक्षित)',
+      offline:'Offline (ऑफलाइन)'
+    }[s] || s;
+  }
+
+  // ---------------- INDIAN REGISTRATION PLATES GENERATOR ----------------
+  var INDIAN_ICE_PLATES = [
+    'DL 01 AB 1234', 'HR 26 DQ 7890', 'MH 02 CB 9876', 'KA 05 MN 4521',
+    'UP 16 AZ 3321', 'TS 08 EF 2468', 'GJ 01 ER 5512', 'TN 09 BK 6543',
+    'WB 02 AX 8899', 'CH 01 BG 4321', 'DL 3C BC 8910', 'MH 12 FX 4123'
+  ];
+  var INDIAN_EV_PLATES = [
+    'DL 3C EV 2024', 'KA 03 EV 9110', 'MH 14 EV 4004', 'HR 26 EV 5500', 'GJ 01 EV 8822'
+  ];
+
+  function randIndianPlate(isEv){
+    if (isEv) return INDIAN_EV_PLATES[Math.floor(Math.random()*INDIAN_EV_PLATES.length)];
+    return INDIAN_ICE_PLATES[Math.floor(Math.random()*INDIAN_ICE_PLATES.length)];
+  }
+
+  function formatPlateBadge(plateStr, isEv){
+    if (!plateStr) return '<span style="color:#64748B;">—</span>';
+    var evClass = isEv ? ' ev' : '';
+    return '<span class="plate-hsrp'+evClass+'"><span class="ind-band">IND</span>'+plateStr+'</span>';
+  }
+
+  // ---------------- MOCK IOT & FASTAG DATA SERVICE ----------------
   var ParkingDataService = (function(){
     var zones = ['A','B','C'];
     var slots = [];
@@ -1239,9 +1455,6 @@
     var currentInterval = 4000;
     var activeReservation = null;
 
-    var PLATES = ['AB1203','DL8CJ91','MH12FX3','KA05LM7','TX9921Z','GJ03QW8','RJ14ST2','UP32NB5','CA8821K','NY4412B','FL9021M'];
-    function randPlate(){ return PLATES[Math.floor(Math.random()*PLATES.length)]; }
-
     function slotType(num){
       if (num % 6 === 0) return 'ev';
       if (num % 7 === 0) return 'accessibility';
@@ -1252,6 +1465,10 @@
       var id = 'P' + String(num).padStart(2,'0');
       var type = slotType(num);
       var status = Math.random() < 0.52 ? 'available' : 'occupied';
+      var isEv = (type === 'ev');
+      var plate = status === 'occupied' ? randIndianPlate(isEv) : null;
+      var fee = (type === 'ev' ? '60.00' : (type === 'accessibility' ? '20.00' : '40.00'));
+
       return {
         id: id, zone: zone, type: type,
         level: num <= 12 ? '1' : '2',
@@ -1259,9 +1476,9 @@
         sensorStatus: 'active',
         detection: (num % 2 === 0) ? 'Ultrasonic' : 'IR',
         since: Date.now() - Math.floor(Math.random()*3600000),
-        fee: (type==='ev' ? (Math.random()*1.5+3.5) : (Math.random()*2 + 2.0)).toFixed(2),
-        plate: status === 'occupied' ? randPlate() : null,
-        evCharge: type === 'ev' && status === 'occupied' ? Math.floor(Math.random()*60+20) : null
+        fee: fee,
+        plate: plate,
+        evCharge: isEv && status === 'occupied' ? Math.floor(Math.random()*60+20) : null
       };
     }
 
@@ -1277,26 +1494,26 @@
         type: s.detection,
         status: 'active',
         lastUpdate: Date.now(),
-        battery: Math.floor(Math.random()*25+75)
+        battery: Math.floor(Math.random()*22+78)
       });
     });
 
-    // Seed realistic previous sessions
-    var seedPlates = ['KA05LM7','MH12FX3','TX9921Z','DL8CJ91','AB1203','CA8821K','FL9021M','GJ03QW8'];
+    // Seed realistic previous sessions for history
     for (var k=0; k<12; k++){
       var stype = (k%3===0)?'ev':((k%5===0)?'accessibility':'standard');
-      var durMins = Math.floor(Math.random()*85 + 15);
-      var arr = Date.now() - (durMins * 60000) - (k * 700000);
+      var durMins = Math.floor(Math.random()*75 + 20);
+      var arr = Date.now() - (durMins * 60000) - (k * 650000);
       var dep = arr + (durMins * 60000);
-      var rate = stype==='ev' ? 4.50 : 2.50;
+      var rate = stype==='ev' ? 60.00 : (stype==='accessibility'?20.00:40.00);
+      var plateVal = (stype==='ev') ? INDIAN_EV_PLATES[k % INDIAN_EV_PLATES.length] : INDIAN_ICE_PLATES[k % INDIAN_ICE_PLATES.length];
       history.push({
-        plate: seedPlates[k % seedPlates.length],
+        plate: plateVal,
         slot: 'P' + String((k % 24)+1).padStart(2,'0'),
         type: stype,
         arrived: arr,
         departed: dep,
         fee: rate.toFixed(2),
-        evKwh: stype==='ev' ? (durMins * 0.28).toFixed(1) : null
+        evKwh: stype==='ev' ? (durMins * 0.35).toFixed(1) : null
       });
     }
 
@@ -1311,25 +1528,27 @@
     function pushHistory(slot, arrivedAt){
       var durMins = Math.max(1, Math.round((Date.now() - arrivedAt)/60000));
       history.unshift({
-        plate: slot.plate || randPlate(),
+        plate: slot.plate || randIndianPlate(slot.type==='ev'),
         slot: slot.id,
         type: slot.type,
         arrived: arrivedAt,
         departed: Date.now(),
         fee: slot.fee,
-        evKwh: slot.type==='ev' ? (durMins * 0.25).toFixed(1) : null
+        evKwh: slot.type==='ev' ? (durMins * 0.32).toFixed(1) : null
       });
       if (history.length > 80) history.pop();
     }
 
-    pushFeed('SmartPark edge mesh network synchronized — 24 nodes online', 'info');
+    pushFeed('SmartPark IGI T3 facility online — 24 slots, 24 sensors, FASTag NETC active', 'info');
 
     function occupySlot(slot, customPlate){
       slot.status = 'occupied';
       slot.since = Date.now();
-      slot.plate = customPlate || randPlate();
-      if (slot.type === 'ev') slot.evCharge = Math.floor(Math.random()*25+10);
-      pushFeed('Vehicle [' + slot.plate + '] parked at Bay ' + slot.id + ' (Zone ' + slot.zone + ')', 'occ');
+      slot.plate = customPlate || randIndianPlate(slot.type==='ev');
+      if (slot.type === 'ev') slot.evCharge = Math.floor(Math.random()*25+15);
+      pushFeed('Vehicle [' + slot.plate + '] entered via FASTag ➔ Bay ' + slot.id + ' (Zone ' + slot.zone + ')', 'occ');
+      showToast('🚗 FASTag Entry: ' + slot.plate + ' parked at Bay ' + slot.id, 'fastag');
+      soundFastagBeep();
     }
 
     function freeSlot(slot){
@@ -1339,7 +1558,8 @@
       var departedPlate = slot.plate;
       slot.plate = null;
       slot.evCharge = null;
-      pushFeed('Bay ' + slot.id + ' vacated by [' + (departedPlate || 'vehicle') + ']', 'avail');
+      pushFeed('Bay ' + slot.id + ' vacated by [' + (departedPlate || 'vehicle') + '] ➔ FASTag Auto-Debited at Exit 2', 'avail');
+      showToast('🏷️ FASTag Auto-Debit: ' + departedPlate + ' exited Gate 2', 'fastag');
     }
 
     function tick(){
@@ -1350,30 +1570,31 @@
       var roll = Math.random();
 
       sensor.lastUpdate = Date.now();
-      if (sensor.status === 'active') sensor.battery = Math.max(2, sensor.battery - 0.05);
+      if (sensor.status === 'active') sensor.battery = Math.max(2, sensor.battery - 0.04);
 
       if (roll < 0.06 && sensor.status === 'active'){
         sensor.status = Math.random() < 0.6 ? 'offline' : 'error';
         slot.sensorStatus = sensor.status;
-        pushFeed('Sensor Node ' + sensor.id + ' reporting ' + sensor.status + ' at Bay ' + slot.id, 'warn');
-        pushAlert('Sensor alert: Node ' + sensor.id + ' went ' + sensor.status, sensor.status === 'error' ? 'critical' : 'warning');
+        pushFeed('Sensor Node ' + sensor.id + ' went ' + sensor.status + ' at Bay ' + slot.id, 'warn');
+        pushAlert('Monsoon glitch: Sensor ' + sensor.id + ' reporting ' + sensor.status, sensor.status === 'error' ? 'critical' : 'warning');
       } else if (roll < 0.12 && sensor.status !== 'active'){
         sensor.status = 'active';
         slot.sensorStatus = 'active';
-        pushFeed('Sensor Node ' + sensor.id + ' recovered & online', 'info');
+        pushFeed('Sensor Node ' + sensor.id + ' recovered & back online', 'info');
       } else if (sensor.status === 'active'){
         if (slot.status === 'available') occupySlot(slot);
         else if (slot.status === 'occupied') freeSlot(slot);
         else if (slot.status === 'reserved' && Math.random() < 0.25){
-          slot.status = 'occupied'; slot.since = Date.now(); slot.plate = randPlate();
-          pushFeed('Reserved Bay ' + slot.id + ' checked-in by vehicle ' + slot.plate, 'occ');
+          slot.status = 'occupied'; slot.since = Date.now(); slot.plate = randIndianPlate(slot.type==='ev');
+          pushFeed('Reserved Bay ' + slot.id + ' checked-in by vehicle [' + slot.plate + ']', 'occ');
+          soundGateOpen();
         }
       }
 
-      // Trickle EV charge
+      // Trickle EV charge progress
       slots.forEach(function(s){
         if (s.type === 'ev' && s.status === 'occupied' && s.evCharge != null){
-          s.evCharge = Math.min(100, s.evCharge + Math.random()*5);
+          s.evCharge = Math.min(100, s.evCharge + Math.random()*4.5);
         }
       });
 
@@ -1402,12 +1623,12 @@
       listeners.forEach(function(fn){ fn(st); });
     }
 
-    function reserveSlot(slotId, plate){
+    function reserveSlot(slotId, customPlate){
       var slot = slots.filter(function(s){return s.id===slotId;})[0];
       if (slot && slot.status === 'available'){
         slot.status = 'reserved';
         slot.since = Date.now();
-        var passId = 'SPK-' + Math.floor(Math.random()*8999 + 1000);
+        var passId = 'SPK-IND-' + Math.floor(Math.random()*8999 + 1000);
         var pin = Math.floor(Math.random()*899+100) + '-' + Math.floor(Math.random()*899+100);
         activeReservation = {
           passId: passId,
@@ -1415,12 +1636,14 @@
           zone: slot.zone,
           level: slot.level,
           type: slot.type,
-          plate: plate || 'DL8CJ91',
+          plate: customPlate || randIndianPlate(slot.type==='ev'),
           reservedAt: Date.now(),
           expiresAt: Date.now() + 15 * 60000,
           pin: pin
         };
-        pushFeed('Bay ' + slot.id + ' reserved via QR pass #' + passId, 'res');
+        pushFeed('Bay ' + slot.id + ' reserved via UPI pass #' + passId + ' for vehicle [' + activeReservation.plate + ']', 'res');
+        showToast('🎟️ Bay ' + slot.id + ' reserved! 15-minute grace period active.', 'info');
+        soundChime();
         notify();
         return activeReservation;
       }
@@ -1434,7 +1657,8 @@
           slot.status = 'available';
           slot.since = Date.now();
         }
-        pushFeed('Reservation #' + activeReservation.passId + ' cancelled', 'info');
+        pushFeed('Reservation #' + activeReservation.passId + ' cancelled by user', 'info');
+        showToast('Pass cancelled. Bay ' + activeReservation.slotId + ' released.');
         activeReservation = null;
         notify();
       }
@@ -1445,38 +1669,42 @@
         var slot = slots.filter(function(s){return s.id===activeReservation.slotId;})[0];
         if (slot){
           occupySlot(slot, activeReservation.plate);
-          pushFeed('Pass #' + activeReservation.passId + ' scanned at Gate 1 — barrier raised', 'occ');
+          pushFeed('Pass #' + activeReservation.passId + ' scanned at Gate 1 ➔ FASTag barrier lifted', 'occ');
         }
         var pass = activeReservation;
         activeReservation = null;
+        soundGateOpen();
         notify();
         return pass;
       }
       return null;
     }
 
-    // Scenarios
+    // Traffic Presets
     function runRushHour(){
       var avail = slots.filter(function(s){return s.status==='available';});
       var count = Math.min(avail.length, 6);
       for (var i=0; i<count; i++) occupySlot(avail[i]);
-      pushAlert('Surge alert: Rapid vehicle influx (+'+count+' parked)', 'warning');
+      pushAlert('NCR Traffic Surge: Sudden vehicle influx (+'+count+' cars parked)', 'warning');
+      showToast('🏎️ Peak Influx: +'+count+' vehicles entered via FASTag');
       notify();
     }
     function runDeparture(){
       var occ = slots.filter(function(s){return s.status==='occupied';});
       var count = Math.min(occ.length, 5);
       for (var i=0; i<count; i++) freeSlot(occ[i]);
-      pushAlert('Turnover alert: '+count+' vehicles vacated bays', 'info');
+      pushAlert('Evening Turnover: '+count+' vehicles vacated & auto-debited', 'info');
+      showToast('🚗💨 Clearance: '+count+' vehicles vacated bays');
       notify();
     }
     function runEvSurge(){
       var evSlots = slots.filter(function(s){return s.type==='ev';});
       evSlots.forEach(function(s){
-        if (s.status==='available') occupySlot(s);
+        if (s.status==='available') occupySlot(s, randIndianPlate(true));
         s.evCharge = 45;
       });
-      pushAlert('EV grid event: High charger utilization in progress', 'info');
+      pushAlert('EV Fast Charging Surge: High load on 22kW charging station', 'info');
+      showToast('⚡ Tata Nexon.ev / MG ZS EV Fast Charging Initiated');
       notify();
     }
     function runGlitch(){
@@ -1486,7 +1714,8 @@
         pick.status = 'error';
         var slot = slots.filter(function(s){return s.id===pick.slot;})[0];
         if (slot) slot.sensorStatus = 'error';
-        pushAlert('Simulated sensor error on node ' + pick.id, 'critical');
+        pushAlert('Monsoon moisture fault on sensor node ' + pick.id, 'critical');
+        showToast('⚠️ Monsoon Glitch simulated on Node ' + pick.id, 'warn');
         notify();
       }
     }
@@ -1494,23 +1723,25 @@
       slots.forEach(function(s, idx){
         s.status = idx % 2 === 0 ? 'available' : 'occupied';
         s.sensorStatus = 'active';
-        s.plate = s.status === 'occupied' ? randPlate() : null;
+        s.plate = s.status === 'occupied' ? randIndianPlate(s.type==='ev') : null;
         s.since = Date.now() - 600000;
       });
       sensors.forEach(function(sen){ sen.status = 'active'; sen.battery = 98; });
-      pushFeed('Garage facility reset to 50% baseline occupancy', 'info');
+      pushFeed('Facility reset to 50% baseline occupancy', 'info');
+      showToast('🔄 Facility reset to 50% baseline');
       notify();
     }
 
     function addSlot(id, zone, type){
+      var fee = (type === 'ev' ? '60.00' : (type === 'accessibility' ? '20.00' : '40.00'));
       var slot = {
         id:id, zone:zone, type:type||'standard',
         level: '1', status:'available', sensorStatus:'active',
-        detection: 'Ultrasonic', since: Date.now(), fee:'3.00', plate:null, evCharge:null
+        detection: 'Ultrasonic', since: Date.now(), fee:fee, plate:null, evCharge:null
       };
       slots.push(slot);
       sensors.push({ id:'S'+id.slice(1), slot:id, type:slot.detection, status:'active', lastUpdate: Date.now(), battery:100 });
-      pushFeed('Bay ' + id + ' added to Zone ' + zone, 'info');
+      pushFeed('Bay ' + id + ' commissioned in Zone ' + zone, 'info');
       notify();
     }
     function removeSlot(id){
@@ -1524,7 +1755,7 @@
       if (!slot) return;
       if (status === 'available') freeSlot(slot);
       else if (status === 'occupied') occupySlot(slot);
-      else if (status === 'reserved'){ slot.status='reserved'; slot.since=Date.now(); pushFeed('Bay '+slot.id+' set to reserved', 'res'); }
+      else if (status === 'reserved'){ slot.status='reserved'; slot.since=Date.now(); pushFeed('Bay '+slot.id+' manually set to reserved', 'res'); }
       notify();
     }
 
@@ -1602,63 +1833,93 @@
     });
   }
 
-  // ---------------- MODAL LOGIC ----------------
+  // ---------------- MODAL LOGIC (SLOT DETAILS & UPI/FASTAG PASS) ----------------
   var modalBackdrop = document.getElementById('modalBackdrop');
   var currentModalSlot = null;
-  var TYPE_LABEL = { standard:'Standard Bay', ev:'⚡ EV Fast Charger', accessibility:'♿ Accessible Bay' };
+  var TYPE_LABEL = {
+    standard:'Standard Bay (सामान्य)',
+    ev:'⚡ EV Fast Charger 22kW (ईवी चार्जिंग)',
+    accessibility:'♿ Divyangjan Priority (दिव्यांगजन)'
+  };
 
   function openModal(slot){
     currentModalSlot = slot.id;
     document.getElementById('modalSlotId').textContent = slot.id + ' · Zone ' + slot.zone + ' (' + TYPE_LABEL[slot.type] + ')';
     var badgeWrap = document.getElementById('modalStatusBadgeWrap');
     badgeWrap.innerHTML = '<span class="badge" style="background:'+statusSoft(slot.status)+';color:'+statusColor(slot.status)+'">'+statusLabel(slot.status)+'</span>';
-    document.getElementById('modalDetectionType').textContent = slot.detection + ' (Overhead Beam)';
+    document.getElementById('modalDetectionType').textContent = slot.detection + ' (Overhead Beam Sensor)';
     document.getElementById('modalSensorStatus').textContent = slot.sensorStatus === 'active' ? 'Online (Heartbeat OK)' : 'Offline / Fault';
-    document.getElementById('modalPlate').textContent = slot.plate || 'Vacant';
+    document.getElementById('modalPlate').innerHTML = slot.plate ? formatPlateBadge(slot.plate, slot.type==='ev') : '<span style="color:#0EA472;font-weight:700;">Vacant (खाली)</span>';
     
     var evRow = document.getElementById('modalEvRow');
     if (slot.type === 'ev'){
       evRow.style.display = 'flex';
-      document.getElementById('modalEvCharge').textContent = slot.status==='occupied' ? Math.round(slot.evCharge||25) + '% (22kW DC)' : 'Ready for Plug-in';
+      document.getElementById('modalEvCharge').textContent = slot.status==='occupied' ? Math.round(slot.evCharge||35) + '% (22kW DC Fast)' : 'Ready for Plug-in (₹14/kWh)';
     } else { evRow.style.display = 'none'; }
 
     var accRow = document.getElementById('modalAccRow');
     accRow.style.display = slot.type === 'accessibility' ? 'flex' : 'none';
 
     document.getElementById('modalDuration').textContent = slot.status === 'available' ? 'None (Open Bay)' : duration(slot.since);
-    document.getElementById('modalFee').textContent = '$' + slot.fee + ' / hour';
+    document.getElementById('modalFee').textContent = '₹' + slot.fee + ' / hour';
 
+    var bookingForm = document.getElementById('modalBookingForm');
     var btn = document.getElementById('modalReserveBtn');
     var confirm = document.getElementById('modalConfirm');
     var qrWrap = document.getElementById('qrWrap');
+    
     confirm.classList.remove('show');
     qrWrap.style.display = 'none';
-    btn.style.display = 'block';
-    btn.disabled = slot.status !== 'available';
-    btn.textContent = slot.status === 'available' ? 'Reserve Slot & Generate QR Pass' : 'Bay Occupied / Reserved';
+
+    if (slot.status === 'available'){
+      bookingForm.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Reserve Slot & Generate UPI Pass (₹' + slot.fee + '/hr)';
+      var plateInput = document.getElementById('userPlateInput');
+      plateInput.value = randIndianPlate(slot.type==='ev');
+    } else {
+      bookingForm.style.display = 'none';
+    }
+
     modalBackdrop.classList.add('open');
   }
 
   document.getElementById('modalClose').addEventListener('click', function(){ modalBackdrop.classList.remove('open'); });
   modalBackdrop.addEventListener('click', function(e){ if (e.target === modalBackdrop) modalBackdrop.classList.remove('open'); });
 
-  // ---------------- 5. QR CODE & TICKET RESERVATION FLOW ----------------
+  // ---------------- 5. UPI / QR RESERVATION FLOW ----------------
   var ticketModalBackdrop = document.getElementById('ticketModalBackdrop');
   document.getElementById('ticketModalClose').addEventListener('click', function(){ ticketModalBackdrop.classList.remove('open'); });
   ticketModalBackdrop.addEventListener('click', function(e){ if (e.target === ticketModalBackdrop) ticketModalBackdrop.classList.remove('open'); });
 
   document.getElementById('modalReserveBtn').addEventListener('click', function(){
     if (!currentModalSlot) return;
-    var pass = ParkingDataService.reserveSlot(currentModalSlot);
+    var userPlate = document.getElementById('userPlateInput').value.trim() || 'DL 01 AB 1234';
+    var pass = ParkingDataService.reserveSlot(currentModalSlot, userPlate);
     if (pass){
       document.getElementById('modalConfirm').classList.add('show');
-      this.style.display = 'none';
+      document.getElementById('modalBookingForm').style.display = 'none';
       var qrWrap = document.getElementById('qrWrap');
       var holder = document.getElementById('qrCanvasHolder');
       qrWrap.style.display = 'block';
-      renderFallbackQr(holder, 'SMARTPARK:' + pass.passId + ':' + pass.slotId, 130);
+      renderFallbackQr(holder, 'upi://pay?pa=smartpark@icici&pn=SmartParkIndia&am=' + (pass.type==='ev'?60:40) + '&cu=INR&tn=BayReservation-' + pass.slotId, 130);
+      showWayfindingRoute(pass.slotId);
     }
   });
+
+  // UPI App Quick Clickers
+  function handleUpiClick(appName){
+    soundChime();
+    showToast('Redirecting to ' + appName + ' for instant UPI payment…');
+    setTimeout(function(){
+      modalBackdrop.classList.remove('open');
+      openTicketModal();
+    }, 600);
+  }
+  document.getElementById('payGpayBtn').addEventListener('click', function(){ handleUpiClick('Google Pay'); });
+  document.getElementById('payPhonepeBtn').addEventListener('click', function(){ handleUpiClick('PhonePe'); });
+  document.getElementById('payPaytmBtn').addEventListener('click', function(){ handleUpiClick('Paytm'); });
+  document.getElementById('payFastagBtn').addEventListener('click', function(){ handleUpiClick('FASTag Auto-Debit'); });
 
   document.getElementById('viewFullPassBtn').addEventListener('click', function(){
     modalBackdrop.classList.remove('open');
@@ -1675,8 +1936,12 @@
     document.getElementById('ticketPassId').textContent = pass.passId;
     document.getElementById('ticketBayBadge').textContent = 'Bay ' + pass.slotId + ' (' + pass.type.toUpperCase() + ')';
     document.getElementById('ticketPin').textContent = pass.pin;
-    document.getElementById('ticketLocation').textContent = 'Zone ' + pass.zone + ' · Level ' + pass.level;
-    renderFallbackQr(document.getElementById('ticketQrHolder'), 'SMARTPARK-GATE:' + pass.passId + ':' + pass.slotId, 140);
+    document.getElementById('ticketLocation').textContent = 'Zone ' + pass.zone + ' · Level ' + pass.level + ' (Ground Deck)';
+    document.getElementById('ticketPlateBadge').innerHTML = '<span class="ind-band">IND</span>' + pass.plate;
+    if (pass.type === 'ev') document.getElementById('ticketPlateBadge').classList.add('ev');
+    else document.getElementById('ticketPlateBadge').classList.remove('ev');
+
+    renderFallbackQr(document.getElementById('ticketQrHolder'), 'SMARTPARK-GATE:' + pass.passId + ':' + pass.slotId + ':' + pass.plate, 140);
     ticketModalBackdrop.classList.add('open');
   }
 
@@ -1684,13 +1949,15 @@
     var pass = ParkingDataService.checkInReservation();
     ticketModalBackdrop.classList.remove('open');
     if (pass){
-      alert('✅ Gate barrier opened! Welcome. Bay ' + pass.slotId + ' is now occupied.');
+      showToast('✅ FASTag Gate 1 barrier lifted! Park in assigned Bay ' + pass.slotId + '.');
+      showWayfindingRoute(pass.slotId);
     }
   });
 
   document.getElementById('cancelReservationBtn').addEventListener('click', function(){
     ParkingDataService.cancelReservation();
     ticketModalBackdrop.classList.remove('open');
+    clearWayfindingRoute();
   });
 
   // Countdown timer for active pass
@@ -1703,7 +1970,7 @@
       var m = Math.floor(rem/60);
       var s = rem % 60;
       var str = (m<10?'0':'')+m + ':' + (s<10?'0':'')+s;
-      document.getElementById('activePassPillText').textContent = '🎟️ Active Pass (' + pass.slotId + ') ' + str;
+      document.getElementById('activePassPillText').textContent = '🎟️ Pass (' + pass.slotId + ') ' + str;
       var timerText = document.getElementById('ticketTimerText');
       if (timerText) timerText.textContent = 'Valid for ' + str;
       if (rem === 0){
@@ -1714,10 +1981,11 @@
     }
   }, 1000);
 
-  // ---------------- 1. 🗺️ REALISTIC ARCHITECTURAL MAP ----------------
+  // ---------------- 1. 🗺️ REALISTIC 2D ARCHITECTURAL MAP WITH WAYFINDING ----------------
   var currentMapLevel = '1';
   var currentMapFilter = 'all';
   var mapTooltip = document.getElementById('mapTooltip');
+  var activeRouteSlotId = null;
 
   document.querySelectorAll('.level-tab').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -1739,6 +2007,23 @@
     });
   });
 
+  function showWayfindingRoute(slotId){
+    activeRouteSlotId = slotId;
+    var banner = document.getElementById('wayfindingBanner');
+    var title = document.getElementById('wayfindingTitle');
+    var steps = document.getElementById('wayfindingSteps');
+    banner.classList.add('show');
+    title.textContent = '🧭 Live Wayfinding Guidance to Bay ' + slotId;
+    steps.textContent = 'Enter Gate 1 (FASTag Auto-Barrier) ➔ Drive along Lane A ➔ Turn Right at Pillar A-2 ➔ Park in Bay ' + slotId;
+    renderMap(ParkingDataService.getState().slots);
+  }
+  function clearWayfindingRoute(){
+    activeRouteSlotId = null;
+    document.getElementById('wayfindingBanner').classList.remove('show');
+    renderMap(ParkingDataService.getState().slots);
+  }
+  document.getElementById('closeWayfindingBtn').addEventListener('click', clearWayfindingRoute);
+
   function renderMap(slots){
     var topRow = document.getElementById('mapRowTop');
     var bottomRow = document.getElementById('mapRowBottom');
@@ -1746,7 +2031,6 @@
     topRow.innerHTML = '';
     bottomRow.innerHTML = '';
 
-    // Filter by level
     var levelSlots = slots.filter(function(s){ return s.level === currentMapLevel; });
     var half = Math.ceil(levelSlots.length / 2);
     var row1Slots = levelSlots.slice(0, half);
@@ -1755,6 +2039,8 @@
     function createBayEl(s){
       var bay = document.createElement('div');
       bay.className = 'bay-slot';
+      if (activeRouteSlotId === s.id) bay.classList.add('route-highlight');
+
       var matchFilter = (currentMapFilter === 'all') ||
         (currentMapFilter === 'available' && s.status === 'available') ||
         (currentMapFilter === 'occupied' && s.status === 'occupied') ||
@@ -1767,13 +2053,15 @@
       var typeIcon = s.type === 'ev' ? '⚡' : (s.type === 'accessibility' ? '♿' : '');
       var vehIcon = s.status === 'occupied' ? (s.type==='ev' ? '🚗' : '🚙') : '';
 
+      var plateDisplay = s.status === 'occupied' ? formatPlateBadge(s.plate, s.type==='ev') : '<span style="font-size:10px;font-weight:700;color:#0EA472;">OPEN</span>';
+
       bay.innerHTML =
         '<div class="bay-top-ind">' +
           '<span class="bay-id">' + s.id + ' <span class="bay-type-ico">' + typeIcon + '</span></span>' +
           '<span class="bay-led" style="background:' + ledColor + ';color:' + ledColor + '"></span>' +
         '</div>' +
         '<div class="bay-vehicle">' + vehIcon + '</div>' +
-        '<div class="bay-plate-tag">' + (s.status === 'occupied' ? (s.plate || 'CAR') : 'OPEN') + '</div>';
+        '<div style="text-align:center;margin-top:2px;">' + plateDisplay + '</div>';
 
       bay.addEventListener('mouseenter', function(e){
         mapTooltip.style.display = 'block';
@@ -1781,15 +2069,18 @@
           '<b>Bay ' + s.id + ' · Zone ' + s.zone + '</b><br>' +
           'Status: <span style="color:'+statusColor(s.status)+'">'+statusLabel(s.status)+'</span><br>' +
           'Type: ' + TYPE_LABEL[s.type] + '<br>' +
-          (s.status==='occupied' ? 'Plate: <b>'+(s.plate||'—')+'</b><br>Parked: '+duration(s.since) : 'Rate: $'+s.fee+'/hr') +
-          '<div style="font-size:10px;color:#94A3B8;margin-top:4px;">Click bay to open details</div>';
+          (s.status==='occupied' ? 'Plate: '+(s.plate||'—')+'<br>Parked: '+duration(s.since) : 'Rate: ₹'+s.fee+'/hr') +
+          '<div style="font-size:10px;color:#93C5FD;margin-top:4px;">Click to view route / book bay</div>';
       });
       bay.addEventListener('mousemove', function(e){
         mapTooltip.style.left = (e.clientX + 14) + 'px';
         mapTooltip.style.top = (e.clientY + 14) + 'px';
       });
       bay.addEventListener('mouseleave', function(){ mapTooltip.style.display = 'none'; });
-      bay.addEventListener('click', function(){ openModal(s); });
+      bay.addEventListener('click', function(){
+        showWayfindingRoute(s.id);
+        openModal(s);
+      });
       return bay;
     }
 
@@ -1797,7 +2088,32 @@
     row2Slots.forEach(function(s){ bottomRow.appendChild(createBayEl(s)); });
   }
 
-  // ---------------- 6. 🚗 SESSION RECEIPT MODAL ----------------
+  // ---------------- 1-CLICK SMART AUTO-ASSIGN WIZARD ----------------
+  function smartAutoAssignNearestSlot(){
+    var state = ParkingDataService.getState();
+    var avail = state.slots.filter(function(s){return s.status==='available';});
+    if (avail.length === 0){
+      alert('❌ All bays currently occupied! Please check back in a few minutes.');
+      return;
+    }
+    // Prefer Level 1 Zone A (closest to main entrance / elevator)
+    var best = avail.sort(function(a,b){
+      var scoreA = (a.level==='1'?0:10) + (a.zone==='A'?0:(a.zone==='B'?2:4)) + parseInt(a.id.slice(1));
+      var scoreB = (b.level==='1'?0:10) + (b.zone==='A'?0:(b.zone==='B'?2:4)) + parseInt(b.id.slice(1));
+      return scoreA - scoreB;
+    })[0];
+
+    showWayfindingRoute(best.id);
+    goToPage('map');
+    openModal(best);
+    showToast('⚡ Optimal bay located: ' + best.id + ' (Nearest to Lift & Gate 1)');
+  }
+  document.getElementById('heroSmartAssignBtn').addEventListener('click', smartAutoAssignNearestSlot);
+  document.getElementById('dashSmartAssignBtn').addEventListener('click', smartAutoAssignNearestSlot);
+  document.getElementById('findSmartAssignBtn').addEventListener('click', smartAutoAssignNearestSlot);
+  document.getElementById('mapSmartAssignBtn').addEventListener('click', smartAutoAssignNearestSlot);
+
+  // ---------------- 6. GST TAX INVOICE RECEIPT MODAL ----------------
   var receiptModalBackdrop = document.getElementById('receiptModalBackdrop');
   document.getElementById('receiptModalClose').addEventListener('click', function(){ receiptModalBackdrop.classList.remove('open'); });
   receiptModalBackdrop.addEventListener('click', function(e){ if (e.target === receiptModalBackdrop) receiptModalBackdrop.classList.remove('open'); });
@@ -1807,12 +2123,14 @@
     var hours = (mins / 60);
     var baseRate = parseFloat(h.fee);
     var baseTotal = hours * baseRate;
-    var evChargeCost = h.type === 'ev' ? 3.98 : 0;
-    var tax = (baseTotal + evChargeCost) * 0.08;
-    var grandTotal = baseTotal + evChargeCost + tax;
+    var evChargeCost = h.type === 'ev' ? 198.80 : 0;
+    var taxableVal = baseTotal + evChargeCost;
+    var cgst = taxableVal * 0.09;
+    var sgst = taxableVal * 0.09;
+    var grandTotal = taxableVal + cgst + sgst;
 
-    document.getElementById('receiptId').textContent = 'RECEIPT #SPK-REC-' + Math.floor(Math.random()*89999 + 10000);
-    document.getElementById('recPlate').textContent = h.plate;
+    document.getElementById('receiptId').textContent = 'GST INVOICE #SPK-IND-' + Math.floor(Math.random()*89999 + 10000);
+    document.getElementById('recPlate').innerHTML = formatPlateBadge(h.plate, h.type==='ev');
     document.getElementById('recSlot').textContent = h.slot;
     document.getElementById('recType').textContent = TYPE_LABEL[h.type];
     document.getElementById('recIn').textContent = new Date(h.arrived).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -1822,27 +2140,28 @@
     var evRow = document.getElementById('recEvRow');
     if (h.type === 'ev'){
       evRow.style.display = 'flex';
-      document.getElementById('recEvKwh').textContent = (h.evKwh || '12.4') + ' kWh ($' + evChargeCost.toFixed(2) + ')';
+      document.getElementById('recEvKwh').textContent = (h.evKwh || '14.2') + ' kWh (₹' + evChargeCost.toFixed(2) + ')';
     } else { evRow.style.display = 'none'; }
 
-    document.getElementById('recBase').textContent = '$' + baseTotal.toFixed(2);
-    document.getElementById('recTax').textContent = '$' + tax.toFixed(2);
-    document.getElementById('recTotal').textContent = '$' + grandTotal.toFixed(2);
+    document.getElementById('recBase').textContent = '₹' + baseTotal.toFixed(2);
+    document.getElementById('recCgst').textContent = '₹' + cgst.toFixed(2);
+    document.getElementById('recSgst').textContent = '₹' + sgst.toFixed(2);
+    document.getElementById('recTotal').textContent = '₹' + grandTotal.toFixed(2);
 
     receiptModalBackdrop.classList.add('open');
   }
 
   document.getElementById('printReceiptBtn').addEventListener('click', function(){ window.print(); });
 
-  // ---------------- 4. 24x7 HEATMAP GENERATION ----------------
+  // ---------------- 4. 24x7 OCCUPANCY HEATMAP ----------------
   var heatmapData = null;
   function buildHeatmapData(){
-    var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    var days = ['Mon (सोम)','Tue (मंगल)','Wed (बुध)','Thu (गुरु)','Fri (शुक्र)','Sat (शनि)','Sun (रवि)'];
     var data = days.map(function(day, di){
       return Array.from({length:24}, function(_, h){
         var isWeekday = di < 5;
-        var base = (h>=8&&h<=10) ? 72 : (h>=17&&h<=19) ? 84 : (h>=11&&h<=16) ? 55 : 12;
-        if (!isWeekday) base = Math.round(base * 0.65);
+        var base = (h>=8&&h<=10) ? 75 : (h>=17&&h<=20) ? 88 : (h>=11&&h<=16) ? 58 : 15;
+        if (!isWeekday) base = Math.round(base * 0.7);
         return Math.min(98, Math.max(5, base + Math.round((Math.random()-0.5)*16)));
       });
     });
@@ -1879,7 +2198,7 @@
           var timeStr = (hour===0?'12 AM':(hour===12?'12 PM':(hour>12?(hour-12)+' PM':hour+' AM')));
           cell.title = day + ' at ' + timeStr + ': ' + pct + '% average occupancy';
           cell.addEventListener('click', function(){
-            alert('📊 ' + day + ' @ ' + timeStr + '\nAverage Occupancy: ' + pct + '%\nDynamic Rate Recommendation: $' + (pct>70?'4.50':'2.50') + '/hr');
+            alert('📊 ' + day + ' @ ' + timeStr + '\nNCR Average Occupancy: ' + pct + '%\nDynamic Rate Suggestion: ₹' + (pct>70?'60':'40') + '/hr');
           });
           gridEl.appendChild(cell);
         });
@@ -1918,11 +2237,13 @@
       var typeIcon = s.type === 'ev' ? ' ⚡' : (s.type === 'accessibility' ? ' ♿' : '');
       var card = document.createElement('div');
       card.className = 'slot-card';
+      var plateHtml = s.plate ? formatPlateBadge(s.plate, s.type==='ev') : '';
+
       card.innerHTML =
         '<div class="bar" style="background:'+statusColor(displayStatus)+'"></div>' +
         '<div class="row1"><span class="slotno">'+s.id+typeIcon+'</span><span class="badge" style="background:'+statusSoft(displayStatus)+';color:'+statusColor(displayStatus)+'">'+statusLabel(displayStatus)+'</span></div>' +
         '<div class="meta">Zone <b>'+s.zone+'</b> · Level '+s.level+'<br>' +
-        (s.status === 'available' ? 'Open · $'+s.fee+'/hr' : (s.plate ? '<span class="plate-pill">'+s.plate+'</span> ' : '') + duration(s.since)) + '</div>' +
+        (s.status === 'available' ? 'Open · ₹'+s.fee+'/hr' : plateHtml + ' · ' + duration(s.since)) + '</div>' +
         (s.type === 'ev' && s.evCharge != null ? '<div class="ev-charge-bar"><div class="fill" style="width:'+Math.round(s.evCharge)+'%"></div></div>' : '');
       card.addEventListener('click', function(){ openModal(s); });
       container.appendChild(card);
@@ -1932,9 +2253,21 @@
   // ---------------- FIND PARKING ----------------
   var findSearch = document.getElementById('findSearch');
   findSearch.addEventListener('input', function(){ renderFindResults(ParkingDataService.getState().slots); });
-  document.getElementById('findFilterAll').addEventListener('click', function(){ findSearch.value = ''; renderFindResults(ParkingDataService.getState().slots); });
-  document.getElementById('findFilterEv').addEventListener('click', function(){ findSearch.value = 'ev'; renderFindResults(ParkingDataService.getState().slots); });
-  document.getElementById('findFilterAcc').addEventListener('click', function(){ findSearch.value = 'accessibility'; renderFindResults(ParkingDataService.getState().slots); });
+  document.getElementById('findFilterAll').addEventListener('click', function(){
+    document.querySelectorAll('.preset-btn').forEach(function(b){b.classList.remove('active');});
+    this.classList.add('active');
+    findSearch.value = ''; renderFindResults(ParkingDataService.getState().slots);
+  });
+  document.getElementById('findFilterEv').addEventListener('click', function(){
+    document.querySelectorAll('.preset-btn').forEach(function(b){b.classList.remove('active');});
+    this.classList.add('active');
+    findSearch.value = 'ev'; renderFindResults(ParkingDataService.getState().slots);
+  });
+  document.getElementById('findFilterAcc').addEventListener('click', function(){
+    document.querySelectorAll('.preset-btn').forEach(function(b){b.classList.remove('active');});
+    this.classList.add('active');
+    findSearch.value = 'accessibility'; renderFindResults(ParkingDataService.getState().slots);
+  });
 
   function renderFindResults(slots){
     var q = findSearch.value.trim().toLowerCase();
@@ -1953,13 +2286,13 @@
     list.forEach(function(s){
       var row = document.createElement('div');
       row.className = 'result-row';
-      var dist = (Math.random()*150+25).toFixed(0);
+      var dist = (Math.random()*150+20).toFixed(0);
       var typeIcon = s.type === 'ev' ? ' ⚡' : (s.type === 'accessibility' ? ' ♿' : '');
       row.innerHTML =
         '<div class="rleft"><span class="swatch" style="background:'+statusColor('available')+'"></span>'+
         '<div><div style="font-weight:700;font-size:14px;">'+s.id+typeIcon+' · Zone '+s.zone+' (Level '+s.level+')</div>'+
-        '<div style="font-size:12px;color:var(--muted);">'+TYPE_LABEL[s.type]+' · $'+s.fee+'/hr</div></div></div>'+
-        '<div class="dist">'+dist+'m from entrance</div>';
+        '<div style="font-size:12px;color:var(--muted);">'+TYPE_LABEL[s.type]+' · ₹'+s.fee+'/hr</div></div></div>'+
+        '<div class="dist">'+dist+'m from Gate 1</div>';
       row.addEventListener('click', function(){ openModal(s); });
       container.appendChild(row);
     });
@@ -2020,8 +2353,8 @@
   function renderHealth(sensors){
     var active = sensors.filter(function(s){return s.status==='active';});
     var avgBattery = active.length ? active.reduce(function(a,s){return a+s.battery;},0)/active.length : 0;
-    document.getElementById('healthLatency').textContent = '41ms';
-    document.getElementById('healthPackets').textContent = (sensors.length * 5) + ' pkt/m';
+    document.getElementById('healthLatency').textContent = '34ms';
+    document.getElementById('healthPackets').textContent = (sensors.length * 6) + ' pkt/m';
     document.getElementById('healthUptime').textContent = '99.8%';
     document.getElementById('healthBattery').textContent = Math.round(avgBattery) + '%';
     
@@ -2033,10 +2366,11 @@
         sensor_id: randNode.id,
         slot_id: randNode.slot,
         type: randNode.type,
-        distance_cm: Math.round(Math.random()*150 + 15),
+        distance_cm: Math.round(Math.random()*140 + 15),
         status: randNode.status.toUpperCase(),
         battery_pct: Math.round(randNode.battery),
-        rssi_dbm: -64,
+        fastag_active: true,
+        hub: "DELHI-T3-ZONE-A",
         timestamp: Date.now()
       }, null, 2);
     }
@@ -2053,7 +2387,7 @@
     ParkingDataService.setPaused(isPaused);
     simPauseBtn.textContent = isPaused ? '▶ Resume Stream' : '⏸ Pause Stream';
     quickTogglePauseBtn.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
-    document.getElementById('demoStatusText').innerHTML = isPaused ? '<b style="color:#F59E0B;">IoT Stream: PAUSED</b>' : '<b>Live IoT Stream:</b> Active';
+    document.getElementById('demoStatusText').innerHTML = isPaused ? '<b style="color:#F59E0B;">IoT & FASTag Stream: PAUSED</b>' : '<b>NETC FASTag Gateway:</b> 865–867 MHz Active';
   }
   simPauseBtn.addEventListener('click', togglePause);
   quickTogglePauseBtn.addEventListener('click', togglePause);
@@ -2084,7 +2418,7 @@
     if (slots.some(function(s){return s.id===current;})) simForceSlotSel.value = current;
   }
 
-  // ---------------- 6. VEHICLE HISTORY TABLE ----------------
+  // ---------------- 6. VEHICLE HISTORY TABLE WITH RUPEE FORMATTING ----------------
   var histSearch = document.getElementById('histSearch');
   var histTypeFilter = document.getElementById('histTypeFilter');
   if (histSearch) histSearch.addEventListener('input', function(){ renderHistory(ParkingDataService.getState().history); });
@@ -2107,14 +2441,14 @@
       var tr = document.createElement('tr');
       tr.className = 'clickable-row';
       tr.innerHTML =
-        '<td><span class="plate-pill">'+h.plate+'</span></td>' +
+        '<td>' + formatPlateBadge(h.plate, h.type==='ev') + '</td>' +
         '<td><b>'+h.slot+'</b></td>' +
         '<td>'+TYPE_LABEL[h.type]+'</td>' +
         '<td>'+new Date(h.arrived).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+'</td>' +
         '<td>'+new Date(h.departed).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+'</td>' +
         '<td>'+mins+' min</td>' +
-        '<td><b>$'+fee+'</b></td>' +
-        '<td><button class="quick-sim-btn" style="background:#EEF2F6;color:#1E293B;">Receipt</button></td>';
+        '<td><b style="color:#059669;">₹'+fee+'</b></td>' +
+        '<td><button class="quick-sim-btn" style="background:#EEF2F6;color:#1E293B;">Tax Invoice</button></td>';
       tr.addEventListener('click', function(){ openReceiptModal(h); });
       tbody.appendChild(tr);
     });
@@ -2126,13 +2460,13 @@
     document.getElementById('histTotal').textContent = total;
     document.getElementById('histAvg').textContent = total ? avgMins + ' min' : '—';
     document.getElementById('histEv').textContent = evCount;
-    document.getElementById('histRevenue').textContent = '$' + revenue.toFixed(2);
+    document.getElementById('histRevenue').textContent = '₹' + revenue.toFixed(2);
   }
 
   // Export History CSV
   document.getElementById('exportHistoryBtn').addEventListener('click', function(){
     var hist = ParkingDataService.getState().history;
-    var csv = 'Plate,Slot,Type,Arrived,Departed,Duration_Mins,Fee_USD\n';
+    var csv = 'Plate,Slot,Type,Arrived,Departed,Duration_Mins,Fee_INR\n';
     hist.forEach(function(h){
       var mins = Math.max(1, Math.round((h.departed - h.arrived)/60000));
       var fee = (mins/60 * parseFloat(h.fee)).toFixed(2);
@@ -2141,7 +2475,7 @@
     var blob = new Blob([csv], {type:'text/csv'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url; a.download = 'smartpark_sessions_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.href = url; a.download = 'smartpark_india_sessions_' + new Date().toISOString().slice(0,10) + '.csv';
     a.click();
   });
 
@@ -2149,20 +2483,22 @@
   document.getElementById('exportReportBtn').addEventListener('click', function(){
     var st = ParkingDataService.getState();
     var csv = 'Metric,Value\n';
+    csv += 'Facility,SmartPark India IGI T3 Hub\n';
     csv += 'Total Slots,' + st.slots.length + '\n';
     csv += 'Available Slots,' + st.slots.filter(function(s){return s.status==='available';}).length + '\n';
     csv += 'Occupied Slots,' + st.slots.filter(function(s){return s.status==='occupied';}).length + '\n';
     csv += 'Reserved Slots,' + st.slots.filter(function(s){return s.status==='reserved';}).length + '\n';
-    csv += 'Sensor Network Uptime,99.8%\n';
-    csv += 'Average Latency,41ms\n';
+    csv += 'Network Uptime,99.8%\n';
+    csv += 'Edge Latency,34ms\n';
+    csv += 'Currency,INR (₹)\n';
     var blob = new Blob([csv], {type:'text/csv'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url; a.download = 'smartpark_analytics_summary.csv';
+    a.href = url; a.download = 'smartpark_india_analytics_summary.csv';
     a.click();
   });
 
-  // ---------------- AI SMART INSIGHTS ----------------
+  // ---------------- AI SMART INSIGHTS (INDIA LOCALIZED) ----------------
   function renderInsights(state){
     var el = document.getElementById('insightsList');
     if (!el) return;
@@ -2173,10 +2509,10 @@
     var offlineSensors = state.sensors.filter(function(s){return s.status!=='active';}).length;
 
     var insights = [
-      { tag: 'pred', tagText: 'FORECAST', text: 'Peak vehicle congestion projected between 5:00 PM – 6:30 PM. Current vacancy buffer is ' + avail + ' bays.' },
-      { tag: 'rev', tagText: 'DYNAMIC PRICING', text: 'Zone A occupancy is at ' + Math.round((occ/state.slots.length)*100) + '%. Recommend adjusting peak rate to $4.50/hr to encourage turnover.' },
-      { tag: 'ev', tagText: 'EV CHARGING', text: evFree + ' of ' + evSlots.length + ' EV fast chargers are currently available (' + (evFree===0?'Charging hub at full capacity.':'Ample fast-charge capacity.') + ')' },
-      { tag: 'maint', tagText: 'PREVENTATIVE', text: offlineSensors > 0 ? offlineSensors + ' sensor node(s) flagged for mesh check in Alerts.' : 'All 24 ultrasonic/IR sensor nodes reporting healthy RSSI & battery levels.' }
+      { tag: 'pred', tagText: 'FORECAST', text: 'Evening rush expected between 6:00 PM – 7:30 PM. Current vacancy buffer is ' + avail + ' bays across Ground & Deck.' },
+      { tag: 'rev', tagText: 'DYNAMIC PRICING', text: 'Zone A occupancy is at ' + Math.round((occ/state.slots.length)*100) + '%. Dynamic tariff of ₹60/hr active for peak turnover optimization.' },
+      { tag: 'ev', tagText: 'TATA / JIO-BP EV', text: evFree + ' of ' + evSlots.length + ' EV fast chargers currently available (' + (evFree===0?'Charging hub operating at peak capacity.':'22kW DC fast charging readily available.') + ')' },
+      { tag: 'maint', tagText: 'FASTAG & SENSORS', text: offlineSensors > 0 ? offlineSensors + ' sensor node(s) flagged for monsoon check in Alerts.' : 'All 24 ultrasonic/IR sensor nodes and NETC FASTag boom barriers are synchronized.' }
     ];
 
     el.innerHTML = insights.map(function(item){
@@ -2231,6 +2567,7 @@
     if (!id) return;
     ParkingDataService.addSlot(id, zone, type);
     document.getElementById('newSlotId').value = '';
+    showToast('Bay ' + id + ' added to Zone ' + zone);
   });
 
   function renderAdmin(state){
@@ -2263,7 +2600,7 @@
     document.getElementById('resEmpty').style.display = reserved.length ? 'none' : 'block';
     reserved.forEach(function(s){
       var tr = document.createElement('tr');
-      tr.innerHTML = '<td><b>'+s.id+'</b></td><td>'+timeAgo(s.since)+'</td><td>Active QR Hold</td>'+
+      tr.innerHTML = '<td><b>'+s.id+'</b></td><td>'+(s.plate||'DL 01 AB 1234')+'</td><td>'+timeAgo(s.since)+'</td><td>Active UPI Hold</td>'+
         '<td class="row-actions"><button data-cancel="'+s.id+'">Cancel</button></td>';
       rbody.appendChild(tr);
     });
