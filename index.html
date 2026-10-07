@@ -735,7 +735,7 @@
 <header class="nav">
   <div class="wrap nav-inner">
     <div class="brand">
-      <span class="dot"></span>SmartPark India <span class="brand-sub">स्मार्टपार्क</span>
+      <span class="dot"></span>SmartPark India <span class="brand-sub">Smart City IoT</span>
     </div>
     <nav class="navlinks">
       <button data-page="landing" class="active">Home</button>
@@ -814,16 +814,16 @@
 
   <div class="wrap stats-bar">
     <div class="stats-card">
-      <div class="stat"><div class="num" id="statTotal">24</div><div class="lbl">Total Capacity (कुल स्थान)</div></div>
-      <div class="stat"><div class="num" id="statAvail" style="color:var(--available)">0</div><div class="lbl">Available (उपलब्ध स्थान)</div></div>
-      <div class="stat"><div class="num" id="statOcc" style="color:var(--occupied)">0</div><div class="lbl">Occupied (व्यस्त स्थान)</div></div>
-      <div class="stat"><div class="num" id="statSensors" style="color:#0284C7">24</div><div class="lbl">Active IoT Sensors (सक्रिय सेंसर)</div></div>
+      <div class="stat"><div class="num" id="statTotal">24</div><div class="lbl">Total Capacity</div></div>
+      <div class="stat"><div class="num" id="statAvail" style="color:var(--available)">0</div><div class="lbl">Available Bays</div></div>
+      <div class="stat"><div class="num" id="statOcc" style="color:var(--occupied)">0</div><div class="lbl">Occupied Bays</div></div>
+      <div class="stat"><div class="num" id="statSensors" style="color:#0284C7">24</div><div class="lbl">Active IoT Sensors</div></div>
     </div>
   </div>
 
   <div class="wrap howitworks">
     <div class="section-head">
-      <div><h2>How SmartPark India Works (कार्यप्रणाली)</h2><p>From ultrasonic detection to FASTag auto-boom barrier lift in under 80 milliseconds</p></div>
+      <div><h2>How SmartPark India Works</h2><p>From ultrasonic detection to FASTag auto-boom barrier lift in under 80 milliseconds</p></div>
     </div>
     <div class="how-row">
       <div class="how-step">
@@ -849,27 +849,27 @@
 <section class="page" id="page-dashboard">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>Live Parking Dashboard (लाइव डैशबोर्ड)</h2><p>Real-time slot occupancy across Ground & Deck levels with Indian Rupee (₹) tariffs</p></div>
+      <div><h2>Live Parking Dashboard</h2><p>Real-time slot occupancy across Ground & Deck levels with Indian Rupee (₹) tariffs</p></div>
       <div class="refresh-pill"><span class="pulse-dot"></span><span>Updated <span id="lastUpdated" class="mono">just now</span></span></div>
     </div>
 
     <div class="summary-row">
       <div class="summary-card"><div class="top"><span class="tag">TOTAL BAYS</span></div><div class="val" id="dashTotal">0</div></div>
-      <div class="summary-card"><div class="top"><span class="tag">AVAILABLE (उपलब्ध)</span><span class="swatch" style="background:var(--available)"></span></div><div class="val" style="color:var(--available)" id="dashAvail">0</div></div>
-      <div class="summary-card"><div class="top"><span class="tag">OCCUPIED (व्यस्त)</span><span class="swatch" style="background:var(--occupied)"></span></div><div class="val" style="color:var(--occupied)" id="dashOcc">0</div></div>
-      <div class="summary-card"><div class="top"><span class="tag">RESERVED (आरक्षित)</span><span class="swatch" style="background:var(--reserved)"></span></div><div class="val" style="color:var(--reserved)" id="dashRes">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">AVAILABLE</span><span class="swatch" style="background:var(--available)"></span></div><div class="val" style="color:var(--available)" id="dashAvail">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">OCCUPIED</span><span class="swatch" style="background:var(--occupied)"></span></div><div class="val" style="color:var(--occupied)" id="dashOcc">0</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">RESERVED</span><span class="swatch" style="background:var(--reserved)"></span></div><div class="val" style="color:var(--reserved)" id="dashRes">0</div></div>
     </div>
 
     <div class="toolbar">
       <select id="filterStatus">
-        <option value="all">All statuses (सभी स्थितियां)</option>
-        <option value="available">Available only (केवल उपलब्ध)</option>
-        <option value="occupied">Occupied only (केवल व्यस्त)</option>
-        <option value="reserved">Reserved only (आरक्षित)</option>
+        <option value="all">All statuses</option>
+        <option value="available">Available only</option>
+        <option value="occupied">Occupied only</option>
+        <option value="reserved">Reserved only</option>
         <option value="offline">Offline sensor</option>
       </select>
       <select id="filterZone">
-        <option value="all">All Zones (सभी ज़ोन)</option>
+        <option value="all">All Zones</option>
         <option value="A">Zone A (Ground Deck)</option>
         <option value="B">Zone B (Ground Deck)</option>
         <option value="C">Zone C (Upper Deck)</option>
@@ -878,7 +878,7 @@
         <option value="all">All Bay Types</option>
         <option value="standard">Standard bays (₹40/hr)</option>
         <option value="ev">⚡ EV Fast Charging (₹60/hr)</option>
-        <option value="accessibility">♿ Divyangjan Accessible (दिव्यांगजन)</option>
+        <option value="accessibility">♿ Divyangjan Priority Accessible</option>
       </select>
       <select id="sortBy">
         <option value="id">Sort by Slot ID</option>
@@ -897,13 +897,13 @@
 <section class="page" id="page-find">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>Find Open Parking (स्थान खोजें)</h2><p>Locate vacant bays by zone, EV charger amenity, or accessibility clearance</p></div>
+      <div><h2>Find Open Parking</h2><p>Locate vacant bays by zone, EV charger amenity, or accessibility clearance</p></div>
     </div>
 
     <div class="toolbar" style="margin-top:14px;">
-      <button class="preset-btn active" id="findFilterAll">All Open Bays (सभी उपलब्ध)</button>
+      <button class="preset-btn active" id="findFilterAll">All Open Bays</button>
       <button class="preset-btn" id="findFilterEv">⚡ EV Fast Chargers Only (₹60/hr)</button>
-      <button class="preset-btn" id="findFilterAcc">♿ Divyangjan Accessible Only (दिव्यांगजन)</button>
+      <button class="preset-btn" id="findFilterAcc">♿ Divyangjan Priority Only</button>
       <button class="preset-btn" id="findSmartAssignBtn" style="background:#047857;color:#fff;border-color:#047857;">⚡ Smart 1-Click Nearest Slot</button>
     </div>
 
@@ -920,9 +920,9 @@
           <h4>METRO FACILITY OVERVIEW — LEVEL 1</h4>
           <div class="lot-grid" id="findLotGrid" style="grid-template-columns:repeat(6,1fr);"></div>
           <div class="zone-legend">
-            <div class="li"><span class="swatch" style="background:var(--available)"></span> Available (उपलब्ध)</div>
-            <div class="li"><span class="swatch" style="background:var(--occupied)"></span> Occupied (व्यस्त)</div>
-            <div class="li"><span class="swatch" style="background:var(--reserved)"></span> Reserved (आरक्षित)</div>
+            <div class="li"><span class="swatch" style="background:var(--available)"></span> Available</div>
+            <div class="li"><span class="swatch" style="background:var(--occupied)"></span> Occupied</div>
+            <div class="li"><span class="swatch" style="background:var(--reserved)"></span> Reserved</div>
           </div>
         </div>
       </div>
@@ -1060,7 +1060,7 @@
         <div class="gate-bar-row">
           <div class="gate-indicator">
             <span class="swatch" style="background:var(--available);"></span>
-            <span>प्रवेश / GATE 1 — FASTag & ANPR AUTO-BARRIER</span>
+            <span>ENTRY / GATE 1 — FASTag & ANPR AUTO-BARRIER</span>
           </div>
           <div style="display:flex;align-items:center;gap:12px;">
             <span class="fastag-badge-ticker">FASTag RFID</span>
@@ -1077,7 +1077,7 @@
           <div class="crosswalk">
             <div class="crosswalk-stripe"></div><div class="crosswalk-stripe"></div><div class="crosswalk-stripe"></div>
           </div>
-          <span>➔ ONE-WAY DRIVING AISLE · SPEED LIMIT 10 KM/H (गति सीमा 10) ➔</span>
+          <span>➔ ONE-WAY DRIVING AISLE · SPEED LIMIT 10 KM/H ➔</span>
           <div class="crosswalk">
             <div class="crosswalk-stripe"></div><div class="crosswalk-stripe"></div><div class="crosswalk-stripe"></div>
           </div>
@@ -1090,7 +1090,7 @@
         <div class="gate-bar-row">
           <div class="gate-indicator" style="color:#F59E0B;">
             <span class="swatch" style="background:var(--occupied);"></span>
-            <span>निकास / GATE 2 — FASTag INSTANT TOLL/PARKING DEBIT</span>
+            <span>EXIT / GATE 2 — FASTag INSTANT TOLL/PARKING DEBIT</span>
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
             <span class="fastag-badge-ticker">NETC EXIT</span>
@@ -1293,7 +1293,7 @@
       <h4>🎮 DEMO & HARDWARE SIMULATION CONTROL CENTER</h4>
       <p class="sim-sub">Trigger real-world Indian traffic scenarios to test live FASTag barriers, UPI pass generation, and sensor alerts.</p>
       
-      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;">REAL-WORLD TRAFFIC PRESETS (ट्रैफिक परिदृश्य):</div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;">REAL-WORLD TRAFFIC PRESETS:</div>
       <div class="sim-presets">
         <button class="preset-btn" id="scenarioRushBtn">🏎️ Delhi Peak Rush (+6 Indian Cars)</button>
         <button class="preset-btn" id="scenarioDepartureBtn">🚗💨 Evening Clearance (-5 Cars via FASTag)</button>
@@ -1368,7 +1368,7 @@
     <div class="chart-card" style="margin-top:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <h4>24×7 Facility Occupancy Heatmap (साप्ताहिक ट्रैफिक हीटमैप)</h4>
+          <h4>24×7 Facility Occupancy Heatmap</h4>
           <p class="sub">Hover over any time slot to view historical occupancy density & dynamic INR pricing suggestions</p>
         </div>
         <select id="heatmapZoneFilter">
@@ -1391,7 +1391,7 @@
 
     <!-- AI Smart Insights -->
     <div class="insights-card">
-      <h4 style="margin:0 0 4px;font-size:15px;">💡 Smart Automated Facility Insights (स्वचालित सुझाव)</h4>
+      <h4 style="margin:0 0 4px;font-size:15px;">💡 Smart Automated Facility Insights</h4>
       <p class="sub" style="margin:0 0 14px;">Rule-based telemetry insights generated from current slot occupancy & EV power consumption</p>
       <div id="insightsList"></div>
     </div>
@@ -1402,7 +1402,7 @@
 <section class="page" id="page-history">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>🚗 Vehicle Session History (वाहन पार्किंग इतिहास)</h2><p>Completed parking transactions logged automatically by FASTag & ANPR exit barriers</p></div>
+      <div><h2>🚗 Vehicle Session History</h2><p>Completed parking transactions logged automatically by FASTag & ANPR exit barriers</p></div>
       <button class="quick-sim-btn" id="exportHistoryBtn" style="padding:8px 14px;font-size:13px;">📥 Export Session History (CSV)</button>
     </div>
 
@@ -1410,7 +1410,7 @@
       <div class="summary-card"><div class="top"><span class="tag">SESSIONS TODAY</span></div><div class="val" id="histTotal">0</div></div>
       <div class="summary-card"><div class="top"><span class="tag">AVG DURATION</span></div><div class="val" id="histAvg">—</div></div>
       <div class="summary-card"><div class="top"><span class="tag">EV FAST SESSIONS</span></div><div class="val" id="histEv">0</div></div>
-      <div class="summary-card"><div class="top"><span class="tag">TOTAL REVENUE TODAY (कुल राजस्व)</span></div><div class="val" id="histRevenue" style="color:#059669;">₹0.00</div></div>
+      <div class="summary-card"><div class="top"><span class="tag">TOTAL REVENUE TODAY</span></div><div class="val" id="histRevenue" style="color:#059669;">₹0.00</div></div>
     </div>
 
     <div class="toolbar">
@@ -1426,7 +1426,7 @@
     <div style="background:var(--paper-card);border:1px solid #E7EAF1;border-radius:14px;overflow-x:auto;">
       <table>
         <thead>
-          <tr><th>Vehicle Plate (HSRP)</th><th>Slot</th><th>Type</th><th>Arrived</th><th>Departed</th><th>Duration</th><th>Fee (शुल्क)</th><th>Receipt</th></tr>
+          <tr><th>Vehicle Plate (HSRP)</th><th>Slot</th><th>Type</th><th>Arrived</th><th>Departed</th><th>Duration</th><th>Fee</th><th>Receipt</th></tr>
         </thead>
         <tbody id="historyTable"></tbody>
       </table>
@@ -1439,7 +1439,7 @@
 <section class="page" id="page-alerts">
   <div class="wrap page-body">
     <div class="section-head">
-      <div><h2>Alerts & Notifications (अलर्ट और सूचनाएं)</h2><p>Edge hardware faults, high occupancy warnings, and FASTag validation status</p></div>
+      <div><h2>Alerts & Notifications</h2><p>Edge hardware faults, high occupancy warnings, and FASTag validation status</p></div>
     </div>
     <div class="toolbar">
       <select id="alertFilter">
@@ -1553,7 +1553,7 @@
     <div class="row" id="modalEvRow" style="display:none;"><span>⚡ EV Fast Charger</span><span id="modalEvCharge">—</span></div>
     <div class="row" id="modalAccRow" style="display:none;"><span>♿ Divyangjan Priority</span><span>Extra-Wide Bay · Near Lift</span></div>
     <div class="row"><span>Active dwell time</span><span id="modalDuration">—</span></div>
-    <div class="row"><span>Hourly rate (शुल्क)</span><span id="modalFee">—</span></div>
+    <div class="row"><span>Hourly rate</span><span id="modalFee">—</span></div>
 
     <!-- View in 360 Camera Shortcut Button -->
     <div style="margin:10px 0;">
@@ -1562,7 +1562,7 @@
 
     <!-- Enter Custom Vehicle Registration Plate -->
     <div id="modalBookingForm" style="margin-top:14px;">
-      <label style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;">Your Vehicle Plate (वाहन नंबर):</label>
+      <label style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;">Your Vehicle Plate (HSRP):</label>
       <input type="text" id="userPlateInput" placeholder="e.g. DL 01 AB 1234 or HR 26..." style="width:100%;font-family:'JetBrains Mono',monospace;font-weight:700;text-transform:uppercase;">
       
       <!-- QR Reservation Flow -->
@@ -1778,10 +1778,10 @@
   function statusSoft(s){ return COLORS[s+'Soft'] || '#E7E9ED'; }
   function statusLabel(s){
     return {
-      available:'Available (उपलब्ध)',
-      occupied:'Occupied (व्यस्त)',
-      reserved:'Reserved (आरक्षित)',
-      offline:'Offline (ऑफलाइन)'
+      available:'Available',
+      occupied:'Occupied',
+      reserved:'Reserved',
+      offline:'Offline'
     }[s] || s;
   }
 
@@ -2205,9 +2205,9 @@
   var modalBackdrop = document.getElementById('modalBackdrop');
   var currentModalSlot = null;
   var TYPE_LABEL = {
-    standard:'Standard Bay (सामान्य)',
-    ev:'⚡ EV Fast Charger 22kW (ईवी चार्जिंग)',
-    accessibility:'♿ Divyangjan Priority (दिव्यांगजन)'
+    standard:'Standard Bay',
+    ev:'⚡ EV Fast Charger 22kW',
+    accessibility:'♿ Divyangjan Priority'
   };
 
   function openModal(slot){
@@ -2217,7 +2217,7 @@
     badgeWrap.innerHTML = '<span class="badge" style="background:'+statusSoft(slot.status)+';color:'+statusColor(slot.status)+'">'+statusLabel(slot.status)+'</span>';
     document.getElementById('modalDetectionType').textContent = slot.detection + ' (Overhead Beam Sensor)';
     document.getElementById('modalSensorStatus').textContent = slot.sensorStatus === 'active' ? 'Online (Heartbeat OK)' : 'Offline / Fault';
-    document.getElementById('modalPlate').innerHTML = slot.plate ? formatPlateBadge(slot.plate, slot.type==='ev') : '<span style="color:#0EA472;font-weight:700;">Vacant (खाली)</span>';
+    document.getElementById('modalPlate').innerHTML = slot.plate ? formatPlateBadge(slot.plate, slot.type==='ev') : '<span style="color:#0EA472;font-weight:700;">Vacant</span>';
     
     var evRow = document.getElementById('modalEvRow');
     if (slot.type === 'ev'){
@@ -3530,7 +3530,7 @@
   // ---------------- 4. 24x7 OCCUPANCY HEATMAP ----------------
   var heatmapData = null;
   function buildHeatmapData(){
-    var days = ['Mon (सोम)','Tue (मंगल)','Wed (बुध)','Thu (गुरु)','Fri (शुक्र)','Sat (शनि)','Sun (रवि)'];
+    var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
     var data = days.map(function(day, di){
       return Array.from({length:24}, function(_, h){
         var isWeekday = di < 5;

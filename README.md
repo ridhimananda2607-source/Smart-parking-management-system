@@ -1,8 +1,8 @@
-# SmartPark India (स्मार्टपार्क) — Smart City IoT Parking, Google Maps & Street View 360° Management
+# SmartPark India — Smart City IoT Parking, Google Maps & Street View 360° Management
 
 A modern, responsive, real-time dashboard featuring **Google Maps Navigation** and an authentic **Google Street View 360° Panorama Suite** for an IoT-based smart parking system localized for Indian urban hubs (IGI Airport Terminal 3, DLF CyberHub Gurugram, Kempegowda T2, Phoenix Marketcity). Integrates real-time ultrasonic & infrared edge sensors, NETC FASTag automated boom barriers, UPI payments (Google Pay, PhonePe, Paytm), Indian HSRP and green EV plates, turn-by-turn wayfinding, and interactive Web Audio synthesis.
 
-🔗 **Live Web Demo:** [https://ridhimananda2607-source.github.io/Smart-parking-management-system/](https://ridhimananda2607-source.github.io/Smart-parking-management-system/)  
+🔗 **Live Web Demo:** [https://ridhimananda2607-source.github.io/Smart-parking-management-system/](https://ridhimananda2607-source.github.io/Smart-parking-management-system/) 
 *(Or open `parking.html` / `index.html` directly in any web browser)*
 
 ---
@@ -51,7 +51,7 @@ Navigate to the **📹 Street View 360°** tab for an immersive Google Street Vi
 ### 4. 🧾 Official GST Tax Invoices
 - Itemized parking receipts featuring **GSTIN: 07AABCS1429B1Z8**, base tariffs (₹40/hr), EV charging power (kWh @ ₹14/kWh), **CGST (9%)**, and **SGST (9%)** with print/save capability.
 
-### 5. ♿ Divyangjan Priority Parking (दिव्यांगजन)
+### 5. ♿ Divyangjan Priority Parking 
 - Dedicated accessible bays designated for differently-abled citizens with zero-step ramp access and priority lift proximity.
 
 ---
@@ -82,7 +82,7 @@ Navigate to the **📹 Street View 360°** tab for an immersive Google Street Vi
 
 ```text
 .
-├── index.html     # Primary web application (GitHub Pages entry point)
-├── parking.html   # Standalone localized application file
-└── README.md      # Documentation & architectural guide
+├── index.html   # Primary web application (GitHub Pages entry point)
+├── parking.html  # Standalone localized application file
+└── README.md   # Documentation & architectural guide
 ```
